@@ -27,7 +27,9 @@ class ssh_security:
 
     __SSH_CONFIG = '/etc/ssh/sshd_config'
     __ip_data = None
+    __user_data = None
     __ClIENT_IP = '/www/server/panel/data/host_login_ip.json'
+    __ClIENT_USER = '/www/server/panel/data/host_login_user.json'
     __pyenv = 'python'
     __REPAIR = {"1": {"id": 1,
                       "type": "file",
@@ -127,6 +129,8 @@ class ssh_security:
 
         if not os.path.exists(self.__ClIENT_IP):
             public.WriteFile(self.__ClIENT_IP, json.dumps([]))
+        if not os.path.exists(self.__ClIENT_USER):
+            public.WriteFile(self.__ClIENT_USER, json.dumps([]))
         self.__mail = send_mail.send_mail()
         self.__mail_config = self.__mail.get_settings()
         self._check_pyenv()
@@ -134,6 +138,10 @@ class ssh_security:
             self.__ip_data = json.loads(public.ReadFile(self.__ClIENT_IP))
         except:
             self.__ip_data = []
+        try:
+            self.__user_data = json.loads(public.ReadFile(self.__ClIENT_USER))
+        except:
+            self.__user_data = []
 
     def _check_pyenv(self):
         if os.path.exists('/www/server/panel/pyenv'):
@@ -161,10 +169,11 @@ class ssh_security:
 
     def return_profile(self):
         if os.path.exists('/root/.bash_profile'): return '/root/.bash_profile'
+        if os.path.exists('/root/.profile'): return '/root/.profile'
         if os.path.exists('/etc/profile'): return '/etc/profile'
-        fd = open('/root/.bash_profil', mode="w", encoding="utf-8")
+        fd = open('/root/.bash_profile', mode="w", encoding="utf-8")
         fd.close()
-        return '/root/.bash_profil'
+        return '/root/.bash_profile'
 
     def return_bashrc(self):
         if os.path.exists('/root/.bashrc'): return '/root/.bashrc'
@@ -179,6 +188,10 @@ class ssh_security:
             json.loads(public.ReadFile(self.__ClIENT_IP))
         except:
             public.WriteFile(self.__ClIENT_IP, json.dumps([]))
+        try:
+            json.loads(public.ReadFile(self.__ClIENT_USER))
+        except:
+            public.WriteFile(self.__ClIENT_USER, json.dumps([]))
 
     def get_ssh_port(self):
         conf = public.readFile(self.__SSH_CONFIG)
@@ -243,8 +256,13 @@ class ssh_security:
     def send_mail_data(self, title, body, login_ip, type=None):
         # public.print_log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         # public.print_log((title, body, login_ip))
-        from panel_msg.collector import SitePushMsgCollect
-        msg = SitePushMsgCollect.ssh_login(body)
+        # panel_msg.collector 模块可能不存在, 缺失时跳过消息格式化, 直接走推送
+        try:
+            from panel_msg.collector import SitePushMsgCollect
+            SitePushMsgCollect.ssh_login(body)
+        except Exception as _e:
+            if public.is_debug():
+                public.print_log("SSH login alert(v2) -> panel_msg.collector unavailable: {}".format(_e))
         push_data = {
             "login_ip": "" if body.find("backdoor user") != -1 else (login_ip if login_ip != "" else "unknown ip"),
             "msg_list": ['>Send content:' + body]
@@ -258,10 +276,19 @@ class ssh_security:
             from mod.base.push_mod import push_by_task_keyword
             # public.print_log(push_data)
             res = push_by_task_keyword("ssh_login", "ssh_login", push_data=push_data)
-            if res:
+            # 任务存在时 res 为 dict (已按任务配置发送到所有通道), 直接结束;
+            # 任务不存在时 res 为字符串, 需要回退到下面的单通道逻辑
+            if isinstance(res, dict):
+                if public.is_debug():
+                    public.print_log("SSH login alert(v2) -> task system OK, result: {}".format(
+                        json.dumps(res, ensure_ascii=False, default=str)))
                 return
-        except:
-            pass
+            else:
+                if public.is_debug():
+                    public.print_log("SSH login alert(v2) -> task not used, push_by_task_keyword returned: {}".format(res))
+        except Exception as _e:
+            if public.is_debug():
+                public.print_log("SSH login alert(v2) -> task system exception: {}".format(_e))
 
         try:
             login_send_type_conf = "/www/server/panel/data/ssh_send_type.pl"
@@ -382,6 +409,51 @@ class ssh_security:
             # return public.returnMsg(False, public.lang("IP does not exist"))
             return public.return_message(-1, 0, public.lang("IP does not exist"))
 
+    # 返回用户白名单
+    def return_user(self, get):
+        self.check_files()
+        return public.return_message(0, 0, self.__user_data)
+
+    # 添加用户白名单
+    def add_return_user(self, get):
+        try:
+            get.validate([
+                Param('user').Require().String(),
+            ], [
+                public.validate.trim_filter(),
+            ])
+        except Exception as ex:
+            public.print_log("error info: {}".format(ex))
+            return public.return_message(-1, 0, str(ex))
+
+        self.check_files()
+        user = get.user.strip()
+        if user in self.__user_data:
+            return public.return_message(-1, 0, public.lang("Already exists"))
+        self.__user_data.append(user)
+        public.writeFile(self.__ClIENT_USER, json.dumps(self.__user_data))
+        return public.return_message(0, 0, public.lang("Added successfully"))
+
+    # 删除用户白名单
+    def del_return_user(self, get):
+        try:
+            get.validate([
+                Param('user').Require().String(),
+            ], [
+                public.validate.trim_filter(),
+            ])
+        except Exception as ex:
+            public.print_log("error info: {}".format(ex))
+            return public.return_message(-1, 0, str(ex))
+
+        self.check_files()
+        user = get.user.strip()
+        if user in self.__user_data:
+            self.__user_data.remove(user)
+            public.writeFile(self.__ClIENT_USER, json.dumps(self.__user_data))
+            return public.return_message(0, 0, public.lang("Successfully deleted"))
+        return public.return_message(-1, 0, public.lang("User does not exist"))
+
     # 取登陆的前50个条记录
     def login_last(self):
         self.check_files()
@@ -396,8 +468,26 @@ class ssh_security:
             public.writeFile(self.__ClIENT_IP, json.dumps(self.__ip_data))
         return self.__ip_data
 
-    # 获取ROOT当前登陆的IP
+    # 获取当前SSH登录用户名
+    def get_login_user(self):
+        user = os.environ.get('USER', '') or os.environ.get('LOGNAME', '')
+        if user:
+            return user
+        try:
+            data = public.ExecShell('who am i | awk \'{print $1}\'')
+            if data and data[0] and data[0].strip():
+                return data[0].strip()
+        except:
+            pass
+        return ''
+
+    # 获取当前SSH登录IP
     def get_ip(self):
+        ssh_conn = os.environ.get('SSH_CONNECTION', '')
+        if ssh_conn:
+            client_ip = ssh_conn.split()[0]
+            if re.match(r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", client_ip):
+                return [client_ip]
         data = public.ExecShell(''' who am i |awk ' {print $5 }' ''')
         data = re.findall(r"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
                           data[0])
@@ -450,27 +540,57 @@ class ssh_security:
         self.check_files()
         self.check_user()
         self.__ip_data = json.loads(public.ReadFile(self.__ClIENT_IP))
+        self.__user_data = json.loads(public.ReadFile(self.__ClIENT_USER))
         ip = self.get_ip()
-        if len(ip[0]) == 0: return False
+        user = self.get_login_user()
+        if not ip or len(ip) == 0 or len(ip[0]) == 0:
+            return False
         try:
             import time
             mDate = time.strftime('%Y-%m-%d %X', time.localtime())
-            if ip[0] in self.__ip_data:
+            # IP 或 用户名 命中白名单则不告警, 仅记录
+            if ip[0] in self.__ip_data or (user and user in self.__user_data):
                 if public.M('logs').where('type=? addtime', ('SSH security', mDate,)).count(): return False
                 public.WriteLog('SSH security',
-                                'The server {} login IP is {}, login user is root'.format(public.GetLocalIp(), ip[0]))
+                                'The server {} login IP is {}, login user is {}'.format(public.GetLocalIp(), ip[0],
+                                                                                        user or 'unknown'))
                 return False
             else:
                 if public.M('logs').where('type=? addtime', ('SSH security', mDate,)).count(): return False
                 self.send_mail_data('Server {} login alarm'.format(public.GetLocalIp()),
-                                    'There is a login alarm on the server {}, the login IP is {}, the login user is root'.format(
-                                        public.GetLocalIp(), ip[0]))
+                                    ' Login alarm triggered on server {}. Login IP: {}, login user: {}'.format(
+                                        public.GetLocalIp(), ip[0], user or 'unknown'), ip[0])
                 public.WriteLog('SSH security',
-                                'There is a login alarm on the server {}, the login IP is {}, login user is root'.format(
-                                    public.GetLocalIp(), ip[0]))
+                                'Login alarm triggered on server {}. Login IP: {}, login user: {}'.format(
+                                    public.GetLocalIp(), ip[0], user or 'unknown'))
                 return True
         except:
             pass
+
+    #清理所有候选profile里的钩子，避免多文件重复告警
+    def _clean_profile(self):
+        # 清除所有候选 profile 文件中的钩子（bash_profile / profile / etc/profile）
+        for profile in ('/root/.bash_profile', '/root/.profile', '/etc/profile'):
+            if not os.path.exists(profile):
+                continue
+            data = public.ReadFile(profile)
+            if not data:
+                continue
+            if re.search(self.return_python()+' /www/server/panel/class/ssh_security.py', data):
+                cmd='''shell="%s /www/server/panel/class/ssh_security.py login"'''%(self.return_python())
+                data=data.replace(cmd, '')
+                cmd='''nohup  `${shell}` &>/dev/null &'''
+                data=data.replace(cmd, '')
+                cmd='''disown $!'''
+                data=data.replace(cmd, '')
+                public.WriteFile(profile,data)
+                #检查是否还存在遗留
+                if re.search(self.return_python()+' /www/server/panel/class/ssh_security.py', data):
+                    public.WriteFile(profile,data.replace(self.return_python()+' /www/server/panel/class/ssh_security.py login',''))
+                #遗留的错误信息
+                datassss = public.ReadFile(profile)
+                if re.search(self.return_python(),datassss):
+                    public.WriteFile(profile,datassss.replace(self.return_python(),''))
 
     # 修复bashrc文件
     def repair_bashrc(self):
@@ -483,51 +603,39 @@ class ssh_security:
             if re.search(self.return_python(), datassss):
                 public.WriteFile(self.return_bashrc(), datassss.replace(self.return_python(), ''))
 
-    # 开启监控
-    def start_jian(self, get):
+    #开启监控
+    def start_jian(self,get):
         self.repair_bashrc()
+        # 若存在用户级 profile(.bash_profile/.profile) 且 /etc/profile 里有旧钩子，则调用 _clean_profile 清除
+        if os.path.exists('/root/.bash_profile') or os.path.exists('/root/.profile'):
+            ep_data = public.ReadFile('/etc/profile')
+            if ep_data and re.search('/www/server/panel/class/ssh_security.py login', ep_data):
+                self._clean_profile()
         data = public.ReadFile(self.return_profile())
         if not re.search(self.return_python() + ' /www/server/panel/class/ssh_security.py', data):
             cmd = '''shell="%s /www/server/panel/class/ssh_security.py login"
         nohup  `${shell}` &>/dev/null &
-        disown $!''' % (self.return_python())
+        disown $!
+''' % (self.return_python())
             public.WriteFile(self.return_profile(), data.strip() + '\n' + cmd)
             return public.returnMsg(True, public.lang("Open successfully"))
         return public.returnMsg(False, public.lang("Open failed"))
 
     # 关闭监控
     def stop_jian(self, get):
-        data = public.ReadFile(self.return_profile())
-        if re.search(self.return_python() + ' /www/server/panel/class/ssh_security.py', data):
-            cmd = '''shell="%s /www/server/panel/class/ssh_security.py login"''' % (self.return_python())
-            data = data.replace(cmd, '')
-            cmd = '''nohup  `${shell}` &>/dev/null &'''
-            data = data.replace(cmd, '')
-            cmd = '''disown $!'''
-            data = data.replace(cmd, '')
-            public.WriteFile(self.return_profile(), data)
-            # 检查是否还存在遗留
-            if re.search(self.return_python() + ' /www/server/panel/class/ssh_security.py', data):
-                public.WriteFile(self.return_profile(),
-                                 data.replace(self.return_python() + ' /www/server/panel/class/ssh_security.py login',
-                                              ''))
-            # 遗留的错误信息
-            datassss = public.ReadFile(self.return_profile())
-            if re.search(self.return_python(), datassss):
-                public.WriteFile(self.return_profile(), datassss.replace(self.return_python(), ''))
+        self._clean_profile()
+        return public.returnMsg(True, public.lang("Closed successfully"))
 
-            return public.returnMsg(True, public.lang("Closed successfully"))
-        else:
-            return public.returnMsg(True, public.lang("Closed successfully"))
-
-    # 监控状态
+    # 监控状态: root 走 /root/.bash_profile 事件触发
     def get_jian(self, get):
-        data = public.ReadFile(self.return_profile())
-        # if re.search(r'{}\/www\/server\/panel\/class\/ssh_security.py\s+login'.format(r".*python\s+"), data):
-        if re.search('/www/server/panel/class/ssh_security.py login', data):
-            return public.returnMsg(True, public.lang("1"))
-        else:
-            return public.returnMsg(False, public.lang("1"))
+        # 检查所有候选 profile 文件（完整路径匹配），避免钩子在其它文件时误报未开启
+        for profile in ('/root/.bash_profile', '/root/.profile', '/etc/profile'):
+            if not os.path.exists(profile):
+                continue
+            data = public.ReadFile(profile) or ''
+            if re.search('/www/server/panel/class/ssh_security.py login', data):
+                return public.returnMsg(True, public.lang("1"))
+        return public.returnMsg(False, public.lang("1"))
 
     def set_password(self, get):
         '''
@@ -694,7 +802,8 @@ class ssh_security:
             return public.return_message(-1, 0, str(ex))
 
         login_send_type_conf = "/www/server/panel/data/ssh_send_type.pl"
-        os.remove(login_send_type_conf)
+        if os.path.exists(login_send_type_conf):
+            os.remove(login_send_type_conf)
         self.stop_jian(get)
         # return public.returnMsg(True, public.lang("Successfully cancel the login alarm！"))
         return public.return_message(0, 0, public.lang("Successfully cancel the login alarm"))

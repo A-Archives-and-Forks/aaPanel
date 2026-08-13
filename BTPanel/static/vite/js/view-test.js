@@ -1,8 +1,7 @@
 ;(() => {
-	const hrefs = []
 	const stylesheetSelector = "link[rel=stylesheet]"
 	const loaded = new Set(Array.from(document.querySelectorAll(stylesheetSelector)).map(link => link.href))
-	const version = "1784873523001"
+	const version = "1786507437784"
 	const findLoadedLink = href => Array.from(document.querySelectorAll(stylesheetSelector)).find(link => link.href === href)
 	const removeAfterLoad = (freshLink, staleLink) => {
 		const remove = () => staleLink.remove()
@@ -28,14 +27,6 @@
 		loaded.add(url.href)
 		removeAfterLoad(freshLink, link)
 	}
-	for (const href of hrefs) {
-		const url = new URL(href, import.meta.url).href
-		if (loaded.has(url)) continue
-		const link = document.createElement("link")
-		link.rel = "stylesheet"
-		link.href = url
-		document.head.appendChild(link)
-		loaded.add(url)
-	}
 })();
-import{r as e}from"./rolldown-runtime.js?v=1784873523001";import{Cn as t,Dn as n,En as r,On as i,kn as a,nn as o,qn as s,sr as c}from"./vendor-utils.js?v=1784873523001";import{ht as l}from"./vendor-naive.js?v=1784873523001";import{jf as u}from"./app.js?v=1784873523001";import{n as d,r as f}from"./vendor-pdf.js?v=1784873523001";o(),f();var p=a({__name:`index`,setup(e){let a=()=>{u({width:1430,height:744,bgColor:`transparent`,hideClose:!0,component:i(()=>d(()=>import(`./feature-FileEditor.js?v=1784873523001`).then(e=>e.t),[]))})},o=()=>{a()},f=()=>{};return(e,i)=>{let a=l;return s(),t(`div`,null,[n(a,{onClick:o},{default:c(()=>[...i[0]||(i[0]=[r(`测试`,-1)])]),_:1}),n(a,{onClick:f},{default:c(()=>[...i[1]||(i[1]=[r(`消息`,-1)])]),_:1})])}}}),m=e({default:()=>h}),h=p;export{m as t};
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["js/feature-FileEditor.js?v=1786507437784","js/rolldown-runtime.js?v=1786507437784","js/vendor-utils.js?v=1786507437784","js/vendor-vue.js?v=1786507437784","js/vendor-naive.js?v=1786507437784","js/vendor.js?v=1786507437784","css/vendor.css?v=1786507437784","js/app.js?v=1786507437784","js/vendor-pdf.js?v=1786507437784","js/vendor-polyfills.js?v=1786507437784","js/app-icons.js?v=1786507437784","css/app.css?v=1786507437784","js/app-components.js?v=1786507437784","js/app-base.js?v=1786507437784","js/vendor-code-highlight.js?v=1786507437784","css/vendor-code-highlight.css?v=1786507437784","css/app-base.css?v=1786507437784","js/vendor-pay.js?v=1786507437784","css/app-components.css?v=1786507437784","js/app-shared.js?v=1786507437784","js/app-modal-ui.js?v=1786507437784","js/vendor-crypto.js?v=1786507437784","css/app-shared.css?v=1786507437784","js/vendor-ace.js?v=1786507437784","css/vendor-ace.css?v=1786507437784","js/feature-EmailEditor.js?v=1786507437784","js/vendor-interaction.js?v=1786507437784","js/vendor-wangeditor.js?v=1786507437784","css/vendor-wangeditor.css?v=1786507437784","css/feature-EmailEditor.css?v=1786507437784","css/feature-FileEditor.css?v=1786507437784"])))=>i.map(i=>d[i]);
+import{r as e}from"./rolldown-runtime.js?v=1786507437784";import{Cn as t,Dn as n,En as r,Jn as i,On as a,cr as o,kn as s,nn as c}from"./vendor-utils.js?v=1786507437784";import{gt as l}from"./vendor-naive.js?v=1786507437784";import{Pf as u}from"./app.js?v=1786507437784";import{n as d,r as f}from"./vendor-pdf.js?v=1786507437784";c(),f();var p=s({__name:`index`,setup(e){let s=()=>{u({width:1430,height:744,bgColor:`transparent`,hideClose:!0,component:a(()=>d(()=>import(`./feature-FileEditor.js?v=1786507437784`).then(e=>e.t),__vite__mapDeps([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30])))})},c=()=>{s()},f=()=>{};return(e,a)=>{let s=l;return i(),t(`div`,null,[n(s,{onClick:c},{default:o(()=>[...a[0]||(a[0]=[r(`测试`,-1)])]),_:1}),n(s,{onClick:f},{default:o(()=>[...a[1]||(a[1]=[r(`消息`,-1)])]),_:1})])}}}),m=e({default:()=>h}),h=p;export{m as t};

@@ -341,7 +341,256 @@
                 "proxy": {
                   "title": "Créer un proxy inverse",
                   "description": "Acheminez les ports internes vers des domaines externes avec mise en cache du proxy."
+                },
+                "importProject": {
+                  "title": "Importer un projet existant",
+                  "description": "Choisissez où votre projet est stocké. aaPanel vous proposera un type de projet à examiner."
+                },
+                "aiBuilder": {
+                  "title": "Créateur de sites Web IA",
+                  "description": "Créez un site Web époustouflant en quelques secondes avec l'IA.",
+                  "action": "Commencer la construction"
                 }
+              }
+            },
+            "importProject": {
+              "brand": "Importation de projet aaPanel",
+              "title": "Importer un projet existant",
+              "description": "Choisissez où votre projet est stocké. aaPanel vous proposera un type de projet à examiner.",
+              "steps": {
+                "source": "Choisissez une source",
+                "analyzing": "Analyse du projet",
+                "review": "Examiner le projet",
+                "complete": "Importation terminée"
+              },
+              "sources": {
+                "archive": {
+                  "title": "Télécharger les archives",
+                  "description": "Téléchargez des fichiers ZIP, TAR.GZ ou TGZ depuis votre ordinateur."
+                },
+                "remote": {
+                  "title": "Serveur FTP/SFTP",
+                  "description": "Téléchargez un répertoire de projet à partir d'un serveur de fichiers distant."
+                },
+                "git": {
+                  "title": "Dépôt Git",
+                  "description": "Clonez un référentiel et une branche Git publics ou privés."
+                },
+                "localArchive": {
+                  "title": "Fichiers locaux",
+                  "description": "Importez un dossier de projet ou une archive déjà stockée sur ce serveur."
+                }
+              },
+              "source": {
+                "archive": {
+                  "title": "Configurer le téléchargement des archives",
+                  "description": "Téléchargez votre package de projet et choisissez sa destination.",
+                  "action": "Télécharger & analyser",
+                  "projectArchive": "Archives du projet",
+                  "dropTitle": "Déposez une archive ici ou choisissez un fichier",
+                  "dropHint": "ZIP, TAR.GZ ou TGZ · Jusqu'à 5 Go",
+                  "localHint": "Le répertoire sur ce serveur aaPanel où l'archive sera extraite.",
+                  "cleanup": "Nettoyage de l'importation",
+                  "cleanupHint": "Supprimer les fichiers temporaires après l'importation"
+                },
+                "remote": {
+                  "title": "Connectez-vous à FTP/SFTP",
+                  "description": "Saisissez les détails de la connexion à distance et de la destination.",
+                  "action": "Connectez-vous & analysez",
+                  "testConnectedAndSelectDirectory": "Tester la connexion et sélectionner le répertoire",
+                  "authentication": "Authentification",
+                  "passwordAuthentication": "Mot de passe",
+                  "privateKey": "Clé privée",
+                  "privateKeyPlaceholder": "Collez le contenu complet de la clé privée SSH",
+                  "remoteHint": "Sélectionnez le répertoire du projet sur le serveur distant.",
+                  "localHint": "Les fichiers seront copiés dans ce répertoire."
+                },
+                "git": {
+                  "title": "Cloner un dépôt Git",
+                  "description": "Configurez le référentiel, l'authentification et la destination.",
+                  "action": "Cloner & analyser",
+                  "repositoryUrl": "URL du référentiel",
+                  "branch": "Branche ou étiquette",
+                  "branchPlaceholder": "Tester la connexion et sélectionner une branche",
+                  "testConnection": "Tester la connexion",
+                  "testAgain": "Testez à nouveau",
+                  "connectionSuccessful": "Connexion réussie.",
+                  "branchesFound": "{0} Branches Git trouvées.",
+                  "verifyRepository": "Vérifiez l'accès au référentiel pour charger les branches disponibles.",
+                  "noBranches": "Aucune branche ou balise n'a été trouvée dans ce référentiel.",
+                  "authentication": "Authentification",
+                  "public": "Publique",
+                  "token": "Jeton",
+                  "sshKey": "Clé SSH",
+                  "copySshKey": "Copier la clé SSH",
+                  "publicHint": "Aucune information d'identification requise.",
+                  "accessToken": "Jeton d'accès",
+                  "privateKey": "Clé privée",
+                  "chooseKey": "Choisissez un fichier .pem ou .key",
+                  "passphrase": "Phrase secrète clé",
+                  "localHint": "Le référentiel sera cloné dans ce répertoire.",
+                  "cloneDepth": "Profondeur de clonage",
+                  "latestCommitOnly": "Dernier commit uniquement",
+                  "fullGitHistory": "Historique complet de Git",
+                  "shallowClone": "Clone peu profond"
+                },
+                "localArchive": {
+                  "title": "Configurer la source locale",
+                  "description": "Choisissez un dossier de projet ou une archive stockée sur ce serveur aaPanel.",
+                  "action": "Analyser la source",
+                  "archiveLocation": "Source du projet",
+                  "archiveHint": "Sélectionnez un dossier de projet ou une archive ZIP, TAR.GZ ou TGZ du serveur actuel.",
+                  "projectDirectory": "Répertoire du projet",
+                  "projectDirectoryHint": "Le projet sera créé dans ce répertoire."
+                }
+              },
+              "common": {
+                "back": "Retour",
+                "browse": "Parcourir",
+                "cancel": "Annuler",
+                "choose": "Choisissez",
+                "configure": "Configurer",
+                "disabled": "Désactivé",
+                "edit": "Modifier",
+                "enabled": "Activé",
+                "localDirectory": "Annuaire local",
+                "notSet": "Non défini",
+                "optional": "Facultatif",
+                "password": "Mot de passe",
+                "port": "Port",
+                "protocol": "Protocole",
+                "remoteDirectory": "Répertoire distant",
+                "save": "Utiliser ce répertoire",
+                "select": "Sélectionnez",
+                "server": "Serveur",
+                "username": "Nom d'utilisateur"
+              },
+              "analyzing": {
+                "title": "Analyser votre projet",
+                "preparing": "Préparation des fichiers sources...",
+                "reading": "Lecture des fichiers et dépendances du projet...",
+                "checking": "Vérification de la configuration et des sauvegardes de base de données...",
+                "detecting": "Détection du type de projet et de la durée d'exécution...",
+                "complete": "Analyse terminée. Préparation de l'examen..."
+              },
+              "review": {
+                "title": "Vérifier les paramètres du projet",
+                "description": "Confirmez le type de projet détecté et configurez la manière dont le projet sera créé.",
+                "detectedFrom": "Détecté depuis {0}",
+                "projectType": "Type de projet",
+                "projectTypeHint": "Détecté automatiquement en fonction des fichiers de projet. Si le résultat est incorrect, veuillez sélectionner le bon type de projet.",
+                "domain": "Nom de domaine",
+                "applySsl": "Demander SSL",
+                "domainRequiredHint": "Requis pour les sites Web PHP et statiques.",
+                "domainOptionalHint": "Facultatif. Laissez vide si l'application sera accessible par IP et par port.",
+                "projectName": "Nom du projet",
+                "phpVersion": "Version PHP",
+                "nodeVersion": "Version Node.js",
+                "startCommand": "Démarrer la commande",
+                "applicationPort": "Port d'application",
+                "dependencyInstallation": "Installation des dépendances",
+                "dependencyInstallationHint": "La réinstallation des dépendances supprime le répertoire node_modules existant et réinstalle les packages de projet pour le serveur actuel. Les fichiers de verrouillage existants sont conservés.",
+                "installDependencies": "Installer les dépendances",
+                "importAction": "Importer un projet",
+                "importing": "Importation...",
+                "types": {
+                  "php": "Site Web PHP",
+                  "node": "Projet Node.js",
+                  "static": "Site Web statique"
+                }
+              },
+              "database": {
+                "title": "Importation de base de données",
+                "description": "Utilisez une sauvegarde détectée ou téléchargez un autre fichier SQL.",
+                "detectedHint": "Une sauvegarde MySQL a été trouvée dans les fichiers du projet.",
+                "notDetectedHint": "Aucune sauvegarde SQL n'a été détectée. Vous pouvez en télécharger un manuellement.",
+                "selectFile": "Sélectionnez une sauvegarde de base de données",
+                "importTo": "Importera dans {0}",
+                "editSettings": "Modifier les paramètres",
+                "backupSource": "Source de sauvegarde",
+                "detected": "Sauvegarde détectée",
+                "useDetected": "Sélectionnez la sauvegarde détectée",
+                "uploadAnother": "Télécharger la sauvegarde de la base de données",
+                "sqlFile": "Fichier de sauvegarde SQL",
+                "uploadPlaceholder": "Choisissez .sql ou .sql.gz",
+                "uploadHint": "Prend en charge les fichiers SQL, SQL.GZ ou GZ",
+                "configuration": "Configuration de la base de données",
+                "name": "Nom de la base de données",
+                "user": "Utilisateur de la base de données",
+                "generate": "Générer",
+                "charset": "Jeu de caractères",
+                "updateConfig": "Mettre à jour la configuration du projet",
+                "updateConfigHint": "Appliquez les nouvelles informations d'identification de la base de données au fichier de configuration détecté.",
+                "doNotImport": "Ne pas importer la base de données",
+                "saveSettings": "Enregistrer les paramètres"
+              },
+              "directory": {
+                "currentServer": "Serveur aaPanel actuel",
+                "localTitle": "Sélectionnez le répertoire local",
+                "remoteTitle": "Sélectionnez le répertoire distant",
+                "empty": "Aucun répertoire enfant dans cet emplacement simulé",
+                "localHint": "Choisissez le répertoire de destination sur ce serveur.",
+                "remoteHint": "Choisissez le répertoire source sur le serveur distant."
+              },
+              "summary": {
+                "title": "Récapitulatif de l'importation",
+                "description": "Réviser avant de créer le projet",
+                "source": "Source du projet",
+                "sourceItem": "Élément source",
+                "detectedAs": "Détecté comme",
+                "destination": "Destination",
+                "domain": "Domaine",
+                "database": "Base de données",
+                "targetDatabase": "Base de données cible",
+                "configUpdate": "Mise à jour de la configuration",
+                "notice": "Aucun projet existant ne sera modifié tant que vous n'aurez pas confirmé l'importation.",
+                "sources": {
+                  "archive": "Archive téléchargée",
+                  "remote": "{0} serveur",
+                  "git": "Dépôt Git",
+                  "localArchive": "Dossier ou archive local"
+                }
+              },
+              "success": {
+                "title": "Projet importé avec succès",
+                "description": "Le projet est maintenant disponible dans la liste de votre site Web aaPanel.",
+                "domain": "Domaine",
+                "project": "Projet",
+                "type": "Type de projet",
+                "path": "Chemin du projet",
+                "database": "Base de données",
+                "notImported": "Non importé",
+                "status": "Statut",
+                "ready": "Prêt",
+                "importAnother": "Importer un autre",
+                "viewProject": "Afficher le projet"
+              },
+              "validation": {
+                "archiveRequired": "Veuillez sélectionner une archive de projet",
+                "localArchiveRequired": "Veuillez sélectionner un dossier ou une archive de projet local",
+                "projectDirectoryRequired": "Le répertoire du projet ne peut pas être vide",
+                "archiveFormat": "Sélectionnez une archive ZIP, TAR.GZ ou TGZ",
+                "archiveSize": "L'archive doit faire 5 Go ou moins",
+                "localDirectoryRequired": "Le répertoire local ne peut pas être vide",
+                "serverRequired": "Le serveur et le port sont requis",
+                "credentialsRequired": "Le nom d'utilisateur et le mot de passe sont requis",
+                "remoteDirectoryRequired": "Le répertoire distant ne peut pas être vide",
+                "repositoryRequired": "L'URL du référentiel ne peut pas être vide",
+                "branchRequired": "Veuillez tester la connexion et sélectionner une succursale",
+                "tokenRequired": "Le jeton d'accès ne peut pas être vide",
+                "privateKeyRequired": "Veuillez sélectionner une clé SSH",
+                "privateKeyContentRequired": "Le contenu de la clé privée ne peut pas être vide",
+                "usernameRequired": "Le nom d'utilisateur ne peut pas être vide",
+                "passwordRequired": "Le mot de passe ne peut pas être vide",
+                "domainRequired": "Le domaine ne peut pas être vide pour ce type de projet",
+                "projectNameRequired": "Le nom du projet ne peut pas être vide",
+                "startCommandRequired": "Start command cannot be empty",
+                "portRequired": "Application port cannot be empty",
+                "portInvalid": "Saisissez un port valide compris entre 1 et 65535",
+                "databaseFileRequired": "Veuillez sélectionner une sauvegarde de base de données",
+                "databaseCredentialsRequired": "Le nom de la base de données, l'utilisateur et le mot de passe sont requis",
+                "databaseFormat": "Sélectionnez un fichier de sauvegarde SQL, SQL.GZ ou GZ",
+                "databaseNameExists": "The database name already exists. Please change the Database name."
               }
             },
             "form": {
@@ -386,6 +635,7 @@
               "projectNamePlaceholder": "Lettres et chiffres uniquement",
               "runtimeVersion": "Version d'exécution",
               "nodeRecommendedVersion": "Node.js 24.15.0 (Recommandé)",
+              "runtimeInstalledVersion": "{0} (Installé)",
               "packageManager": "Gestionnaire de paquets",
               "frameworkTemplate": "Modèle de framework",
               "mappingDomain": "Domaine de mappage",

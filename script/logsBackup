@@ -83,8 +83,8 @@ def split_log(siteName, num, log_cut_path):
         return
     project_type = site_info['project_type'].lower()
 
-    # 按照语言类型格式
-    if project_type in ['php', 'wp', 'wp2']:
+    # 按照项目类型格式
+    if project_type in ['php', 'wp', 'wp2', 'proxy', 'dk_proxy']:
         conf_name = siteName
     else:
         conf_name = project_type + '_' + siteName

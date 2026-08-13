@@ -1642,7 +1642,7 @@ echo $! > {pid_file}'''.format(
         block = ''
         nl_count = 0
         start = 0
-        fsock = open(filename, 'rU')
+        fsock = open(filename, 'r')
         try:
             fsock.seek(0, 2)
             curpos = fsock.tell()

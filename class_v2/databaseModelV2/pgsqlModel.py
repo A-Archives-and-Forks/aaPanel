@@ -1277,7 +1277,7 @@ class main(databaseBase, panelPgsql):
             status, err_msg = pgsql_obj.connect()
             if status is False:
                 return public.fail_v2(public.lang("Remote database connection failed!"))
-            return public.success_v2(status)
+            return status
         except:
             return public.fail_v2(public.lang("Remote database connection failed!"))
 

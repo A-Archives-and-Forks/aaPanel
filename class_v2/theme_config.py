@@ -134,7 +134,8 @@ class ThemeConfigManager:
         "theme": {
             "preset": "light",
             "color": "#20a53a",
-            "view": "default"
+            "view": "default",
+            "component_ui": "legacy"
         },
         "logo": {
             "image": "/static/icons/menu_logo.png",
@@ -181,6 +182,7 @@ class ThemeConfigManager:
         "theme.preset": FieldValidator(str, required=True, choices=["light", "dark"]),
         "theme.color": FieldValidator(str, required=True, pattern=r"^#[0-9a-fA-F]{3,8}$"),
         "theme.view": FieldValidator(str, required=True, choices=["default", "aapanel", "compact"]),
+        "theme.component_ui": FieldValidator(str, required=True, choices=["legacy", "modern"]),
         "sidebar.dark": FieldValidator(bool, required=True),
         "sidebar.color": FieldValidator(str, required=True, pattern=r"^#[0-9a-fA-F]{3,8}$"),
         "sidebar.opacity": FieldValidator(int, required=True, min_val=0, max_val=100),
@@ -429,15 +431,15 @@ class ThemeConfigManager:
             import copy
             validated_config = copy.deepcopy(config)
 
-            # 补充缺失的顶级字段
+            # 补充缺失字段
             missing_count = 0
-            for key, default_value in self.DEFAULT_CONFIG.items():
-                if key not in validated_config:
-                    validated_config[key] = copy.deepcopy(default_value)
-                    missing_count += 1
+            fill_result = self.auto_fill_missing_fields(validated_config)
+            if fill_result["status"]:
+                validated_config = fill_result["data"]["config"]
+                missing_count = fill_result["data"]["filled_count"]
 
             # 验证关键字段
-            critical_fields = ['theme.color', 'theme.view', 'sidebar.color']
+            critical_fields = ['theme.color', 'theme.view', 'theme.component_ui', 'sidebar.color']
             validation_fix_count = 0
 
             for field_path in critical_fields:
@@ -453,7 +455,7 @@ class ThemeConfigManager:
             # 构建返回消息
             message_parts = []
             if missing_count > 0:
-                message_parts.append(f'Filled {missing_count} missing top-level fields')
+                message_parts.append(f'Filled {missing_count} missing fields')
             if validation_fix_count > 0:
                 message_parts.append(f'Fixed {validation_fix_count} validation errors')
             if not message_parts:
@@ -575,6 +577,14 @@ class ThemeConfigManager:
         if cache:
             cached_config = cache.get(self.CACHE_KEY)
             if cached_config and isinstance(cached_config, dict):
+                normalized_config = self._ensure_preset_field(cached_config)
+                validation_result = self.validate_config(normalized_config)
+                if validation_result['status']:
+                    normalized_config = validation_result['data']
+                    if self._config_has_changes(cached_config, normalized_config):
+                        self.save_config(normalized_config, skip_validation=True)
+                        cache.set(self.CACHE_KEY, normalized_config, 3600 * 24)
+                    return self.return_message(True, 'Config fetched from cache', normalized_config)
                 return self.return_message(True, 'Config fetched from cache', cached_config)
         try:
             # 读取配置文件

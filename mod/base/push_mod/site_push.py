@@ -445,18 +445,24 @@ class SSHLoginErrorTask(BaseTask):
         args.count = task_data['count']
         args.p = 1
         res = PluginLoader.module_run("syslog", "get_ssh_error", args)
+        if not isinstance(res, list) or len(res) == 0:
+            return None
         if 'status' in res:
             return None
 
-        last_info = res[task_data['count'] - 1]
+        need_count = task_data['count']
+        if len(res) < need_count:
+            return None
+
+        last_info = res[need_count - 1]
         if self.to_date(times=last_info['time']) >= time.time() - task_data['cycle'] * 60:
             s_list = [">Notification type: SSH login failure alarm",
                       ">Content of alarm: <font color=#ff0000> Login failed more than {} times in {} minutes</font> ".format(
-                          task_data['cycle'], task_data['count'])]
+                          need_count, task_data['cycle'])]
 
             return {
                 'msg_list': s_list,
-                'count': task_data['count']
+                'count': need_count
             }
 
         return None
@@ -792,8 +798,102 @@ class SSHLoginTask(BaseTask):
     def get_keyword(self, task_data: dict) -> str:
         return "ssh_login"
 
+    _last_alert_file = "/www/server/panel/data/ssh_login_last_alert"
+
     def get_push_data(self, task_id: str, task_data: dict) -> Optional[dict]:
+        # 日志轮询: 复用 get_ssh_success 读取成功登录(自动兼容 /var/log/secure 与 /var/log/auth.log)
+        import PluginLoader  # noqa
+        args = GET_CLASS()
+        args.model_index = 'safe'
+        args.count = 10
+        args.p = 1
+        res = PluginLoader.module_run("syslog", "get_ssh_success", args)
+        if not isinstance(res, list) or len(res) == 0:
+            return None
+
+        # get_ssh_success 最新在前, 反序遍历从旧到新, 让多次登录按时间顺序告警
+        for last in reversed(res):
+            user = str(last.get('user', ''))
+            ip = str(last.get('address', ''))
+            login_time = str(last.get('time', ''))
+
+            # root 由 /root/.bash_profile 事件触发处理, 日志轮询只处理普通用户, 避免双告警
+            if user == 'root':
+                continue
+
+            # 去重: 相同 user+ip+time 不重复告警
+            key = "{}|{}|{}".format(user, ip, login_time)
+            if key == self._read_last_alert():
+                continue
+
+            # 白名单过滤: IP 或 用户 命中则不告警
+            if self._in_whitelist(user, ip):
+                continue
+
+            # who 交叉验证: 只有真实交互登录(who 里有持久记录)才告警, 非交互 ssh host 'cmd' 不告警
+            if not self._is_real_login(user, ip, login_time):
+                continue
+
+            self._write_last_alert(key)
+            # 面板日志记一条(与发送的消息内容一致, 含登录时间)
+            try:
+                public.WriteLog('SSH security',
+                                'User login detected at {}. Login IP: {}, login user: {}'.format(
+                                    login_time, ip, user))
+            except:
+                pass
+            # 普通用户消息格式与 root 不同, 便于区分: 用户名放最后
+            return {
+                'msg_list': [
+                    ">Notification type: SSH login alert",
+                    ">Content of alarm: <font color=#ff0000>User login detected at {}. Login IP: {}, login user: {}</font>".format(
+                        login_time, ip, user),
+                ],
+                'login_ip': ip,
+                'user': user,
+                'login_time': login_time,
+            }
         return None
+
+    def _read_last_alert(self) -> str:
+        if os.path.exists(self._last_alert_file):
+            return (public.readFile(self._last_alert_file) or '').strip()
+        return ''
+
+    def _write_last_alert(self, key: str) -> None:
+        try:
+            public.writeFile(self._last_alert_file, key)
+        except:
+            pass
+
+    def _in_whitelist(self, user: str, ip: str) -> bool:
+        try:
+            ips = json.loads(public.readFile('/www/server/panel/data/host_login_ip.json') or '[]')
+            users = json.loads(public.readFile('/www/server/panel/data/host_login_user.json') or '[]')
+        except:
+            return False
+        return ip in ips or (user and user in users)
+
+    def _is_real_login(self, user: str, ip: str, login_time: str) -> bool:
+        # 优先 last(wtmp): 真实登录会留 wtmp 记录(登出后仍在); last 不可用时回退 who(仅活跃会话)
+        login_hhmm = login_time[11:16] if len(login_time) >= 16 else ''
+        # 空值防护: 空 IP 或空时间会导致 '' in line 恒为 True, 直接返回 False
+        if not login_hhmm or not ip or not user:
+            return False
+        last_out = (public.ExecShell("last -n 100")[0] or '')
+        if last_out.strip():
+            for line in last_out.split('\n'):
+                if line.startswith(user + ' ') and ip in line and login_hhmm in line:
+                    return True
+        else:
+            # last 不可用(极简容器等) -> 回退 who
+            who_out = (public.ExecShell('who')[0] or '')
+            for line in who_out.split('\n'):
+                parts = line.split()
+                if len(parts) >= 4 and parts[0] == user and ip in line:
+                    if parts[-2][:5] == login_hhmm:
+                        return True
+        return False
 
     def filter_template(self, template) -> dict:
         return template
@@ -838,6 +938,20 @@ class SSHLoginTask(BaseTask):
         return self.task_config_update_hook(task)
 
     def task_config_remove_hook(self, task: dict) -> None:
+        # 删除告警: 清理 profile 注入(v2 stop_jian) + 删除旧单通道配置
+        try:
+            from ssh_security_v2 import ssh_security
+            ssh_security().stop_jian(None)
+        except Exception:
+            pass
+
+        try:
+            login_send_type_conf = "/www/server/panel/data/ssh_send_type.pl"
+            if os.path.exists(login_send_type_conf):
+                os.remove(login_send_type_conf)
+        except Exception:
+            pass
+
         if os.path.exists(self.push_tip_file):
             os.remove(self.push_tip_file)
 

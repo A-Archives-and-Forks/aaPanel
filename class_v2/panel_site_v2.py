@@ -2454,6 +2454,7 @@ include /www/server/panel/vhost/openlitespeed/proxy/BTSITENAME/*.conf
                 Param('ftp').Integer(),
                 Param('database').Integer(),
                 Param('path').Integer(),
+                Param('del_port').Integer(),
 
             ], [
                 public.validate.trim_filter(),
@@ -2605,6 +2606,10 @@ include /www/server/panel/vhost/openlitespeed/proxy/BTSITENAME/*.conf
         if not multiple:
             public.serviceReload()
 
+        # 删除站点放行端口(除默认80/443外)
+        if hasattr(get, 'del_port') and get.del_port == '1':
+            self.__del_site_firewall_port(id, siteName, get)
+
         try:
             # 从数据库删除
             public.M('sites').where("id=?", (id,)).delete()
@@ -2661,6 +2666,41 @@ include /www/server/panel/vhost/openlitespeed/proxy/BTSITENAME/*.conf
         return_message = public.return_msg_gettext(True, 'Successfully deleted site!')
         del return_message['status']
         return public.return_message(0, 0, return_message['msg'])
+
+    # 删除站点时删除该站点的防火墙放行端口(排除默认80/443)
+    def __del_site_firewall_port(self, site_id, site_name, get):
+        domain_list = public.M('domain').where("pid=?", (site_id,)).field('name,port').select()
+        if not domain_list:
+            return
+        identifiers = {site_name}
+        port_set = set()
+        for item in domain_list:
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get('name', '')).strip()
+            if name:
+                identifiers.add(name)
+            port = str(item.get('port', '')).strip()
+            if port and port not in ('80', '443'):
+                port_set.add(port)
+        if not port_set:
+            return
+        import firewalls
+        fw = firewalls.firewalls()
+        for port in port_set:
+            # AddAcceptPort 入库端口为 '-' 转 ':' 后的格式，两种写法都查一次
+            fw_row = public.M('firewall').where("port=? or port=?", (port, port.replace('-', ':'))).find()
+            if not fw_row or not isinstance(fw_row, dict):
+                continue
+            # 仅删除由本站点/域名开放端口时创建的规则，避免误删手动添加的规则
+            if fw_row.get('ps') not in identifiers:
+                continue
+            try:
+                get.port = fw_row['port']
+                get.id = fw_row['id']
+                fw.DelAcceptPort(get)
+            except:
+                pass
 
     # 子站点删除
     def delete_sub_dir_site(self, get):
@@ -3155,8 +3195,10 @@ listener Default%s{
         # 保存配置文件
         public.writeFile(listen_file, listen_conf)
 
-        # 多服务下仅添加80
+        # 多服务下仅添加80, 443.conf 保留，不移动
         if public.get_multi_webservice_status() and get.port != '80':
+            if listen_file.endswith('443.conf'):
+                return public.return_message(0, 0, True)
             if os.path.exists(listen_file):
                 shutil.move(listen_file, listen_file + '.barduo')
                 get.port = '80'
@@ -3553,6 +3595,8 @@ listener Default%s{
             if os.path.exists(path): shutil.rmtree(backup_cert)
             shutil.move(backup_cert, path)
             return public.return_message(-1, 0, 'ERROR: <br><a style="color:red;">' + isError.replace("\n",'<br>') + '</a>')
+        self._ensure_ols_ssl_listen_conf()
+        self._clear_nginx_proxy_cache()
         public.serviceReload()
 
         if os.path.exists(path + '/partnerOrderId'): os.remove(path + '/partnerOrderId')
@@ -3666,10 +3710,170 @@ listener Default%s{
         domains = [d['name'] for d in domains]
         return domains
 
+    # 重建 OLS SSL443 监听器配置（listen/443.conf）
+    def _rebuild_ols_ssl_listen_conf(self):
+        """
+        重建 443.conf（OLS SSL443 监听器），从源数据恢复完整 map，修复文件缺失/清空/损坏。
+        站点判定：detail 配置含 openlitespeed/detail/ssl 的 include，
+        或存在 detail/ssl/<site>.conf；域名取 DB 绑定表，并与旧文件合并（只增不删）。
+        端口按多服务状态推导：8190（多服务）/ 443（单服务）。
+        """
+        listen_file = self.setupPath + '/panel/vhost/openlitespeed/listen/443.conf'
+        detail_dir = self.setupPath + '/panel/vhost/openlitespeed/detail/'
+        old_conf = public.readFile(listen_file)
+
+        # 启用了 SSL 的 OLS 站点：扫 detail 目录得站点名 → 批量查域名（仅 2 次 DB 查询，避免逐站 2×N 次）
+        ssl_sites = {}  # siteName -> 逗号拼接的域名
+        ssl_site_names = []
+        try:
+            if os.path.isdir(detail_dir):
+                for f in os.listdir(detail_dir):
+                    if not f.endswith('.conf') or os.path.isdir(detail_dir + f):
+                        continue
+                    site = f[:-5]
+                    detail = public.readFile(detail_dir + f)
+                    if not detail:
+                        continue
+                    if detail.find('openlitespeed/detail/ssl') == -1 and \
+                            not os.path.exists(detail_dir + 'ssl/' + site + '.conf'):
+                        continue
+                    ssl_site_names.append(site)
+        except Exception as e:
+            public.print_log("rebuild openlitespeed 443.conf scan detail dir failed: {}".format(e))
+
+        # 批量查询站点域名
+        if ssl_site_names:
+            try:
+                site_rows = public.S('sites').where_in('name', ssl_site_names).field('id,name').select() or []
+                id_map = {}
+                for r in site_rows or []:
+                    if isinstance(r, dict) and r.get('id') is not None and r.get('name'):
+                        id_map[r['id']] = r['name']
+                if id_map:
+                    dom_rows = public.S('domain').where_in('pid', list(id_map.keys())).field('pid,name').select() or []
+                    dom_map = {}
+                    for d in dom_rows or []:
+                        if isinstance(d, dict) and d.get('pid') is not None and d.get('name'):
+                            dom_map.setdefault(d['pid'], []).append(d['name'])
+                    for sid, sname in id_map.items():
+                        doms = [x for x in dom_map.get(sid) or [] if x]
+                        if doms:
+                            ssl_sites[sname] = ','.join(doms)
+            except Exception as e:
+                public.print_log("rebuild openlitespeed 443.conf query domains failed: {}".format(e))
+
+        if not ssl_sites and not old_conf:
+            # 无 SSL 站点且无旧配置，无需重建
+            return  
+
+        # 解析旧配置：保留 listener 指令（含额外配置）与旧 map，供合并
+        old_header = None
+        old_maps = {}
+        if old_conf:
+            m = re.search(r'listener\s+SSL443\s*\{.*?\}', old_conf, re.S)
+            if m:
+                block = m.group(0)
+                old_header = re.sub(r'^\s*map\s+\S+.*$\n?', '', block, flags=re.M)
+                for k, v in re.findall(r'^\s*map\s+(\S+)\s+(.+?)\s*$', block, re.M):
+                    old_maps[k] = v
+
+        # 生成 map：只增不删（SSL 站域名 = 旧map 与 DB 的并集；非 SSL 站 map 保留）
+        map_items = []
+        for site, db_doms in ssl_sites.items():
+            doms = set(x for x in db_doms.split(',') if x)
+            if site in old_maps:
+                doms |= set(x for x in str(old_maps[site]).split(',') if x)
+            map_items.append((site, ','.join(doms)))
+        for k, v in old_maps.items():
+            if k not in ssl_sites:
+                map_items.append((k, v))
+        if not any(str(v).strip() == '*' for _, v in map_items):
+            map_items.append(('default', '*'))
+        map_str = ''.join('\n  map                     {} {}'.format(k, v) for k, v in map_items)
+
+        # 优先保留旧 listener 指令（含额外配置），仅替换 map 部分并重推导端口；否则标准模板兜底
+        prot = '8190' if public.get_multi_webservice_status() else '443'
+        if old_header and \
+                old_header.find('keyFile') != -1 and old_header.find('certFile') != -1 and \
+                old_header.find('address') != -1:
+            # 旧 header 完整：保留额外指令，仅重推导端口并替换 map
+            old_header = re.sub(r'^\s*address\s+\S+\s*$',
+                                '  address                 *:{}'.format(prot), old_header, flags=re.M)
+            conf = re.sub(r'(listener\s+SSL443\s*\{)', r'\1' + map_str, old_header, count=1)
+        else:
+            cert_dir = None
+            if ssl_sites:
+                cert_dir = '/www/server/panel/vhost/cert/' + list(ssl_sites.keys())[0]
+            ssl_lines = ''
+            if cert_dir:
+                ssl_lines = ('  keyFile                 {}/privkey.pem\n'.format(cert_dir) +
+                             '  certFile                {}/fullchain.pem\n'.format(cert_dir))
+            conf = (
+                'listener SSL443 {' + map_str + '\n' +
+                '  address                 *:{}\n'.format(prot) +
+                '  secure                  1\n' +
+                ssl_lines +
+                '  certChain               1\n' +
+                '  sslProtocol             24\n' +
+                '  ciphers                 EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH:ECDHE-RSA-AES128-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA128:DHE-RSA-AES128-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA128:ECDHE-RSA-AES128-SHA384:ECDHE-RSA-AES128-SHA128:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA128:DHE-RSA-AES128-SHA128:DHE-RSA-AES128-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA384:AES128-GCM-SHA128:AES128-SHA128:AES128-SHA128:AES128-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4\n' +
+                '  enableECDHE             1\n' +
+                '  renegProtection         1\n' +
+                '  sslSessionCache         1\n' +
+                '  enableSpdy              15\n' +
+                '  enableStapling           1\n' +
+                '  ocspRespMaxAge          86400\n' +
+                '}\n'
+            )
+
+        # 先写临时文件再重命名，避免磁盘满/写入中断导致 443.conf 被截断成半成品
+        tmp_file = listen_file + '.tmp'
+        try:
+            with open(tmp_file, 'w') as fp:
+                fp.write(conf)
+            os.rename(tmp_file, listen_file)
+        except Exception as e:
+            public.print_log("rebuild OLS 443.conf failed: {}".format(e))
+            try:
+                if os.path.exists(tmp_file):
+                    os.remove(tmp_file)
+            except Exception:
+                pass
+            return False
+
+        public.print_log(
+            "OLS SSL443 listener (443.conf) auto-rebuilt: {} SSL site(s), port {}".format(
+                len(ssl_sites), prot)
+        )
+        # 重建标识文件
+        public.writeFile(self.setupPath + '/panel/data/ols_ssl_443_rebuild.pl', 'True')
+        return conf
+
+    # OLS reload 前确保 443.conf 有效：缺失/为空/结构不完整/端口错误则重建
+    def _ensure_ols_ssl_listen_conf(self):
+        listen_file = self.setupPath + '/panel/vhost/openlitespeed/listen/443.conf'
+        conf = public.readFile(listen_file)
+        # 结构完整性：listener 行首存在 + keyFile/certFile 存在，避免漏掉后半缺失导致的不重建
+        if not conf or \
+                not re.search(r'^\s*listener\s+SSL443\s*\{', conf, re.M) or \
+                conf.find('keyFile') == -1 or \
+                conf.find('certFile') == -1:
+            self._rebuild_ols_ssl_listen_conf()
+            return
+        # 端口必须与多服务状态一致；address 缺失或端口不符也重建
+        expected = '8190' if public.get_multi_webservice_status() else '443'
+        m = re.search(r'address\s+[^:]+:(\d+)', conf)
+        if not m or m.group(1) != expected:
+            self._rebuild_ols_ssl_listen_conf()
+
     # 设置OLS ssl
     def set_ols_ssl(self, get, siteName):
         listen_conf = self.setupPath + '/panel/vhost/openlitespeed/listen/443.conf'
         conf = public.readFile(listen_conf)
+        # 设置SSL时重建以补全缺失map；重建标识文件存在则跳过
+        marker_file = self.setupPath + '/panel/data/ols_ssl_443_rebuild.pl'
+        if not conf or not os.path.exists(marker_file):
+            self._rebuild_ols_ssl_listen_conf()
+            conf = public.readFile(listen_conf)
         ssl_conf = """
 vhssl {
   keyFile                 /www/server/panel/vhost/cert/BTDOMAIN/privkey.pem
@@ -3736,6 +3940,9 @@ listener SSL443 {{
             if count == 0:
                 rep = r'(listener\s*SSL443\s*{)'
                 conf = re.sub(rep, r'\1\n  ' + new_map_line, conf)
+        # 多服务下端口修正：443.conf 的 address 应为 8190，否则 443
+        ssl_port = '8190' if public.get_multi_webservice_status() else '443'
+        conf = re.sub(r'^\s*address\s+\S+\s*$', '  address                 *:{}'.format(ssl_port), conf, flags=re.M)
         public.writeFile(listen_conf, conf)
 
     def _get_ap_static_security(self, ap_conf):
@@ -3861,6 +4068,11 @@ listener SSL443 {{
                 # 多服务下修改对应的端口
                 try:
                     if public.get_multi_webservice_status() and site_info['project_type'] in ['PHP','WP2']:
+                        # 根据后端服务类型选择代理端口（apache: 8288/8290，openlitespeed: 8188/8190）
+                        if site_info.get('service_type') == 'openlitespeed':
+                            http_port, https_port = '8188', '8190'
+                        else:
+                            http_port, https_port = '8288', '8290'
                         # 2.6以上添加修补补丁
                         apache_version = "/www/server/apache/bin/httpd -v|grep version|awk '{print $3}'|cut -f2 -d'/'"
                         ver = public.ExecShell(apache_version)[0].strip()
@@ -3870,7 +4082,7 @@ listener SSL443 {{
                             or re.search(r"^\s*ssl_certificate\s+", ng_conf, re.M)
                         )
                         proxy_pat = re.compile(
-                            r"proxy_pass\s+https?://127\.0\.0\.1:(8288|8290);[ \t]*"
+                            r"proxy_pass\s+https?://127\.0\.0\.1:(8188|8190|8288|8290);[ \t]*"
                             r"(\r?\n[ \t]*proxy_ssl_server_name\s+on;[ \t]*)?"
                             r"(\r?\n[ \t]*proxy_ssl_name\s+\$host;[ \t]*)?"
                             r"(\r?\n[ \t]*proxy_ssl_session_reuse\s+off;[ \t]*)?"
@@ -3878,15 +4090,15 @@ listener SSL443 {{
                         from packaging import version
                         if ssl_enabled and version.parse(ver) >= version.parse("2.4.62"):
                             patch_str = (
-                                "proxy_pass https://127.0.0.1:8290;\n"
-                                "\t\t\t\tproxy_ssl_server_name on;\n"
-                                "\t\t\t\tproxy_ssl_name $host;\n"
+                                "proxy_pass https://127.0.0.1:{};\n".format(https_port) +
+                                "\t\t\t\tproxy_ssl_server_name on;\n" +
+                                "\t\t\t\tproxy_ssl_name $host;\n" +
                                 "\t\t\t\tproxy_ssl_session_reuse off;"
                             )
                         elif ssl_enabled:
-                            patch_str = "proxy_pass https://127.0.0.1:8290;"
+                            patch_str = "proxy_pass https://127.0.0.1:{};".format(https_port)
                         else:
-                            patch_str = "proxy_pass http://127.0.0.1:8288;"
+                            patch_str = "proxy_pass http://127.0.0.1:{};".format(http_port)
                         ng_conf = proxy_pat.sub(patch_str, ng_conf)
                 except:
                     pass
@@ -4049,6 +4261,14 @@ listener SSL443 {{
         else:
             return public.returnMsg(True, "")
 
+    # 多服务模式下清除Nginx反向代理缓存并重启(避免部署SSL后重定向过多)
+    def _clear_nginx_proxy_cache(self):
+        if not public.get_multi_webservice_status():
+            return
+        proxy_cache_dir = '/www/server/nginx/proxy_cache_dir'
+        if os.path.isdir(proxy_cache_dir):
+            public.ExecShell('rm -rf /www/server/nginx/proxy_cache_dir/*')
+
     # HttpToHttps
     def HttpToHttps(self, get):
         # 校验参数
@@ -4120,6 +4340,7 @@ listener SSL443 {{
     </IfModule>
     #HTTP_TO_HTTPS_END'''
             public.writeFile(file, ols_force_https)
+        self._clear_nginx_proxy_cache()
         public.serviceReload()
         return_message = public.return_msg_gettext(True, 'Setup successfully!')
         del return_message['status']
@@ -4185,7 +4406,9 @@ listener SSL443 {{
         file = self.setupPath + '/panel/vhost/nginx/' + siteName + '.conf'
         if not os.path.exists(file):
             file = self.setupPath + '/panel/vhost/nginx/node_' + siteName + '.conf'
-            if not os.path.exists(file): return False
+        if not os.path.exists(file):
+            file = self.setupPath + '/panel/vhost/openlitespeed/redirect/' + siteName + '/force_https.conf'
+        if not os.path.exists(file): return False
         conf = public.readFile(file)
         if conf:
             if conf.find('HTTP_TO_HTTPS_START') != -1: return True
@@ -4329,6 +4552,7 @@ listener SSL443 {{
 
         public.write_log_gettext('Site manager', 'Site [{}] turned off SSL successfully!', (siteName,))
         if hasattr(get, "reload") and int(get.reload) == 1:
+            self._clear_nginx_proxy_cache()
             public.serviceReload()
         # ================== domian ssl v2 part =========================
         try:
@@ -4408,6 +4632,8 @@ listener SSL443 {{
             status = False
 
         toHttps = self.IsToHttps(file=file)
+        if public.get_webserver() == "openlitespeed":
+            toHttps = self.IsToHttps(file=self.setupPath + '/panel/vhost/openlitespeed/redirect/' + siteName + '/force_https.conf')
         id = public.M('sites').where("name=?", (siteName,)).getField('id')
         domains = public.M('domain').where("pid=?", (id,)).field('name').select()
         email = public.M('users').where('id=?', (1,)).getField('email')
@@ -9653,7 +9879,7 @@ RewriteRule \.(BTPFILE)$    /404.html   [R,NC]
             ], [
                 public.validate.trim_filter(),
             ])
-            lines = int(get.get('lines', 99999))
+            lines = int(get.get('lines', '') or 99999)
             search = get.get('search', '')
             time_search = get.get('time_search', '[]')
         except Exception as ex:
@@ -9672,9 +9898,7 @@ RewriteRule \.(BTPFILE)$    /404.html   [R,NC]
         else:
             logPath = '/www/wwwlogs/' + siteName + '_ols.error_log'
         if not os.path.exists(logPath):
-            return_message = public.return_msg_gettext(False, 'Log is empty')
-            del return_message['status']
-            return public.return_message(-1, 0, return_message['msg'])
+            return public.return_message(0, 0, "")
 
         # 3. 读取日志内容
         logs = public.GetNumLines(logPath, lines)
@@ -11906,7 +12130,17 @@ RewriteRule \.(BTPFILE)$    /404.html   [R,NC]
 
             # 线程存在且正常，读取并返回进度信息
             with open(task_status, 'r') as f:
-                res = json.loads(f.read())
+                # 修复空文件解析 JSON
+                content = f.read().strip()
+                if not content:
+                    return public.success_v2({'status': 1})
+                try:
+                    res = json.loads(content)
+                except json.JSONDecodeError:
+                    return public.success_v2({'status': 1})
+
+
+                # res = json.loads(f.read())
                 if args.get('progress_type', '') == 'backup_deploy':
                     res = self._fill_wp_progress_overview(res, args)
                 return public.success_v2(res)
@@ -13718,6 +13952,8 @@ RewriteRule \.(BTPFILE)$    /404.html   [R,NC]
             ok, msg = self.enable_multi_webservice()
             if not ok:
                 return public.return_message(-1, 0, f'Error: {msg}')
+            # 开启多服务后清除nginx反向代理缓存
+            self._clear_nginx_proxy_cache()
 
         else:
             if not reserve:
@@ -14283,6 +14519,7 @@ RewriteRule \.(BTPFILE)$    /404.html   [R,NC]
     location / {{
         proxy_pass {proxy_host};
 {proxy_ssl_config}
+        proxy_cache_valid 200 304 1m;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -14463,8 +14700,11 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FOR
 
         # 重启与重载服务，避免重启后配置仍不生效
         if args.get('is_reload', True):
+            # 切换服务后清除nginx反向代理缓存
+            self._clear_nginx_proxy_cache()
             public.webservice_operation('nginx', 'reload')
             public.webservice_operation(service_type, 'reload')
+            
 
         public.write_log_gettext('Site manager	', 'Successfully switched the website [{}] from [{}] service to [{}]!',
                                  (site['name'],old_type,service_type))
@@ -14566,8 +14806,10 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FOR
                 public.set_module_logs('Multi-WebServer', f'switch_webservice-{site['project_type']}')
 
             # 重启与重载服务，避免重启后配置仍不生效
+            self._clear_nginx_proxy_cache()
             public.webservice_operation('nginx', 'reload')
             public.webservice_operation(service_type, 'reload')
+            
 
             return True, res
         except Exception as e:

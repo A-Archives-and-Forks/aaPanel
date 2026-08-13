@@ -346,8 +346,257 @@
 					"proxy": {
 						"title": "ສ້າງ Reverse Proxy",
 						"description": "ການຮ້ອງຂໍໂດເມນສາທາລະນະຂອງພຣັອກຊີໄປຫາພອດທ້ອງຖິ່ນຂອງທ່ານ ຫຼືເຊີບເວີຕົ້ນນໍ້າ."
-					}
+					},
+				  "importProject": {
+				    "title": "ນຳເຂົ້າໂຄງການທີ່ມີຢູ່ແລ້ວ",
+				    "description": "ເລືອກບ່ອນທີ່ໂຄງການຂອງເຈົ້າຖືກເກັບໄວ້. aaPanel ຈະແນະນໍາປະເພດໂຄງການໃຫ້ທ່ານທົບທວນຄືນ."
+				  },
+				  "aiBuilder": {
+				    "title": "ຕົວສ້າງເວັບໄຊທ໌ AI",
+				    "description": "ສ້າງເວັບໄຊທ໌ໃຫ້ປະລາດໃຈພາຍໃນວິນາທີດ້ວຍ AI.",
+				    "action": "ເລີ່ມກໍ່ສ້າງ"
+				  }
 				}
+			},
+			"importProject": {
+			  "brand": "ການນຳເຂົ້າໂຄງການ aaPanel",
+			  "title": "ນຳເຂົ້າໂຄງການທີ່ມີຢູ່ແລ້ວ",
+			  "description": "ເລືອກບ່ອນທີ່ໂຄງການຂອງເຈົ້າຖືກເກັບໄວ້. aaPanel ຈະແນະນໍາປະເພດໂຄງການໃຫ້ທ່ານທົບທວນຄືນ.",
+			  "steps": {
+			    "source": "ເລືອກແຫຼ່ງ",
+			    "analyzing": "ວິເຄາະໂຄງການ",
+			    "review": "ທົບທວນໂຄງການ",
+			    "complete": "ນຳເຂົ້າສຳເລັດ"
+			  },
+			  "sources": {
+			    "archive": {
+			      "title": "ອັບໂຫລດແຟ້ມຈັດເກັບ",
+			      "description": "ອັບໂຫລດໄຟລ໌ ZIP, TAR.GZ ຫຼື TGZ ຈາກຄອມພິວເຕີຂອງທ່ານ."
+			    },
+			    "remote": {
+			      "title": "ເຊີບເວີ FTP / SFTP",
+			      "description": "ດາວໂຫລດໄດເຣັກທໍຣີໂຄງການຈາກເຊີບເວີໄຟລ໌ທາງໄກ."
+			    },
+			    "git": {
+			      "title": "Git repository",
+			      "description": "Clone ຄັງເກັບມ້ຽນ Git ສາທາລະນະ ຫຼືເອກະຊົນ ແລະສາຂາ."
+			    },
+			    "localArchive": {
+			      "title": "ໄຟລ໌ທ້ອງຖິ່ນ",
+			      "description": "ນຳເຂົ້າໂຟນເດີໂຄງການ ຫຼືແຟ້ມຈັດເກັບທີ່ເກັບໄວ້ໃນເຊີບເວີນີ້."
+			    }
+			  },
+			  "source": {
+			    "archive": {
+			      "title": "ຕັ້ງຄ່າການອັບໂຫລດແຟ້ມຈັດເກັບ",
+			      "description": "ອັບໂຫຼດແພັກເກດໂຄງການຂອງທ່ານແລະເລືອກປາຍທາງຂອງມັນ.",
+			      "action": "ອັບໂຫລດ & ວິເຄາະ",
+			      "projectArchive": "ແຟ້ມຈັດເກັບໂຄງການ",
+			      "dropTitle": "ວາງແຟ້ມຈັດເກັບໄວ້ບ່ອນນີ້ ຫຼືເລືອກໄຟລ໌",
+			      "dropHint": "ZIP, TAR.GZ ຫຼື TGZ · ສູງສຸດ 5 GB",
+			      "localHint": "ໄດເລກະທໍລີໃນເຊີບເວີ aaPanel ນີ້ບ່ອນທີ່ແຟ້ມຈັດເກັບຈະຖືກແຍກອອກ.",
+			      "cleanup": "ນຳເຂົ້າການອະນາໄມ",
+			      "cleanupHint": "ເອົາໄຟລ໌ຊົ່ວຄາວອອກຫຼັງຈາກນໍາເຂົ້າ"
+			    },
+			    "remote": {
+			      "title": "ເຊື່ອມຕໍ່ຫາ FTP / SFTP",
+			      "description": "ໃສ່ການເຊື່ອມຕໍ່ທາງໄກ ແລະລາຍລະອຽດປາຍທາງ.",
+			      "action": "ເຊື່ອມຕໍ່ & ວິເຄາະ",
+			      "testConnectedAndSelectDirectory": "ທົດສອບການເຊື່ອມຕໍ່ ແລະເລືອກ Directory",
+			      "authentication": "ການພິສູດຢືນຢັນ",
+			      "passwordAuthentication": "ລະຫັດຜ່ານ",
+			      "privateKey": "ກະແຈສ່ວນຕົວ",
+			      "privateKeyPlaceholder": "ວາງເນື້ອໃນກະແຈສ່ວນຕົວ SSH ທີ່ສົມບູນ",
+			      "remoteHint": "ເລືອກລາຍຊື່ໂຄງການໃນເຊີບເວີທາງໄກ.",
+			      "localHint": "ໄຟລ໌ຈະຖືກສຳເນົາໄວ້ໃນໄດເລກະທໍລີນີ້."
+			    },
+			    "git": {
+			      "title": "Clone a Git repository",
+			      "description": "ກຳນົດຄ່າບ່ອນເກັບມ້ຽນ, ການພິສູດຢືນຢັນ ແລະປາຍທາງ.",
+			      "action": "ໂຄນ & ວິເຄາະ",
+			      "repositoryUrl": "URL ຄັງເກັບມ້ຽນ",
+			      "branch": "ສາຂາ ຫຼື ແທັກ",
+			      "branchPlaceholder": "ທົດສອບການເຊື່ອມຕໍ່ ແລະເລືອກສາຂາ",
+			      "testConnection": "ທົດສອບການເຊື່ອມຕໍ່",
+			      "testAgain": "ທົດສອບອີກຄັ້ງ",
+			      "connectionSuccessful": "ການເຊື່ອມຕໍ່ສຳເລັດແລ້ວ.",
+			      "branchesFound": "{0} ພົບສາຂາ Git.",
+			      "verifyRepository": "ຢືນຢັນການເຂົ້າເຖິງບ່ອນເກັບມ້ຽນເພື່ອໂຫລດສາຂາທີ່ມີຢູ່.",
+			      "noBranches": "ບໍ່ພົບສາຂາ ຫຼືແທັກຢູ່ໃນບ່ອນເກັບມ້ຽນນີ້.",
+			      "authentication": "ການກວດສອບຄວາມຖືກຕ້ອງ",
+			      "public": "ສາທາລະນະ",
+			      "token": "ໂທເຄັນ",
+			      "sshKey": "ກະແຈ SSH",
+			      "copySshKey": "ສຳເນົາລະຫັດ SSH",
+			      "publicHint": "ບໍ່ຈໍາເປັນຕ້ອງມີຂໍ້ມູນປະຈໍາຕົວ.",
+			      "accessToken": "ໂທເຄັນການເຂົ້າເຖິງ",
+			      "privateKey": "ກະແຈສ່ວນຕົວ",
+			      "chooseKey": "ເລືອກໄຟລ໌ .pem ຫຼື .key",
+			      "passphrase": "ວະລີຜ່ານກະແຈ",
+			      "localHint": "ຄັງເກັບມ້ຽນຈະຖືກໂຄນເຂົ້າໄປໃນໄດເລກະທໍລີນີ້.",
+			      "cloneDepth": "ຄວາມເລິກຂອງ Clone",
+			      "latestCommitOnly": "ສັນຍາຫຼ້າສຸດເທົ່ານັ້ນ",
+			      "fullGitHistory": "ປະຫວັດ Git ເຕັມ",
+			      "shallowClone": "ໂຄນຕື້ນ"
+			    },
+			    "localArchive": {
+			      "title": "ກຳນົດຄ່າແຫຼ່ງທ້ອງຖິ່ນ",
+			      "description": "ເລືອກໂຟນເດີໂຄງການ ຫຼືແຟ້ມຈັດເກັບທີ່ເກັບໄວ້ໃນເຊີບເວີ aaPanel ນີ້.",
+			      "action": "ວິເຄາະແຫຼ່ງທີ່ມາ",
+			      "archiveLocation": "ແຫຼ່ງໂຄງການ",
+			      "archiveHint": "ເລືອກໂຟນເດີໂຄງການ ຫຼືແຟ້ມ ZIP, TAR.GZ ຫຼື TGZ ຈາກເຊີບເວີປັດຈຸບັນ.",
+			      "projectDirectory": "ລາຍຊື່ໂຄງການ",
+			      "projectDirectoryHint": "ໂຄງ​ການ​ຈະ​ໄດ້​ຮັບ​ການ​ສ້າງ​ຕັ້ງ​ຂື້ນ​ໃນ​ລະ​ບົບ​ນີ້​."
+			    }
+			  },
+			  "common": {
+			    "back": "ກັບຄືນ",
+			    "browse": "ຄົ້ນຫາ",
+			    "cancel": "ຍົກເລີກ",
+			    "choose": "ເລືອກ",
+			    "configure": "ກຳນົດຄ່າ",
+			    "disabled": "ປິດໃຊ້ງານ",
+			    "edit": "ແກ້ໄຂ",
+			    "enabled": "ເປີດໃຊ້ແລ້ວ",
+			    "localDirectory": "ໄດເລກະທໍລີທ້ອງຖິ່ນ",
+			    "notSet": "ບໍ່ໄດ້ຕັ້ງ",
+			    "optional": "ທາງເລືອກ",
+			    "password": "ລະຫັດຜ່ານ",
+			    "port": "ພອດ",
+			    "protocol": "ພິທີການ",
+			    "remoteDirectory": "ໄດເລກະທໍລີໄລຍະໄກ",
+			    "save": "ໃຊ້ໄດເລກະທໍລີນີ້",
+			    "select": "ເລືອກ",
+			    "server": "ເຊີບເວີ",
+			    "username": "ຊື່ຜູ້ໃຊ້"
+			  },
+			  "analyzing": {
+			    "title": "ການວິເຄາະໂຄງການຂອງທ່ານ",
+			    "preparing": "ກຳລັງກະກຽມໄຟລ໌ຕົ້ນສະບັບ...",
+			    "reading": "ກຳລັງອ່ານໄຟລ໌ໂຄງການ ແລະການອ້າງອີງ...",
+			    "checking": "ກຳລັງກວດສອບການຕັ້ງຄ່າ ແລະຂໍ້ມູນສຳຮອງ...",
+			    "detecting": "ກວດພົບປະເພດໂຄງການ ແລະເວລາແລ່ນ...",
+			    "complete": "ສຳເລັດການວິເຄາະ. ກຳລັງກະກຽມການທົບທວນ..."
+			  },
+			  "review": {
+			    "title": "ກວດເບິ່ງການຕັ້ງຄ່າໂຄງການ",
+			    "description": "ຢືນຢັນປະເພດຂອງໂຄງການທີ່ກວດພົບ ແລະກໍານົດວິທີການສ້າງໂຄງການ.",
+			    "detectedFrom": "ກວດພົບຈາກ {0}",
+			    "projectType": "ປະເພດໂຄງການ",
+			    "projectTypeHint": "ກວດພົບອັດຕະໂນມັດໂດຍອີງໃສ່ໄຟລ໌ໂຄງການ. ຖ້າຜົນໄດ້ຮັບບໍ່ຖືກຕ້ອງ, ກະລຸນາເລືອກປະເພດໂຄງການທີ່ຖືກຕ້ອງ.",
+			    "domain": "ຊື່ໂດເມນ",
+			    "applySsl": "ສະໝັກ SSL",
+			    "domainRequiredHint": "ຕ້ອງການສໍາລັບເວັບໄຊທ໌ PHP ແລະ Static.",
+			    "domainOptionalHint": "ທາງເລືອກ. ປ່ອຍຫວ່າງໄວ້ຖ້າແອັບພລິເຄຊັນຈະຖືກເຂົ້າເຖິງໂດຍ IP ແລະພອດ.",
+			    "projectName": "ຊື່ໂຄງການ",
+			    "phpVersion": "ເວີຊັນ PHP",
+			    "nodeVersion": "ລຸ້ນ Node.js",
+			    "startCommand": "ເລີ່ມຕົ້ນຄຳສັ່ງ",
+			    "applicationPort": "ພອດແອັບພລິເຄຊັນ",
+			    "dependencyInstallation": "ການຕິດຕັ້ງແບບຂຶ້ນກັບ",
+			    "dependencyInstallationHint": "ການຕິດຕັ້ງ dependencies ຄືນໃໝ່ຈະລຶບໄດເຣັກທໍຣີ node_modules ທີ່ມີຢູ່ແລ້ວ ແລະຕິດຕັ້ງແພັກເກັດໂປຣເຈັກອີກຄັ້ງສຳລັບເຊີບເວີປັດຈຸບັນ. ໄຟລ໌ລັອກທີ່ມີຢູ່ແລ້ວຖືກຮັກສາໄວ້.",
+			    "installDependencies": "ຕິດຕັ້ງການຂຶ້ນກັບ",
+			    "importAction": "ໂຄງການນໍາເຂົ້າ",
+			    "importing": "ກຳລັງນຳເຂົ້າ...",
+			    "types": {
+			      "php": "ເວັບໄຊທ໌ PHP",
+			      "node": "ໂຄງການ Node.js",
+			      "static": "ເວັບໄຊທ໌ຄົງທີ່"
+			    }
+			  },
+			  "database": {
+			    "title": "ການນຳເຂົ້າຖານຂໍ້ມູນ",
+			    "description": "ໃຊ້ການສຳຮອງຂໍ້ມູນທີ່ກວດພົບ ຫຼືອັບໂຫລດໄຟລ໌ SQL ອື່ນ.",
+			    "detectedHint": "ພົບການສຳຮອງຂໍ້ມູນ MySQL ໃນໄຟລ໌ໂຄງການ.",
+			    "notDetectedHint": "ບໍ່ພົບການສຳຮອງຂໍ້ມູນ SQL. ທ່ານສາມາດອັບໂຫລດຫນຶ່ງດ້ວຍຕົນເອງ.",
+			    "selectFile": "ເລືອກການສຳຮອງຂໍ້ມູນຖານຂໍ້ມູນ",
+			    "importTo": "ຈະນຳເຂົ້າໃສ່ {0}",
+			    "editSettings": "ແກ້ໄຂການຕັ້ງຄ່າ",
+			    "backupSource": "ແຫຼ່ງສຳຮອງ",
+			    "detected": "ກວດພົບການສຳຮອງຂໍ້ມູນ",
+			    "useDetected": "ເລືອກການສຳຮອງຂໍ້ມູນທີ່ກວດພົບ",
+			    "uploadAnother": "ອັບໂຫຼດຂໍ້ມູນສຳຮອງ",
+			    "sqlFile": "ໄຟລ໌ສຳຮອງ SQL",
+			    "uploadPlaceholder": "ເລືອກ .sql ຫຼື .sql.gz",
+			    "uploadHint": "ຮອງຮັບໄຟລ໌ SQL, SQL.GZ ຫຼື GZ",
+			    "configuration": "ການຕັ້ງຄ່າຖານຂໍ້ມູນ",
+			    "name": "ຊື່ຖານຂໍ້ມູນ",
+			    "user": "ຜູ້ໃຊ້ຖານຂໍ້ມູນ",
+			    "generate": "ສ້າງ",
+			    "charset": "ຊຸດຕົວອັກສອນ",
+			    "updateConfig": "ອັບເດດການກຳນົດຄ່າໂຄງການ",
+			    "updateConfigHint": "ນຳໃຊ້ຂໍ້ມູນປະຈຳຕົວຂອງຖານຂໍ້ມູນໃໝ່ໃສ່ໄຟລ໌ການຕັ້ງຄ່າທີ່ກວດພົບ.",
+			    "doNotImport": "ຫ້າມນຳເຂົ້າຖານຂໍ້ມູນ",
+			    "saveSettings": "ບັນທຶກການຕັ້ງຄ່າ"
+			  },
+			  "directory": {
+			    "currentServer": "ເຊີບເວີ aaPanel ປັດຈຸບັນ",
+			    "localTitle": "ເລືອກລາຍຊື່ທ້ອງຖິ່ນ",
+			    "remoteTitle": "ເລືອກລາຍການທາງໄກ",
+			    "empty": "ບໍ່ມີລາຍຊື່ເດັກນ້ອຍໃນສະຖານທີ່ຈຳລອງນີ້",
+			    "localHint": "ເລືອກລາຍການປາຍທາງໃນເຊີບເວີນີ້.",
+			    "remoteHint": "ເລືອກລາຍຊື່ແຫຼ່ງໃນເຊີບເວີທາງໄກ."
+			  },
+			  "summary": {
+			    "title": "ສະຫຼຸບການນຳເຂົ້າ",
+			    "description": "ກວດເບິ່ງກ່ອນສ້າງໂຄງການ",
+			    "source": "ແຫຼ່ງໂຄງການ",
+			    "sourceItem": "ລາຍການແຫຼ່ງທີ່ມາ",
+			    "detectedAs": "ກວດພົບວ່າເປັນ",
+			    "destination": "ປາຍທາງ",
+			    "domain": "ໂດເມນ",
+			    "database": "ຖານຂໍ້ມູນ",
+			    "targetDatabase": "ຖານຂໍ້ມູນເປົ້າໝາຍ",
+			    "configUpdate": "ອັບເດດການຕັ້ງຄ່າ",
+			    "notice": "ບໍ່ມີໂຄງການທີ່ມີຢູ່ແລ້ວຈະຖືກປ່ຽນແປງຈົນກວ່າທ່ານຈະຢືນຢັນການນໍາເຂົ້າ.",
+			    "sources": {
+			      "archive": "ອັບໂຫຼດແຟ້ມຈັດເກັບ",
+			      "remote": "{0} ເຊີບເວີ",
+			      "git": "Git repository",
+			      "localArchive": "ໂຟນເດີທ້ອງຖິ່ນ ຫຼືແຟ້ມຈັດເກັບ"
+			    }
+			  },
+			  "success": {
+			    "title": "ນຳເຂົ້າໂຄງການສຳເລັດແລ້ວ",
+			    "description": "ດຽວນີ້ໂຄງການມີໃຫ້ຢູ່ໃນລາຍຊື່ເວັບໄຊທ໌ aaPanel ຂອງທ່ານ.",
+			    "domain": "ໂດເມນ",
+			    "project": "ໂຄງການ",
+			    "type": "ປະເພດໂຄງການ",
+			    "path": "ເສັ້ນທາງໂຄງການ",
+			    "database": "ຖານຂໍ້ມູນ",
+			    "notImported": "ບໍ່ໄດ້ນຳເຂົ້າ",
+			    "status": "ສະຖານະ",
+			    "ready": "ພ້ອມ",
+			    "importAnother": "ນຳເຂົ້າອັນອື່ນ",
+			    "viewProject": "ເບິ່ງໂຄງການ"
+			  },
+			  "validation": {
+			    "archiveRequired": "ກະລຸນາເລືອກແຟ້ມຈັດເກັບໂຄງການ",
+			    "localArchiveRequired": "ກະລຸນາເລືອກໂຟນເດີໂຄງການທ້ອງຖິ່ນ ຫຼືແຟ້ມຈັດເກັບ",
+			    "projectDirectoryRequired": "ລາຍຊື່ໂຄງການບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "archiveFormat": "ເລືອກ ZIP, TAR.GZ ຫຼື TGZ archive",
+			    "archiveSize": "ແຟ້ມຈັດເກັບຕ້ອງມີຂະໜາດ 5 GB ຫຼືນ້ອຍກວ່າ",
+			    "localDirectoryRequired": "ໄດເລກະທໍລີທ້ອງຖິ່ນບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "serverRequired": "ຕ້ອງການເຊີບເວີ ແລະພອດ",
+			    "credentialsRequired": "ຕ້ອງລະບຸຊື່ຜູ້ໃຊ້ ແລະລະຫັດຜ່ານ",
+			    "remoteDirectoryRequired": "ໄດເຣັກທໍຣີໄລຍະໄກບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "repositoryRequired": "URL ເກັບຮັກສາບໍ່ສາມາດຫວ່າງເປົ່າ",
+			    "branchRequired": "ກະລຸນາທົດສອບການເຊື່ອມຕໍ່ ແລະເລືອກສາຂາ",
+			    "tokenRequired": "ໂທເຄັນການເຂົ້າເຖິງບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "privateKeyRequired": "ກະລຸນາເລືອກກະແຈ SSH",
+			    "privateKeyContentRequired": "ເນື້ອໃນກະແຈສ່ວນຕົວບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "usernameRequired": "ຊື່ຜູ້ໃຊ້ບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "passwordRequired": "ລະຫັດຜ່ານບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "domainRequired": "ໂດເມນບໍ່ສາມາດຫວ່າງເປົ່າສຳລັບໂຄງການປະເພດນີ້",
+			    "projectNameRequired": "ຊື່ໂຄງການບໍ່ສາມາດຫວ່າງເປົ່າໄດ້",
+			    "startCommandRequired": "Start command cannot be empty",
+			    "portRequired": "Application port cannot be empty",
+			    "portInvalid": "ໃສ່ພອດທີ່ຖືກຕ້ອງລະຫວ່າງ 1 ຫາ 65535",
+			    "databaseFileRequired": "ກະລຸນາເລືອກການສຳຮອງຂໍ້ມູນຖານຂໍ້ມູນ",
+			    "databaseCredentialsRequired": "ຊື່ຖານຂໍ້ມູນ, ຜູ້ໃຊ້ ແລະລະຫັດຜ່ານແມ່ນຕ້ອງການ",
+			    "databaseFormat": "ເລືອກໄຟລ໌ສຳຮອງ SQL, SQL.GZ ຫຼື GZ",
+			    "databaseNameExists": "The database name already exists. Please change the Database name."
+			  }
 			},
 			"form": {
 				"wordpress": {
@@ -391,6 +640,7 @@
 				"projectNamePlaceholder": "ພຽງແຕ່ຕົວອັກສອນແລະຕົວເລກ",
 				"runtimeVersion": "ລຸ້ນ Runtime",
 				"nodeRecommendedVersion": "Node.js 24.15.0 (ແນະນຳ)",
+				"runtimeInstalledVersion": "{0} (ຕິດຕັ້ງແລ້ວ)",
 				"packageManager": "ຜູ້ຈັດການຊຸດ",
 				"frameworkTemplate": "ແມ່ແບບກອບ",
 				"mappingDomain": "ແຜນທີ່ໂດເມນ",

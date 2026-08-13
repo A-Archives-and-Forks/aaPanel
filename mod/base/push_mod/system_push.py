@@ -209,7 +209,7 @@ class PanelSysCPUTask(BaseTask):
         self.cpu_count = round(avg_data, 2)
         s_list = [
             ">Notification type: High CPU usage alarm",
-            ">Content of alarm: The average CPU usage of the machine in the last {} minutes is {}%, which is higher than the alarm value {}%.".format(
+            ">Content of alarm: Average CPU usage in the last {} minutes: {}%, exceeding the alarm value {}%.".format(
                 task_data["cycle"], round(avg_data, 2), task_data["count"]),
         ]
 
@@ -279,7 +279,7 @@ class PanelSysLoadTask(BaseTask):
         return {
             "msg_list": [
                 ">Notification type: Alarm when the load exceeds the standard",
-                ">Content of alarm: The average load factor of the machine in the last {} minutes is {}%, which is higher than the alarm value of {}%.".format(
+                ">Content of alarm: Average load in the last {} minutes: {}%, exceeding the alarm value {}%.".format(
                     task_data["cycle"], round(avg_data, 2), task_data["count"]),
             ]
         }
@@ -363,7 +363,7 @@ class PanelSysMEMTask(BaseTask):
         return {
             'msg_list': [
                 ">Notification type: High memory usage alarm",
-                ">Content of alarm: The average memory usage of the machine in the last {} minutes is {}%, which is higher than the alarm value {}%.".format(
+                ">Content of alarm: Average memory usage in the last {} minutes: {}%, exceeding the alarm value {}%.".format(
                     task_data["cycle"], round(avg_data * 100, 2), task_data["count"]),
             ]
         }

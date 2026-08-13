@@ -45,8 +45,8 @@ class Rsync38Task(BaseTask):
     def __init__(self):
         super().__init__()
         self.source_name = "rsync_push"
-        self.template_name = "File synchronization alarm"
-        self.title = "File synchronization alarm"
+        self.template_name = "Files Sync alarm"
+        self.title = "Files Sync alarm"
 
     def check_task_data(self, task_data: dict) -> Union[dict, str]:
         if "interval" not in task_data or not isinstance(task_data["interval"], int):
@@ -63,8 +63,8 @@ class Rsync38Task(BaseTask):
 
         return {
             "msg_list": [
-                ">Notification type: File synchronization alarm",
-                ">Content of alarm: <font color=#ff0000>If an error occurs during file synchronization, please pay attention to the file synchronization situation and handle it in a timely manner.</font> ",
+                ">Notification type: Files Sync alarm",
+                ">Content of alarm: <font color=#ff0000>An error occurred during file synchronization. Please check the synchronization status and handle it promptly.</font> ",
             ]
         }
 
@@ -86,6 +86,9 @@ class Rsync38Task(BaseTask):
         return time_rule
 
     def filter_template(self, template: dict) -> Optional[dict]:
+        # file_sync 为独立插件, 存在即显示该告警模板(不走 rsync 版本判断)
+        if os.path.exists("/www/server/panel/plugin/file_sync/rsync_push.py"):
+            return template
         res = rsync_ver_is_38()
         if res is None:
             return None
@@ -99,7 +102,7 @@ class Rsync38Task(BaseTask):
 
     def to_wx_account_msg(self, push_data: dict, push_public_data: dict) -> WxAccountMsg:
         msg = WxAccountMsg.new_msg()
-        msg.thing_type = "File synchronization alarm"
+        msg.thing_type = "Files Sync alarm"
         msg.msg = "There was an error in the synchronization. Please keep an eye on the synchronization"
         return msg
 
@@ -109,8 +112,8 @@ class Rsync39Task(BaseTask):
     def __init__(self):
         super().__init__()
         self.source_name = "rsync_push"
-        self.template_name = "File synchronization alarm"
-        self.title = "File synchronization alarm"
+        self.template_name = "Files Sync alarm"
+        self.title = "Files Sync alarm"
 
     def check_task_data(self, task_data: dict) -> Union[dict, str]:
         if "interval" not in task_data or not isinstance(task_data["interval"], int):
@@ -134,6 +137,9 @@ class Rsync39Task(BaseTask):
         return time_rule
 
     def filter_template(self, template: dict) -> Optional[dict]:
+        # file_sync 为独立插件, 存在即显示该告警模板(不走 rsync 版本判断)
+        if os.path.exists("/www/server/panel/plugin/file_sync/rsync_push.py"):
+            return template
         res = rsync_ver_is_38()
         if res is None:
             return None
@@ -148,7 +154,7 @@ class Rsync39Task(BaseTask):
     def to_wx_account_msg(self, push_data: dict, push_public_data: dict) -> WxAccountMsg:
         task_name = push_data.get("task_name", None)
         msg = WxAccountMsg.new_msg()
-        msg.thing_type = "File synchronization alarm"
+        msg.thing_type = "Files Sync alarm"
         if task_name:
             msg.msg = "An error occurred on file synchronization task {}".format(task_name)
         else:
@@ -240,7 +246,7 @@ def load_rsync_template():
             "ver": "1",
             "used": True,
             "source": "rsync_push",
-            "title": "File synchronization alarm",
+            "title": "Files Sync alarm",
             "load_cls": {
                 "load_type": "path",
                 "cls_path": "mod.base.push_mod.rsync_push",
@@ -276,8 +282,8 @@ def push_rsync_by_task_name(task_name: str):
     push_data = {
         "task_name": task_name,
         "msg_list": [
-            ">Notification type: File synchronization alarm",
-            ">Content of alarm: <font color=#ff0000>File synchronization task {} has failed during the execution, please pay attention to the file synchronization situation and deal with it.</font> ".format(
+            ">Notification type: Files Sync alarm",
+            ">Content of alarm: <font color=#ff0000>File synchronization task {} failed during execution. Please check the synchronization status and handle it promptly.</font> ".format(
                 task_name),
         ]
     }

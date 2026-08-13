@@ -315,7 +315,7 @@ class databaseBase:
         if get.type == 'redis':
             arrs = ['db_host', 'db_port', 'db_password', 'db_ps', 'type']
         cRet = self.check_cloud_args(get, arrs)
-        if isinstance(cRet, dict):
+        if cRet['status'] != 0:
             return cRet
 
         get['db_name'] = None
@@ -422,7 +422,7 @@ class databaseBase:
             arrs = ['db_host', 'db_port', 'db_password', 'db_ps', 'type']
 
         cRet = self.check_cloud_args(get, arrs)
-        if isinstance(cRet, dict):
+        if cRet['status'] != 0:
             return cRet
 
         get['db_name'] = None

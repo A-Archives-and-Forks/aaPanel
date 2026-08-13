@@ -567,10 +567,10 @@ class backup:
         if not self._exclude:
             exclude_config = "Not set"
 
-        if siteName:
+        if siteName and not for_wp2:
             self.echo_info(public.lang('Backup site: {}', siteName))
             self.echo_info(public.lang('Website document root: {}', spath))
-        else:
+        elif not siteName:
             self.echo_info(public.lang('Backup directory: {}', spath))
 
         self.echo_info(public.lang('Directory size: {}', str(public.to_size(p_size))))
@@ -687,11 +687,11 @@ class backup:
         self.echo_start()
         self.cron_info = public.M('crontab').where('echo=?', (echo_id,)).field(
             'backupTo,name,save_local,notice,notice_channel,id,sType,split_type,split_value,db_backup_path'
-        ).select()[0]
+        ).find()
         if not self.cron_info:
             return False
         save_local = self.__backup_site_check_local_flag()
-        find = public.M('sites').where('name=?', (siteName,)).select()[0]
+        find = public.M('sites').where('name=?', (siteName,)).find()
 
         if not find:
             error_msg = 'The specified website [{}] does not exist!'.format(siteName)
@@ -734,6 +734,7 @@ class backup:
             try:
                 from wp_toolkit import wpbackup
                 # save & insert
+                self.echo_info(public.lang('Backup site: {}', siteName))
                 start = time.time()
                 bak_info = wpbackup(find['id']).backup_full_get_data(self.cron_info)
                 cp_time = str('{:.2f}'.format(time.time() - start))

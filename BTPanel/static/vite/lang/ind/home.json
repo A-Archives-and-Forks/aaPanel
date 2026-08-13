@@ -341,7 +341,256 @@
           "proxy": {
             "title": "Buat Reverse Proxy",
             "description": "Rutekan port internal ke domain eksternal dengan cache proxy."
+          },
+          "importProject": {
+            "title": "Impor proyek yang sudah ada",
+            "description": "Pilih tempat penyimpanan proyek Anda. aaPanel akan menyarankan jenis proyek untuk Anda tinjau."
+          },
+          "aiBuilder": {
+            "title": "Pembuat Situs Web AI",
+            "description": "Bangun situs web menakjubkan dalam hitungan detik dengan AI.",
+            "action": "Mulai membangun"
           }
+        }
+      },
+      "importProject": {
+        "brand": "Impor Proyek aaPanel",
+        "title": "Impor proyek yang sudah ada",
+        "description": "Pilih tempat penyimpanan proyek Anda. aaPanel akan menyarankan jenis proyek untuk Anda tinjau.",
+        "steps": {
+          "source": "Pilih sumber",
+          "analyzing": "Menganalisis proyek",
+          "review": "Tinjau proyek",
+          "complete": "Impor selesai"
+        },
+        "sources": {
+          "archive": {
+            "title": "Unggah arsip",
+            "description": "Unggah file ZIP, TAR.GZ atau TGZ dari komputer Anda."
+          },
+          "remote": {
+            "title": "Server FTP/SFTP",
+            "description": "Unduh direktori proyek dari server file jarak jauh."
+          },
+          "git": {
+            "title": "Repositori Git",
+            "description": "Mengkloning repositori dan cabang Git publik atau pribadi."
+          },
+          "localArchive": {
+            "title": "File lokal",
+            "description": "Impor folder atau arsip proyek yang sudah disimpan di server ini."
+          }
+        },
+        "source": {
+          "archive": {
+            "title": "Konfigurasikan pengunggahan arsip",
+            "description": "Unggah paket proyek Anda dan pilih tujuannya.",
+            "action": "Unggah & analisis",
+            "projectArchive": "Arsip proyek",
+            "dropTitle": "Letakkan arsip di sini atau pilih file",
+            "dropHint": "ZIP, TAR.GZ atau TGZ · Hingga 5 GB",
+            "localHint": "Direktori di server aaPanel tempat arsip akan diekstraksi.",
+            "cleanup": "Impor pembersihan",
+            "cleanupHint": "Hapus file sementara setelah impor"
+          },
+          "remote": {
+            "title": "Hubungkan ke FTP / SFTP",
+            "description": "Masukkan koneksi jarak jauh dan detail tujuan.",
+            "action": "Hubungkan & analisis",
+            "testConnectedAndSelectDirectory": "Uji Koneksi dan Pilih Direktori",
+            "authentication": "Otentikasi",
+            "passwordAuthentication": "Sandi",
+            "privateKey": "Kunci pribadi",
+            "privateKeyPlaceholder": "Tempelkan konten kunci pribadi SSH lengkap",
+            "remoteHint": "Pilih direktori proyek di server jauh.",
+            "localHint": "File akan disalin ke direktori ini."
+          },
+          "git": {
+            "title": "Mengkloning repositori Git",
+            "description": "Konfigurasikan repositori, autentikasi, dan tujuan.",
+            "action": "Mengkloning & menganalisis",
+            "repositoryUrl": "URL Repositori",
+            "branch": "Cabang atau tag",
+            "branchPlaceholder": "Uji Koneksi dan Pilih Cabang",
+            "testConnection": "Uji koneksi",
+            "testAgain": "Uji lagi",
+            "connectionSuccessful": "Koneksi berhasil.",
+            "branchesFound": "{0} Cabang Git ditemukan.",
+            "verifyRepository": "Verifikasi akses repositori untuk memuat cabang yang tersedia.",
+            "noBranches": "Tidak ada cabang atau tag yang ditemukan di repositori ini.",
+            "authentication": "Otentikasi",
+            "public": "Publik",
+            "token": "Token",
+            "sshKey": "Kunci SSH",
+            "copySshKey": "Salin kunci SSH",
+            "publicHint": "Tidak diperlukan kredensial.",
+            "accessToken": "Token akses",
+            "privateKey": "Kunci pribadi",
+            "chooseKey": "Pilih file .pem atau .key",
+            "passphrase": "Frasa sandi kunci",
+            "localHint": "Repositori akan diklon ke direktori ini.",
+            "cloneDepth": "Kedalaman klon",
+            "latestCommitOnly": "Komit terbaru saja",
+            "fullGitHistory": "Riwayat Git lengkap",
+            "shallowClone": "Klon dangkal"
+          },
+          "localArchive": {
+            "title": "Konfigurasikan sumber lokal",
+            "description": "Pilih folder atau arsip proyek yang disimpan di server aaPanel ini.",
+            "action": "Analisis sumber",
+            "archiveLocation": "Sumber proyek",
+            "archiveHint": "Pilih folder proyek atau arsip ZIP, TAR.GZ atau TGZ dari server saat ini.",
+            "projectDirectory": "Direktori proyek",
+            "projectDirectoryHint": "Proyek akan dibuat di direktori ini."
+          }
+        },
+        "common": {
+          "back": "Kembali",
+          "browse": "Jelajahi",
+          "cancel": "Batal",
+          "choose": "Pilih",
+          "configure": "Konfigurasikan",
+          "disabled": "Dinonaktifkan",
+          "edit": "Sunting",
+          "enabled": "Diaktifkan",
+          "localDirectory": "Direktori lokal",
+          "notSet": "Belum disetel",
+          "optional": "Opsional",
+          "password": "Sandi",
+          "port": "Pelabuhan",
+          "protocol": "Protokol",
+          "remoteDirectory": "Direktori jarak jauh",
+          "save": "Gunakan direktori ini",
+          "select": "Pilih",
+          "server": "Server",
+          "username": "Nama Pengguna"
+        },
+        "analyzing": {
+          "title": "Menganalisis proyek Anda",
+          "preparing": "Mempersiapkan file sumber...",
+          "reading": "Membaca file proyek dan dependensi...",
+          "checking": "Memeriksa konfigurasi dan cadangan basis data...",
+          "detecting": "Mendeteksi jenis proyek dan waktu proses...",
+          "complete": "Analisis selesai. Mempersiapkan tinjauan..."
+        },
+        "review": {
+          "title": "Tinjau setelan proyek",
+          "description": "Konfirmasikan jenis proyek yang terdeteksi dan konfigurasikan cara proyek akan dibuat.",
+          "detectedFrom": "Terdeteksi dari {0}",
+          "projectType": "Jenis proyek",
+          "projectTypeHint": "Terdeteksi secara otomatis berdasarkan file proyek. Jika hasilnya salah, silakan pilih jenis proyek yang benar.",
+          "domain": "Nama domain",
+          "applySsl": "Ajukan permohonan SSL",
+          "domainRequiredHint": "Diperlukan untuk situs web PHP dan Statis.",
+          "domainOptionalHint": "Opsional. Biarkan kosong jika aplikasi akan diakses berdasarkan IP dan port.",
+          "projectName": "Nama proyek",
+          "phpVersion": "versi PHP",
+          "nodeVersion": "Versi Node.js",
+          "startCommand": "Mulai perintah",
+          "applicationPort": "Port aplikasi",
+          "dependencyInstallation": "Instalasi ketergantungan",
+          "dependencyInstallationHint": "Menginstal ulang dependensi akan menghapus direktori node_modules yang ada dan menginstal ulang paket proyek untuk server saat ini. File kunci yang ada dipertahankan.",
+          "installDependencies": "Instal dependensi",
+          "importAction": "Impor proyek",
+          "importing": "Mengimpor...",
+          "types": {
+            "php": "Situs Web PHP",
+            "node": "Proyek Node.js",
+            "static": "Situs Web Statis"
+          }
+        },
+        "database": {
+          "title": "Impor basis data",
+          "description": "Gunakan cadangan yang terdeteksi atau unggah file SQL lain.",
+          "detectedHint": "Cadangan MySQL ditemukan di file proyek.",
+          "notDetectedHint": "Tidak ada cadangan SQL yang terdeteksi. Anda dapat mengunggahnya secara manual.",
+          "selectFile": "Pilih cadangan basis data",
+          "importTo": "Akan diimpor ke {0}",
+          "editSettings": "Edit setelan",
+          "backupSource": "Sumber cadangan",
+          "detected": "Cadangan terdeteksi",
+          "useDetected": "Pilih cadangan yang terdeteksi",
+          "uploadAnother": "Unggah cadangan basis data",
+          "sqlFile": "File cadangan SQL",
+          "uploadPlaceholder": "Pilih .sql atau .sql.gz",
+          "uploadHint": "Mendukung file SQL, SQL.GZ atau GZ",
+          "configuration": "Konfigurasi basis data",
+          "name": "Nama basis data",
+          "user": "Pengguna basis data",
+          "generate": "Hasilkan",
+          "charset": "Kumpulan karakter",
+          "updateConfig": "Perbarui konfigurasi proyek",
+          "updateConfigHint": "Terapkan kredensial database baru ke file konfigurasi yang terdeteksi.",
+          "doNotImport": "Jangan impor basis data",
+          "saveSettings": "Simpan setelan"
+        },
+        "directory": {
+          "currentServer": "Server aaPanel saat ini",
+          "localTitle": "Pilih direktori lokal",
+          "remoteTitle": "Pilih direktori jarak jauh",
+          "empty": "Tidak ada direktori anak di lokasi simulasi ini",
+          "localHint": "Pilih direktori tujuan di server ini.",
+          "remoteHint": "Pilih direktori sumber di server jauh."
+        },
+        "summary": {
+          "title": "Impor ringkasan",
+          "description": "Tinjau sebelum membuat proyek",
+          "source": "Sumber proyek",
+          "sourceItem": "Item sumber",
+          "detectedAs": "Terdeteksi sebagai",
+          "destination": "Tujuan",
+          "domain": "Domain",
+          "database": "Basis Data",
+          "targetDatabase": "Basis data sasaran",
+          "configUpdate": "Pembaruan konfigurasi",
+          "notice": "Tidak ada proyek yang ada yang akan diubah sampai Anda mengonfirmasi impor.",
+          "sources": {
+            "archive": "Arsip yang diunggah",
+            "remote": "{0} server",
+            "git": "Repositori Git",
+            "localArchive": "Folder atau arsip lokal"
+          }
+        },
+        "success": {
+          "title": "Proyek berhasil diimpor",
+          "description": "Proyek sekarang tersedia di daftar situs web aaPanel Anda.",
+          "domain": "Domain",
+          "project": "Proyek",
+          "type": "Jenis proyek",
+          "path": "Jalur proyek",
+          "database": "Basis Data",
+          "notImported": "Tidak diimpor",
+          "status": "Status",
+          "ready": "Siap",
+          "importAnother": "Impor",
+          "viewProject": "Lihat proyek"
+        },
+        "validation": {
+          "archiveRequired": "Silakan pilih arsip proyek",
+          "localArchiveRequired": "Silakan pilih folder atau arsip proyek lokal",
+          "projectDirectoryRequired": "Direktori proyek tidak boleh kosong",
+          "archiveFormat": "Pilih arsip ZIP, TAR.GZ atau TGZ",
+          "archiveSize": "Arsip harus berukuran 5 GB atau lebih kecil",
+          "localDirectoryRequired": "Direktori lokal tidak boleh kosong",
+          "serverRequired": "Server dan port diperlukan",
+          "credentialsRequired": "Nama pengguna dan sandi diperlukan",
+          "remoteDirectoryRequired": "Direktori jarak jauh tidak boleh kosong",
+          "repositoryRequired": "URL repositori tidak boleh kosong",
+          "branchRequired": "Silakan uji koneksi dan pilih cabang",
+          "tokenRequired": "Token akses tidak boleh kosong",
+          "privateKeyRequired": "Silakan pilih kunci SSH",
+          "privateKeyContentRequired": "Konten kunci pribadi tidak boleh kosong",
+          "usernameRequired": "Nama pengguna tidak boleh kosong",
+          "passwordRequired": "Kata sandi tidak boleh kosong",
+          "domainRequired": "Domain tidak boleh kosong untuk jenis proyek ini",
+          "projectNameRequired": "Nama proyek tidak boleh kosong",
+          "startCommandRequired": "Start command cannot be empty",
+          "portRequired": "Application port cannot be empty",
+          "portInvalid": "Masukkan port yang valid antara 1 dan 65535",
+          "databaseFileRequired": "Silakan pilih cadangan basis data",
+          "databaseCredentialsRequired": "Nama basis data, pengguna dan kata sandi diperlukan",
+          "databaseFormat": "Pilih file cadangan SQL, SQL.GZ atau GZ",
+          "databaseNameExists": "The database name already exists. Please change the Database name."
         }
       },
       "form": {
@@ -386,6 +635,7 @@
         "projectNamePlaceholder": "Hanya huruf dan angka",
         "runtimeVersion": "Versi runtime",
         "nodeRecommendedVersion": "Node.js 24.15.0 (Direkomendasikan)",
+        "runtimeInstalledVersion": "{0} (Terpasang)",
         "packageManager": "Manajer paket",
         "frameworkTemplate": "Template kerangka kerja",
         "mappingDomain": "Domain pemetaan",

@@ -455,19 +455,18 @@ class main(databaseBase):
 
         for key in arrs:
             if key not in get:
-                return public.returnMsg(False, 'Parameter passing error, missing parameter{}!'.format(key))
+                return public.fail_v2(public.lang('Parameter passing error, missing parameter {}!'.format(key)))
 
         id = int(get.id)
         get['db_port'] = int(get['db_port'])
         db_find = public.M('database_servers').where('id=?', (id,)).find()
-        if not db_find: return public.returnMsg(False, 'Specifies that the remote server does not exist!')
+        if not db_find: return public.fail_v2(public.lang('Specifies that the remote server does not exist!'))
         _modify = False
         if db_find['db_host'] != get['db_host'] or db_find['db_port'] != get['db_port']:
             _modify = True
             if public.M('database_servers').where('db_host=? AND db_port=?', (get['db_host'], get['db_port'])).count():
-                return public.returnMsg(False,
-                                        'Specifies that the server already exists: [{}:{}]'.format(get['db_host'],
-                                                                                                   get['db_port']))
+                return public.fail_v2(public.lang(
+                    'Specifies that the server already exists: [{}:{}]'.format(get['db_host'], get['db_port'])))
 
         if db_find['db_user'] != get['db_user'] or db_find['db_password'] != get['db_password']:
             _modify = True
@@ -488,8 +487,8 @@ class main(databaseBase):
                 'Database management',
                 'Modifying a Remote MySQL Server[{}:{}]'.format(get['db_host'], get['db_port'])
             )
-            return public.returnMsg(True, 'Modified successfully!')
-        return public.returnMsg(False, 'Modification Failure： {}'.format(result))
+            return public.success_v2(public.lang('Modified successfully!'))
+        return public.fail_v2(public.lang('Modification Failure： {}'.format(result)))
 
     def set_auth_status(self, get):
         """

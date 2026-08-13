@@ -234,9 +234,22 @@ class one_key_wp:
     def unzip_package(self, site_path):
         print("Start unzipping the installation package...")
         self.write_logs("|-Start unzipping the installation package...")
-        public.ExecShell('unzip -o {} -d {}/'.format(self.package_zip, site_path))
-        public.ExecShell('mv {}/wordpress/* {}'.format(site_path, site_path))
-        os.removedirs("{}/wordpress/".format(site_path))
+        unzip_output, unzip_error = public.ExecShell(
+            'unzip -o {} -d {}/'.format(self.package_zip, site_path))
+        wordpress_path = os.path.join(site_path, 'wordpress')
+        if not os.path.isdir(wordpress_path):
+            raise RuntimeError(
+                'WordPress package extraction failed, output: {}, error: {}'.format(
+                    unzip_output, unzip_error))
+        move_output, move_error = public.ExecShell(
+            'mv {}/wordpress/* {}'.format(site_path, site_path))
+        if os.path.isdir(wordpress_path):
+            try:
+                os.rmdir(wordpress_path)
+            except OSError as e:
+                raise RuntimeError(
+                    'Failed to move WordPress files, output: {}, error: {}, detail: {}'.format(
+                        move_output, move_error, e))
         print("Start setting up site permissions...")
         self.write_logs("|-Start setting up site permissions...")
         self.set_permission(site_path)
@@ -1282,10 +1295,13 @@ class one_key_wp:
                 return public.return_message(-1, 0, public.lang("Please check if the [{}] format is correct For example: {}", "domain", "aapanel.com"))
         if hasattr(args, 'weblog_title'):
             values['weblog_title'] = public.xssencode2(args.weblog_title)
+
+        # todo 账号密码暂不转义  后续转义需要保持创建编辑整体一致
         if hasattr(args, 'user_name'):
-            values['user_name'] = public.xssencode2(args.user_name)
+            values['user_name'] = args.user_name
         if hasattr(args, 'admin_password'):
-            values['admin_password'] = public.xssencode2(args.admin_password)
+            values['admin_password'] = args.admin_password
+
         if hasattr(args, 'pw_weak'):
             if args.pw_weak in ['on', 'off']:
                 values['pw_weak'] = args.pw_weak
@@ -1332,6 +1348,36 @@ class one_key_wp:
         get.path = "1"
         p.DeleteSite(get)
 
+    def _start_wp_deploy_tamper_temp_close(self):
+        plugin_path = '/www/server/panel/plugin/tamper_core'
+        if not os.path.isdir(plugin_path):
+            return None
+        try:
+            status = public.run_plugin('tamper_core', 'get_service_status', public.to_dict_obj({}))
+            if not isinstance(status, dict) or not (
+                    status.get('kernel_module_status') and status.get('controller_status')):
+                return None
+            close_time = public.run_plugin('tamper_core', 'get_temp_close', public.to_dict_obj({}))
+            if int(close_time or 0) > int(time.time()):
+                return {'owned': False}
+            public.run_plugin('tamper_core', 'set_temp_close', public.to_dict_obj({
+                'expire': 3, 'unit': 'minute',
+            }))
+            time.sleep(5)
+            return {'owned': True}
+        except Exception as e:
+            public.print_log('Failed to temporarily close tamper protection: {}'.format(e))
+            return None
+
+    def _stop_wp_deploy_tamper_temp_close(self, token):
+        if not token or not token.get('owned'):
+            return
+        try:
+            public.run_plugin('tamper_core', 'del_temp_close', public.to_dict_obj({}))
+            time.sleep(1)
+        except Exception as e:
+            public.print_log('Failed to cancel temporary tamper protection shutdown: {}'.format(e))
+
     # 安装WP
     def deploy_wp(self, get):
         """
@@ -1375,6 +1421,7 @@ class one_key_wp:
             public.print_log("error info: {}".format(ex))
             return public.return_message(-1, 0, str(ex))
 
+        tamper_temp_close_token = None
         try:
             self.write_logs('', clean=True)
             values = self.check_param(get)
@@ -1427,6 +1474,7 @@ class one_key_wp:
             # 下载特定版本的安装包
             self.package_zip = wp_version_obj.download_package(get.package_version)
 
+            tamper_temp_close_token = self._start_wp_deploy_tamper_temp_close()
             self.unzip_package(site_info['path'])
 
             # 优化PHP, 仅首次PHP优化
@@ -1472,6 +1520,9 @@ class one_key_wp:
             from traceback import format_exc
             public.print_log(format_exc())
             return public.return_message(-1, 0, public.lang("Deployment failed: {}", e))
+
+        finally:
+            self._stop_wp_deploy_tamper_temp_close(tamper_temp_close_token)
 
     # 删除指定的域名本地回环记录
     def remove_hosts_record(self, site_name):
@@ -1556,24 +1607,27 @@ class one_key_wp:
         if os.path.exists(os.path.join(wp_path, '.maintenance')):
             wp_toolkit_config_data['maintenance_mode'] = True
 
+        wp_toolkit_config_data = wp_toolkit_config_data or {}
+        admin_info = wp_toolkit_config_data.get("admin_info") or {}
+        whl_config = wp_toolkit_config_data.get("whl_config") or {}
+
         return public.success_v2({
             'local_version': wp_local_version,
             'latest_version': wp_latest_version,
             'can_upgrade': can_upgrade,
-            'language': wp_toolkit_config_data['locale'],
-            'login_url': wp_toolkit_config_data['login_url'],
-            'site_url': wp_toolkit_config_data['site_url'],
+            'language': wp_toolkit_config_data.get('locale', ''),
+            'login_url': wp_toolkit_config_data.get('login_url', ''),
+            'site_url': wp_toolkit_config_data.get('site_url', ''),
             'cache_enabled': self.get_cache_status(args.s_id),
-            # 'admin_user': wp_toolkit_config_data['admin_info']['user_login'],
-            'admin_user': wp_toolkit_config_data.get("admin_info", {}).get('user_login', ''), # 修复当admin_info不存在时导致的KeyError
-            'admin_email': wp_toolkit_config_data['admin_info']['user_email'],
-            'whl_enabled': wp_toolkit_config_data['whl_config'].get('activated', False),
-            'whl_page': wp_toolkit_config_data['whl_config'].get('whl_page', 'login'),
-            'whl_redirect_admin': wp_toolkit_config_data['whl_config'].get('whl_redirect_admin', '404'),
+            'admin_user': admin_info.get('user_login', ''),
+            'admin_email': admin_info.get('user_email', ''),
+            'whl_enabled': whl_config.get('activated', False),
+            'whl_page': whl_config.get('whl_page', 'login'),
+            'whl_redirect_admin': whl_config.get('whl_redirect_admin', '404'),
             'wp_title': wp_toolkit_config_data.get('wp_title', 'Acquisition failed, MySQL error occurred'),
             'wp_home': wp_toolkit_config_data.get('wp_home', 'Acquisition failed, MySQL error occurred'),
-            'site_type': type_.get("site_type",''),
-            'maintenance' : wp_toolkit_config_data.get('maintenance_mode', False),
+            'site_type': type_.get("site_type", ''),
+            'maintenance': wp_toolkit_config_data.get('maintenance_mode', False),
         })
 
     # 保存WP Toolkit配置

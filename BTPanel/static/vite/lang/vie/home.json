@@ -341,7 +341,256 @@
           "proxy": {
             "title": "Tạo Proxy ngược",
             "description": "Định tuyến cổng nội bộ ra tên miền ngoài với bộ nhớ đệm proxy."
+          },
+          "importProject": {
+            "title": "Nhập dự án hiện có",
+            "description": "Chọn nơi lưu trữ dự án của bạn. aaPanel sẽ đề xuất loại dự án để bạn xem xét."
+          },
+          "aiBuilder": {
+            "title": "Trình tạo trang web AI",
+            "description": "Xây dựng một trang web tuyệt đẹp trong vài giây với AI.",
+            "action": "Bắt đầu xây dựng"
           }
+        }
+      },
+      "importProject": {
+        "brand": "Nhập dự án aaPanel",
+        "title": "Nhập dự án hiện có",
+        "description": "Chọn nơi lưu trữ dự án của bạn. aaPanel sẽ đề xuất loại dự án để bạn xem xét.",
+        "steps": {
+          "source": "Chọn nguồn",
+          "analyzing": "Đang phân tích dự án",
+          "review": "Đánh giá dự án",
+          "complete": "Nhập hoàn tất"
+        },
+        "sources": {
+          "archive": {
+            "title": "Tải lên bản lưu trữ",
+            "description": "Tải lên các tệp ZIP, TAR.GZ hoặc TGZ từ máy tính của bạn."
+          },
+          "remote": {
+            "title": "Máy chủ FTP / SFTP",
+            "description": "Tải xuống thư mục dự án từ máy chủ tệp từ xa."
+          },
+          "git": {
+            "title": "Kho lưu trữ Git",
+            "description": "Sao chép nhánh và kho lưu trữ Git công khai hoặc riêng tư."
+          },
+          "localArchive": {
+            "title": "Tệp cục bộ",
+            "description": "Nhập thư mục dự án hoặc kho lưu trữ đã được lưu trữ trên máy chủ này."
+          }
+        },
+        "source": {
+          "archive": {
+            "title": "Định cấu hình tải lên kho lưu trữ",
+            "description": "Tải gói dự án của bạn lên và chọn đích đến.",
+            "action": "Tải lên & phân tích",
+            "projectArchive": "Lưu trữ dự án",
+            "dropTitle": "Thả bản lưu trữ vào đây hoặc chọn một tệp",
+            "dropHint": "ZIP, TAR.GZ hoặc TGZ · Tối đa 5 GB",
+            "localHint": "Thư mục trên máy chủ aaPanel này nơi kho lưu trữ sẽ được trích xuất.",
+            "cleanup": "Dọn dẹp nhập",
+            "cleanupHint": "Xóa các tệp tạm thời sau khi nhập"
+          },
+          "remote": {
+            "title": "Kết nối với FTP / SFTP",
+            "description": "Nhập chi tiết điểm đến và kết nối từ xa.",
+            "action": "Kết nối & phân tích",
+            "testConnectedAndSelectDirectory": "Kiểm tra kết nối và chọn thư mục",
+            "authentication": "Xác thực",
+            "passwordAuthentication": "Mật khẩu",
+            "privateKey": "Khóa riêng",
+            "privateKeyPlaceholder": "Dán toàn bộ nội dung khóa riêng tư SSH",
+            "remoteHint": "Chọn thư mục dự án trên máy chủ từ xa.",
+            "localHint": "Các tệp sẽ được sao chép vào thư mục này."
+          },
+          "git": {
+            "title": "Sao chép kho lưu trữ Git",
+            "description": "Định cấu hình kho lưu trữ, xác thực và đích.",
+            "action": "Sao chép & phân tích",
+            "repositoryUrl": "URL kho lưu trữ",
+            "branch": "Nhánh hoặc thẻ",
+            "branchPlaceholder": "Kiểm tra kết nối và chọn nhánh",
+            "testConnection": "Kiểm tra kết nối",
+            "testAgain": "Kiểm tra lại",
+            "connectionSuccessful": "Kết nối thành công.",
+            "branchesFound": "Đã tìm thấy {0} nhánh Git.",
+            "verifyRepository": "Xác minh quyền truy cập kho lưu trữ để tải các nhánh có sẵn.",
+            "noBranches": "Không tìm thấy nhánh hoặc thẻ nào trong kho lưu trữ này.",
+            "authentication": "Xác thực",
+            "public": "Công khai",
+            "token": "Mã thông báo",
+            "sshKey": "Khóa SSH",
+            "copySshKey": "Sao chép khóa SSH",
+            "publicHint": "Không cần thông tin xác thực.",
+            "accessToken": "Mã thông báo truy cập",
+            "privateKey": "Khóa riêng",
+            "chooseKey": "Chọn tệp .pem hoặc .key",
+            "passphrase": "Cụm mật khẩu chính",
+            "localHint": "Kho lưu trữ sẽ được sao chép vào thư mục này.",
+            "cloneDepth": "Độ sâu sao chép",
+            "latestCommitOnly": "Chỉ cam kết mới nhất",
+            "fullGitHistory": "Lịch sử Git đầy đủ",
+            "shallowClone": "Bản sao nông"
+          },
+          "localArchive": {
+            "title": "Định cấu hình nguồn cục bộ",
+            "description": "Chọn thư mục dự án hoặc kho lưu trữ được lưu trữ trên máy chủ aaPanel này.",
+            "action": "Phân tích nguồn",
+            "archiveLocation": "Nguồn dự án",
+            "archiveHint": "Chọn thư mục dự án hoặc kho lưu trữ ZIP, TAR.GZ hoặc TGZ từ máy chủ hiện tại.",
+            "projectDirectory": "Thư mục dự án",
+            "projectDirectoryHint": "Dự án sẽ được tạo trong thư mục này."
+          }
+        },
+        "common": {
+          "back": "Quay lại",
+          "browse": "Duyệt qua",
+          "cancel": "Hủy",
+          "choose": "Chọn",
+          "configure": "Định cấu hình",
+          "disabled": "Đã tắt",
+          "edit": "Chỉnh sửa",
+          "enabled": "Đã bật",
+          "localDirectory": "Thư mục cục bộ",
+          "notSet": "Chưa đặt",
+          "optional": "Tùy chọn",
+          "password": "Mật khẩu",
+          "port": "Cổng",
+          "protocol": "Giao thức",
+          "remoteDirectory": "Thư mục từ xa",
+          "save": "Sử dụng thư mục này",
+          "select": "Chọn",
+          "server": "Máy chủ",
+          "username": "Tên người dùng"
+        },
+        "analyzing": {
+          "title": "Phân tích dự án của bạn",
+          "preparing": "Đang chuẩn bị tệp nguồn...",
+          "reading": "Đọc tệp dự án và các phần phụ thuộc...",
+          "checking": "Kiểm tra cấu hình và sao lưu cơ sở dữ liệu...",
+          "detecting": "Đang phát hiện loại dự án và thời gian chạy...",
+          "complete": "Phân tích hoàn tất. Đang chuẩn bị đánh giá..."
+        },
+        "review": {
+          "title": "Xem lại cài đặt dự án",
+          "description": "Xác nhận loại dự án đã phát hiện và định cấu hình cách tạo dự án.",
+          "detectedFrom": "Đã phát hiện từ {0}",
+          "projectType": "Loại dự án",
+          "projectTypeHint": "Tự động được phát hiện dựa trên tệp dự án. Nếu kết quả không chính xác, vui lòng chọn đúng loại dự án.",
+          "domain": "Tên miền",
+          "applySsl": "Đăng ký SSL",
+          "domainRequiredHint": "Bắt buộc đối với PHP và trang web tĩnh.",
+          "domainOptionalHint": "Tùy chọn. Để trống nếu ứng dụng sẽ được truy cập bằng IP và cổng.",
+          "projectName": "Tên dự án",
+          "phpVersion": "Phiên bản PHP",
+          "nodeVersion": "Phiên bản Node.js",
+          "startCommand": "Lệnh bắt đầu",
+          "applicationPort": "Cổng ứng dụng",
+          "dependencyInstallation": "Cài đặt phụ thuộc",
+          "dependencyInstallationHint": "Việc cài đặt lại các phần phụ thuộc sẽ xóa thư mục node_modules hiện có và cài đặt lại các gói dự án cho máy chủ hiện tại. Các tập tin khóa hiện có được bảo tồn.",
+          "installDependencies": "Cài đặt phần phụ thuộc",
+          "importAction": "Nhập dự án",
+          "importing": "Đang nhập...",
+          "types": {
+            "php": "Trang web PHP",
+            "node": "Dự án Node.js",
+            "static": "Trang web tĩnh"
+          }
+        },
+        "database": {
+          "title": "Nhập cơ sở dữ liệu",
+          "description": "Sử dụng bản sao lưu được phát hiện hoặc tải lên tệp SQL khác.",
+          "detectedHint": "Đã tìm thấy bản sao lưu MySQL trong tệp dự án.",
+          "notDetectedHint": "Không phát hiện thấy bản sao lưu SQL nào. Bạn có thể tải lên một cách thủ công.",
+          "selectFile": "Chọn bản sao lưu cơ sở dữ liệu",
+          "importTo": "Sẽ nhập vào {0}",
+          "editSettings": "Chỉnh sửa cài đặt",
+          "backupSource": "Nguồn dự phòng",
+          "detected": "Đã phát hiện thấy bản sao lưu",
+          "useDetected": "Chọn bản sao lưu được phát hiện",
+          "uploadAnother": "Tải lên bản sao lưu cơ sở dữ liệu",
+          "sqlFile": "Tệp sao lưu SQL",
+          "uploadPlaceholder": "Chọn .sql hoặc .sql.gz",
+          "uploadHint": "Hỗ trợ các tệp SQL, SQL.GZ hoặc GZ",
+          "configuration": "Cấu hình cơ sở dữ liệu",
+          "name": "Tên cơ sở dữ liệu",
+          "user": "Người dùng cơ sở dữ liệu",
+          "generate": "Tạo",
+          "charset": "Bộ ký tự",
+          "updateConfig": "Cập nhật cấu hình dự án",
+          "updateConfigHint": "Áp dụng thông tin xác thực cơ sở dữ liệu mới cho tệp cấu hình được phát hiện.",
+          "doNotImport": "Không nhập cơ sở dữ liệu",
+          "saveSettings": "Lưu cài đặt"
+        },
+        "directory": {
+          "currentServer": "Máy chủ aaPanel hiện tại",
+          "localTitle": "Chọn thư mục cục bộ",
+          "remoteTitle": "Chọn thư mục từ xa",
+          "empty": "Không có thư mục con nào ở vị trí mô phỏng này",
+          "localHint": "Chọn thư mục đích trên máy chủ này.",
+          "remoteHint": "Chọn thư mục nguồn trên máy chủ từ xa."
+        },
+        "summary": {
+          "title": "Nhập tóm tắt",
+          "description": "Xem lại trước khi tạo dự án",
+          "source": "Nguồn dự án",
+          "sourceItem": "Mục nguồn",
+          "detectedAs": "Đã phát hiện là",
+          "destination": "Điểm đến",
+          "domain": "Tên miền",
+          "database": "Cơ sở dữ liệu",
+          "targetDatabase": "Cơ sở dữ liệu đích",
+          "configUpdate": "Cập nhật cấu hình",
+          "notice": "Sẽ không có dự án hiện tại nào bị thay đổi cho đến khi bạn xác nhận việc nhập.",
+          "sources": {
+            "archive": "Bản lưu trữ đã tải lên",
+            "remote": "{0} máy chủ",
+            "git": "Kho lưu trữ Git",
+            "localArchive": "Thư mục cục bộ hoặc kho lưu trữ"
+          }
+        },
+        "success": {
+          "title": "Dự án đã được nhập thành công",
+          "description": "Dự án hiện có sẵn trong danh sách trang web aaPanel của bạn.",
+          "domain": "Tên miền",
+          "project": "Dự án",
+          "type": "Loại dự án",
+          "path": "Đường dẫn dự án",
+          "database": "Cơ sở dữ liệu",
+          "notImported": "Chưa được nhập",
+          "status": "Trạng thái",
+          "ready": "Sẵn sàng",
+          "importAnother": "Nhập cái khác",
+          "viewProject": "Xem dự án"
+        },
+        "validation": {
+          "archiveRequired": "Vui lòng chọn kho lưu trữ dự án",
+          "localArchiveRequired": "Vui lòng chọn thư mục hoặc kho lưu trữ dự án cục bộ",
+          "projectDirectoryRequired": "Thư mục dự án không được để trống",
+          "archiveFormat": "Chọn kho lưu trữ ZIP, TAR.GZ hoặc TGZ",
+          "archiveSize": "Tệp lưu trữ phải có dung lượng từ 5 GB trở xuống",
+          "localDirectoryRequired": "Thư mục cục bộ không được để trống",
+          "serverRequired": "Cần có máy chủ và cổng",
+          "credentialsRequired": "Bắt buộc phải có tên người dùng và mật khẩu",
+          "remoteDirectoryRequired": "Thư mục từ xa không được để trống",
+          "repositoryRequired": "URL kho lưu trữ không được để trống",
+          "branchRequired": "Vui lòng kiểm tra kết nối và chọn chi nhánh",
+          "tokenRequired": "Mã thông báo truy cập không được để trống",
+          "privateKeyRequired": "Vui lòng chọn khóa SSH",
+          "privateKeyContentRequired": "Nội dung khóa riêng tư không được để trống",
+          "usernameRequired": "Tên người dùng không được để trống",
+          "passwordRequired": "Mật khẩu không được để trống",
+          "domainRequired": "Tên miền không được để trống cho loại dự án này",
+          "projectNameRequired": "Tên dự án không được để trống",
+          "startCommandRequired": "Start command cannot be empty",
+          "portRequired": "Application port cannot be empty",
+          "portInvalid": "Nhập cổng hợp lệ từ 1 đến 65535",
+          "databaseFileRequired": "Vui lòng chọn bản sao lưu cơ sở dữ liệu",
+          "databaseCredentialsRequired": "Bắt buộc phải có tên cơ sở dữ liệu, người dùng và mật khẩu",
+          "databaseFormat": "Chọn tệp sao lưu SQL, SQL.GZ hoặc GZ",
+          "databaseNameExists": "The database name already exists. Please change the Database name."
         }
       },
       "form": {
@@ -386,6 +635,7 @@
         "projectNamePlaceholder": "Chỉ chữ cái và số",
         "runtimeVersion": "Phiên bản runtime",
         "nodeRecommendedVersion": "Node.js 24.15.0 (Khuyến nghị)",
+        "runtimeInstalledVersion": "{0} (Đã cài đặt)",
         "packageManager": "Trình quản lý gói",
         "frameworkTemplate": "Mẫu framework",
         "mappingDomain": "Tên miền ánh xạ",

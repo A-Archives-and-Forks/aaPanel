@@ -292,19 +292,47 @@ class firewalls:
             get.status = '0'
         else:
             get.status = '1'
-        filename = '/etc/sysctl.conf'
-        conf = public.readFile(filename)
-        if not isinstance(conf, str):
-            conf = ''
+        value = get.status
+        public.ExecShell('mkdir -p /etc/sysctl.d')
+        ping_file = '/etc/sysctl.d/99-bt-ping.conf'
+        ping_content = 'net.ipv4.icmp_echo_ignore_all=' + value + "\n" \
+                      'net.ipv6.icmp.echo_ignore_all=' + value + "\n"
+        if public.writeFile(ping_file, ping_content):
+            # Compatible with old systems: /etc/sysctl.conf will be synchronized only if it exists
+            if os.path.exists('/etc/sysctl.conf'):
+                filename = '/etc/sysctl.conf'
+                conf = public.readFile(filename)
+                if not isinstance(conf, str):
+                    conf = ''
 
-        if conf.find('net.ipv4.icmp_echo') != -1:
-            rep = r"net\.ipv4\.icmp_echo.*"
-            conf = re.sub(rep, 'net.ipv4.icmp_echo_ignore_all=' + get.status + "\n", conf)
-        else:
-            conf += "\nnet.ipv4.icmp_echo_ignore_all=" + get.status + "\n"
-
-        if public.writeFile(filename, conf):
-            public.ExecShell('sysctl -p')
+                if conf.find('net.ipv4.icmp_echo') != -1:
+                    rep = r"net\.ipv4\.icmp_echo.*"
+                    conf = re.sub(rep, 'net.ipv4.icmp_echo_ignore_all=' + value + "\n", conf)
+                else:
+                    conf += "\nnet.ipv4.icmp_echo_ignore_all=" + value + "\n"
+                if conf.find('net.ipv6.icmp.echo_ignore_all') != -1:
+                    conf = re.sub(r"#*net\.ipv6\.icmp\.echo_ignore_all\s*=\s*[0-9]+",
+                                  'net.ipv6.icmp.echo_ignore_all=' + value, conf)
+                else:
+                    conf += "\nnet.ipv6.icmp.echo_ignore_all=" + value + "\n"
+                public.writeFile(filename, conf)
+            ufw_sysctl = '/etc/ufw/sysctl.conf'
+            if os.path.exists(ufw_sysctl):
+                uconf = public.readFile(ufw_sysctl)
+                if isinstance(uconf, str):
+                    rep_ufw4 = r"#*net[./]ipv4[./]icmp_echo_ignore_all\s*=\s*[0-9]+"
+                    if re.search(rep_ufw4, uconf):
+                        uconf = re.sub(rep_ufw4, 'net/ipv4/icmp_echo_ignore_all=' + value, uconf)
+                    else:
+                        uconf += "\nnet/ipv4/icmp_echo_ignore_all=" + value + "\n"
+                    rep_ufw6 = r"#*net[./]ipv6[./]icmp[./]echo_ignore_all\s*=\s*[0-9]+"
+                    if re.search(rep_ufw6, uconf):
+                        uconf = re.sub(rep_ufw6, 'net/ipv6/icmp/echo_ignore_all=' + value, uconf)
+                    else:
+                        uconf += "\nnet/ipv6/icmp/echo_ignore_all=" + value + "\n"
+                    public.writeFile(ufw_sysctl, uconf)
+            public.ExecShell('sysctl -w net.ipv4.icmp_echo_ignore_all=' + value)
+            public.ExecShell('sysctl -w net.ipv6.icmp.echo_ignore_all=' + value)
             return public.return_message(0, 0, public.lang("SUCCESS"))
         else:
             return public.return_message(-1, 0, '<a style="color:red;">ERROR: setup failed, [sysctl.conf] not writable!</a><br>1. If [System hardening] is installed, please close it first<br>')
@@ -365,9 +393,12 @@ class firewalls:
         status = public.get_sshd_status()
         isPing = True
         try:
-            file = '/etc/sysctl.conf'
+            # 优先读 /etc/sysctl.d/99-bt-ping.conf（新系统唯一生效来源），取不到再回退 /etc/sysctl.conf
+            file = '/etc/sysctl.d/99-bt-ping.conf'
             conf = public.readFile(file)
             rep = r"#*net\.ipv4\.icmp_echo_ignore_all\s*=\s*([0-9]+)"
+            if not isinstance(conf, str) or re.search(rep, conf or '') is None:
+                conf = public.readFile('/etc/sysctl.conf')
             tmp = re.search(rep, conf).groups(0)[0]
             if tmp == '1': isPing = False
         except:

@@ -1321,7 +1321,7 @@ class panelPlugin:
         indexList = json.loads(public.ReadFile(self.__index))
         if sName in indexList:
             return public.return_message(-1, 0, public.lang("Please do NOT repeat adding"))
-        if len(indexList) >= 12:
+        if len(indexList) >= 15:
             softList = self.get_cloud_list(get)['list']
             softList = self.set_coexist(softList)
             for softInfo in softList:
@@ -1336,8 +1336,8 @@ class panelPlugin:
                     new_softInfo = self.check_status(softInfo)
                     if not new_softInfo['setup']: indexList.remove(softInfo['name'])
             public.writeFile(self.__index,json.dumps(indexList))
-            if len(indexList) >= 12:
-                return public.return_message(-1, 0, public.lang("Dashboard only display up to 12 software!"))
+            if len(indexList) >= 15:
+                return public.return_message(-1, 0, public.lang("Dashboard only display up to 15 software!"))
         indexList.append(sName)
         public.writeFile(self.__index,json.dumps(indexList))
         return public.return_message(0, 0, public.lang("Setup successfully!"))

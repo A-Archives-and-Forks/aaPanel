@@ -480,10 +480,13 @@ class database(datatool.datatools):
             if len(username.encode("utf-8")) > 16:
                 if os.path.exists("/www/server/mysql/version.pl"):
                     m_version = public.readFile(public.GetConfigValue('setup_path') + '/mysql/version.pl')
-                    if '5.7' not in m_version and '8.0' not in m_version and '8.4' not in m_version and '9.0' not in m_version:
-                        return public.fail_v2('Usernames cannot exceed 16 characters. To use usernames longer than 16 characters, please upgrade to MySQL-5.7/8.0/8.4/9.0')
+                    if ('5.7' not in m_version and '8.0' not in m_version and '8.4' not in m_version
+                            and '9.0' not in m_version and '9.7' not in m_version
+                            and not any(mariadb_ver in m_version for mariadb_ver in
+                                        ['10.5.', '10.4.', '10.6.', '10.7.', '10.11.', '11.3.', '11.4.', '11.8'])):
+                        return public.fail_v2('Usernames cannot exceed 16 characters. To use usernames longer than 16 characters, please upgrade to MySQL-5.7/8.0/8.4/9.0/9.7 or MariaDB 10.x')
                 else:
-                    return public.fail_v2('Usernames cannot exceed 16 characters. To use usernames longer than 16 characters, please upgrade to MySQL-5.7/8.0/8.4/9.0')
+                    return public.fail_v2('Usernames cannot exceed 16 characters. To use usernames longer than 16 characters, please upgrade to MySQL-5.7/8.0/8.4/9.0/9.7')
             data_pwd = get['password']
             re_list = re.findall("[，。？！；：“”‘’（）【】《》￥&\u4e00-\u9fa5]+", data_pwd)
             if re_list:

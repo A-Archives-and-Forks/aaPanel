@@ -16,12 +16,20 @@ log_file = sys.argv[1]
 # 记录任务执行状态的文件路径
 task_log = "/tmp/task_log.log"
 
-# 反向读取日志文件
+# 设置要读取的最大字节数（1000KB = 1024 * 1000 字节）
+MAX_BYTES_TO_READ = 1024 * 1000  # 1000KB
+
+# 反向读取日志文件的最后1000KB内容
 try:
-    with open(log_file, 'r', encoding='utf-8', errors='ignore') as f:
-        lines = f.readlines()[::-1]
+    with open(log_file, 'rb') as f:
+        f.seek(0, os.SEEK_END)  # 定位到文件末尾
+        file_size = f.tell()  # 获取文件总大小
+        offset = max(file_size - MAX_BYTES_TO_READ, 0)  # 计算读取偏移量
+        f.seek(offset)  # 定位到偏移量处
+        data = f.read(MAX_BYTES_TO_READ).decode('utf-8', errors='ignore')  # 读取数据并解码为字符串
+        lines = data.splitlines()[::-1]  # 将数据分割为行并反转顺序
 except FileNotFoundError:
-    print("Log file {} not found.".format(log_file))
+    print(f"Log file {log_file} not found.")
     sys.exit(1)
 
 # 初始化变量
@@ -29,7 +37,10 @@ found_successful = False
 found_error_before_next_successful = False
 
 # 要查找的错误模式
-error_patterns = ["错误", "失败", "command not found", "Unknown error", "不存在", "请先到软件商店安装日志清理工具", "failed to run command", "No such file or directory", "not supported or disabled in libcurl"]
+error_patterns = ["Error","错误","Failed", "失败", "command not found", "Unknown error", "不存在","not found","does not exist",
+                  "请先到软件商店安装日志清理工具", "failed to run command",
+                  "No such file or directory", "not supported or disabled in libcurl"]
+
 
 # 迭代检查日志内容
 for line in lines:

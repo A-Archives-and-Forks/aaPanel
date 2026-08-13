@@ -2207,6 +2207,16 @@ def panel_cloud(is_csrf=True):
     return redirect(download_url)
 
 
+
+# # 前端新架构使用  暂时注释
+# @app.route('/software', methods=method_all)
+# def software(pdata=None):
+#     # 图标
+#     comReturn = comm.local()
+#     if comReturn: return comReturn
+#     return render_template('software.html', data={})
+
+
 @app.route('/btwaf_error', methods=method_get)
 def btwaf_error():
     # 图标
@@ -6543,6 +6553,7 @@ def safeModel_v2(def_name):
 @app.route(route_v2 + '/panel/webscanning/<def_name>', methods=method_all)
 @app.route(route_v2 + '/panel/public/<def_name>', methods=method_all)
 @app.route(route_v2 + '/panel/history/<def_name>', methods=method_all)
+# @app.route(route_v2 + '/panel/panel_reverse_generation/<def_name>', methods=method_all)
 @app.route(route_v2 + '/monitor/process_management/<def_name>',
            methods=method_all)
 @app.route(route_v2 + '/monitor/soft/<def_name>', methods=method_all)

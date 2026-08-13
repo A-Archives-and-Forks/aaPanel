@@ -35,10 +35,12 @@ class main():
         :return:
         """
         ssh_conf = get.get('ssh_conf', "{}")
-        try:
-            get.ssh_conf = json.loads(ssh_conf)
-        except Exception:
-            return public.return_message(-1, 0,"SSH_conf data format error")
+        if isinstance(ssh_conf, str):
+            try:
+                ssh_conf = json.loads(ssh_conf)
+            except Exception:
+                return public.return_message(-1, 0, "SSH_conf data format error")
+        get.ssh_conf = ssh_conf
         n, err = Node.from_dict(get)
         if not n:
             return public.return_message(-1, 0, err)
@@ -60,7 +62,7 @@ class main():
             monitor_node_once_with_timeout(node)
         # 埋点
         public.set_module_logs('node', 'add_node')
-        public.WriteLog("node", f"Add Node: {remarks} ")
+        public.WriteLog("node", f"Add Node: {n.remarks} ")
 
         return public.return_message(0, 0, "Node added successfully")
 
@@ -126,10 +128,12 @@ class main():
         """
         node_id = get.get('id/d', 0)
         ssh_conf = get.get('ssh_conf', "{}")
-        try:
-            get.ssh_conf = json.loads(ssh_conf)
-        except Exception:
-            return public.return_message(-1, 0, "SSH_conf data format error")
+        if isinstance(ssh_conf, str):
+            try:
+                ssh_conf = json.loads(ssh_conf)
+            except Exception:
+                return public.return_message(-1, 0, "SSH_conf data format error")
+        get.ssh_conf = ssh_conf
         if not node_id:
             return public.return_message(-1, 0, "Node ID cannot be empty")
         n, err = Node.from_dict(get)

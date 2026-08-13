@@ -341,7 +341,256 @@
                 "proxy": {
                   "title": "إنشاء وكيل عكسي",
                   "description": "توجيه المنافذ الداخلية إلى النطاقات الخارجية مع التخزين المؤقت للوكيل."
+                },
+                "importProject": {
+                  "title": "استيراد مشروع موجود",
+                  "description": "اختر مكان تخزين مشروعك. سيقترح عليك aaPanel نوع المشروع لمراجعته."
+                },
+                "aiBuilder": {
+                  "title": "أداة إنشاء مواقع الويب بالذكاء الاصطناعي",
+                  "description": "قم ببناء موقع ويب مذهل في ثوانٍ باستخدام الذكاء الاصطناعي.",
+                  "action": "ابدأ البناء"
                 }
+              }
+            },
+            "importProject": {
+              "brand": "استيراد مشروع aaPanel",
+              "title": "استيراد مشروع موجود",
+              "description": "اختر مكان تخزين مشروعك. سيقترح عليك aaPanel نوع المشروع لمراجعته.",
+              "steps": {
+                "source": "اختر مصدرًا",
+                "analyzing": "تحليل المشروع",
+                "review": "مراجعة المشروع",
+                "complete": "اكتمل الاستيراد"
+              },
+              "sources": {
+                "archive": {
+                  "title": "رفع الأرشيف",
+                  "description": "قم بتحميل ملفات ZIP أو TAR.GZ أو TGZ من جهاز الكمبيوتر الخاص بك."
+                },
+                "remote": {
+                  "title": "خادم FTP / SFTP",
+                  "description": "قم بتنزيل دليل المشروع من خادم ملفات بعيد."
+                },
+                "git": {
+                  "title": "مستودع Git",
+                  "description": "استنساخ مستودع وفرع Git عام أو خاص."
+                },
+                "localArchive": {
+                  "title": "الملفات المحلية",
+                  "description": "قم باستيراد مجلد المشروع أو الأرشيف المخزن بالفعل على هذا الخادم."
+                }
+              },
+              "source": {
+                "archive": {
+                  "title": "تكوين تحميل الأرشيف",
+                  "description": "قم بتحميل حزمة مشروعك واختر وجهتها.",
+                  "action": "التحميل & التحليل",
+                  "projectArchive": "أرشيف المشروع",
+                  "dropTitle": "أسقط أرشيفًا هنا أو اختر ملفًا",
+                  "dropHint": "ZIP أو TAR.GZ أو TGZ · ما يصل إلى 5 جيجابايت",
+                  "localHint": "الدليل الموجود على خادم aaPanel حيث سيتم استخراج الأرشيف.",
+                  "cleanup": "تنظيف الاستيراد",
+                  "cleanupHint": "إزالة الملفات المؤقتة بعد الاستيراد"
+                },
+                "remote": {
+                  "title": "الاتصال بـ FTP / SFTP",
+                  "description": "أدخل تفاصيل الاتصال والوجهة عن بعد.",
+                  "action": "الاتصال & التحليل",
+                  "testConnectedAndSelectDirectory": "اختبار الاتصال وتحديد الدليل",
+                  "authentication": "المصادقة",
+                  "passwordAuthentication": "كلمة المرور",
+                  "privateKey": "المفتاح الخاص",
+                  "privateKeyPlaceholder": "الصق محتوى مفتاح SSH الخاص الكامل",
+                  "remoteHint": "حدد دليل المشروع على الخادم البعيد.",
+                  "localHint": "سيتم نسخ الملفات إلى هذا الدليل."
+                },
+                "git": {
+                  "title": "استنساخ مستودع Git",
+                  "description": "قم بتكوين المستودع والمصادقة والوجهة.",
+                  "action": "النسخ & التحليل",
+                  "repositoryUrl": "عنوان URL للمستودع",
+                  "branch": "الفرع أو العلامة",
+                  "branchPlaceholder": "اختبار الاتصال واختيار الفرع",
+                  "testConnection": "اختبار الاتصال",
+                  "testAgain": "الاختبار مرة أخرى",
+                  "connectionSuccessful": "تم الاتصال بنجاح.",
+                  "branchesFound": "{0} تم العثور على فروع Git.",
+                  "verifyRepository": "تحقق من الوصول إلى المستودع لتحميل الفروع المتاحة.",
+                  "noBranches": "لم يتم العثور على فروع أو علامات في هذا المستودع.",
+                  "authentication": "المصادقة",
+                  "public": "عامة",
+                  "token": "الرمز المميز",
+                  "sshKey": "مفتاح SSH",
+                  "copySshKey": "انسخ مفتاح SSH",
+                  "publicHint": "لا توجد بيانات اعتماد مطلوبة.",
+                  "accessToken": "رمز الوصول",
+                  "privateKey": "المفتاح الخاص",
+                  "chooseKey": "اختر ملف .pem أو .key",
+                  "passphrase": "عبارة المرور الرئيسية",
+                  "localHint": "سيتم استنساخ المستودع في هذا الدليل.",
+                  "cloneDepth": "عمق الاستنساخ",
+                  "latestCommitOnly": "الالتزام الأخير فقط",
+                  "fullGitHistory": "سجل Git الكامل",
+                  "shallowClone": "استنساخ سطحي"
+                },
+                "localArchive": {
+                  "title": "تكوين المصدر المحلي",
+                  "description": "اختر مجلد المشروع أو الأرشيف المخزن على خادم aaPanel هذا.",
+                  "action": "تحليل المصدر",
+                  "archiveLocation": "مصدر المشروع",
+                  "archiveHint": "حدد مجلد المشروع أو أرشيف ZIP أو TAR.GZ أو TGZ من الخادم الحالي.",
+                  "projectDirectory": "دليل المشروع",
+                  "projectDirectoryHint": "سيتم إنشاء المشروع في هذا الدليل."
+                }
+              },
+              "common": {
+                "back": "عودة",
+                "browse": "تصفح",
+                "cancel": "إلغاء",
+                "choose": "اختر",
+                "configure": "تكوين",
+                "disabled": "معطل",
+                "edit": "تحرير",
+                "enabled": "ممكّن",
+                "localDirectory": "الدليل المحلي",
+                "notSet": "غير محدد",
+                "optional": "اختياري",
+                "password": "كلمة المرور",
+                "port": "المنفذ",
+                "protocol": "البروتوكول",
+                "remoteDirectory": "الدليل البعيد",
+                "save": "استخدم هذا الدليل",
+                "select": "حدد",
+                "server": "الخادم",
+                "username": "اسم المستخدم"
+              },
+              "analyzing": {
+                "title": "تحليل مشروعك",
+                "preparing": "تحضير الملفات المصدر...",
+                "reading": "قراءة ملفات المشروع وتبعياته...",
+                "checking": "التحقق من التكوين والنسخ الاحتياطية لقاعدة البيانات...",
+                "detecting": "الكشف عن نوع المشروع ووقت التشغيل...",
+                "complete": "اكتمل التحليل. جارٍ إعداد المراجعة..."
+              },
+              "review": {
+                "title": "مراجعة إعدادات المشروع",
+                "description": "قم بتأكيد نوع المشروع الذي تم اكتشافه وتكوين كيفية إنشاء المشروع.",
+                "detectedFrom": "تم اكتشافه من {0}",
+                "projectType": "نوع المشروع",
+                "projectTypeHint": "يتم اكتشافه تلقائيًا بناءً على ملفات المشروع. إذا كانت النتيجة غير صحيحة، يرجى تحديد نوع المشروع الصحيح.",
+                "domain": "اسم النطاق",
+                "applySsl": "التقدم بطلب للحصول على SSL",
+                "domainRequiredHint": "مطلوب لمواقع PHP والمواقع الثابتة.",
+                "domainOptionalHint": "اختياري. اتركه فارغًا إذا كان سيتم الوصول إلى التطبيق عن طريق IP والمنفذ.",
+                "projectName": "اسم المشروع",
+                "phpVersion": "نسخة PHP",
+                "nodeVersion": "إصدار Node.js",
+                "startCommand": "أمر البدء",
+                "applicationPort": "منفذ التطبيق",
+                "dependencyInstallation": "تثبيت التبعية",
+                "dependencyInstallationHint": "تؤدي إعادة تثبيت التبعيات إلى إزالة دليلNode_modules الموجود وتثبيت حزم المشروع مرة أخرى للخادم الحالي. يتم الاحتفاظ بملفات القفل الموجودة.",
+                "installDependencies": "تثبيت التبعيات",
+                "importAction": "استيراد المشروع",
+                "importing": "جارٍ الاستيراد...",
+                "types": {
+                  "php": "موقع PHP",
+                  "node": "مشروع Node.js",
+                  "static": "موقع ويب ثابت"
+                }
+              },
+              "database": {
+                "title": "استيراد قاعدة البيانات",
+                "description": "استخدم نسخة احتياطية تم اكتشافها أو قم بتحميل ملف SQL آخر.",
+                "detectedHint": "تم العثور على نسخة احتياطية لـ MySQL في ملفات المشروع.",
+                "notDetectedHint": "لم يتم اكتشاف نسخة احتياطية لـ SQL. يمكنك تحميل واحد يدويا.",
+                "selectFile": "حدد نسخة احتياطية لقاعدة البيانات",
+                "importTo": "سيتم الاستيراد إلى {0}",
+                "editSettings": "تعديل الإعدادات",
+                "backupSource": "المصدر الاحتياطي",
+                "detected": "تم اكتشاف نسخة احتياطية",
+                "useDetected": "حدد النسخة الاحتياطية التي تم اكتشافها",
+                "uploadAnother": "تحميل النسخة الاحتياطية لقاعدة البيانات",
+                "sqlFile": "ملف النسخ الاحتياطي SQL",
+                "uploadPlaceholder": "اختر .sql أو .sql.gz",
+                "uploadHint": "يدعم ملفات SQL أو SQL.GZ أو GZ",
+                "configuration": "تكوين قاعدة البيانات",
+                "name": "اسم قاعدة البيانات",
+                "user": "مستخدم قاعدة البيانات",
+                "generate": "إنشاء",
+                "charset": "مجموعة الأحرف",
+                "updateConfig": "تحديث تكوين المشروع",
+                "updateConfigHint": "قم بتطبيق بيانات اعتماد قاعدة البيانات الجديدة على ملف التكوين الذي تم اكتشافه.",
+                "doNotImport": "عدم استيراد قاعدة البيانات",
+                "saveSettings": "حفظ الإعدادات"
+              },
+              "directory": {
+                "currentServer": "خادم aaPanel الحالي",
+                "localTitle": "حدد الدليل المحلي",
+                "remoteTitle": "حدد الدليل البعيد",
+                "empty": "لا توجد أدلة فرعية في هذا الموقع الذي تمت محاكاته",
+                "localHint": "اختر دليل الوجهة على هذا الخادم.",
+                "remoteHint": "اختر الدليل المصدر على الخادم البعيد."
+              },
+              "summary": {
+                "title": "ملخص الاستيراد",
+                "description": "المراجعة قبل إنشاء المشروع",
+                "source": "مصدر المشروع",
+                "sourceItem": "العنصر المصدر",
+                "detectedAs": "تم اكتشافه كـ",
+                "destination": "الوجهة",
+                "domain": "المجال",
+                "database": "قاعدة البيانات",
+                "targetDatabase": "قاعدة البيانات المستهدفة",
+                "configUpdate": "تحديث التكوين",
+                "notice": "لن يتم تغيير أي مشروع موجود حتى تقوم بتأكيد الاستيراد.",
+                "sources": {
+                  "archive": "الأرشيف الذي تم تحميله",
+                  "remote": "{0} خادم",
+                  "git": "مستودع Git",
+                  "localArchive": "المجلد المحلي أو الأرشيف"
+                }
+              },
+              "success": {
+                "title": "تم استيراد المشروع بنجاح",
+                "description": "المشروع متاح الآن في قائمة مواقع الويب الخاصة بك على aaPanel.",
+                "domain": "النطاق",
+                "project": "المشروع",
+                "type": "نوع المشروع",
+                "path": "مسار المشروع",
+                "database": "قاعدة البيانات",
+                "notImported": "لم يتم استيراده",
+                "status": "الحالة",
+                "ready": "جاهز",
+                "importAnother": "استيراد آخر",
+                "viewProject": "عرض المشروع"
+              },
+              "validation": {
+                "archiveRequired": "الرجاء تحديد أرشيف المشروع",
+                "localArchiveRequired": "الرجاء تحديد مجلد المشروع المحلي أو الأرشيف",
+                "projectDirectoryRequired": "لا يمكن أن يكون دليل المشروع فارغًا",
+                "archiveFormat": "حدد أرشيف ZIP أو TAR.GZ أو TGZ",
+                "archiveSize": "يجب أن يكون حجم الأرشيف 5 غيغابايت أو أصغر",
+                "localDirectoryRequired": "لا يمكن أن يكون الدليل المحلي فارغًا",
+                "serverRequired": "الخادم والمنفذ مطلوبان",
+                "credentialsRequired": "اسم المستخدم وكلمة المرور مطلوبان",
+                "remoteDirectoryRequired": "لا يمكن أن يكون الدليل البعيد فارغًا",
+                "repositoryRequired": "لا يمكن أن يكون عنوان URL للمستودع فارغًا",
+                "branchRequired": "يرجى اختبار الاتصال واختيار الفرع",
+                "tokenRequired": "لا يمكن أن يكون رمز الوصول فارغًا",
+                "privateKeyRequired": "الرجاء تحديد مفتاح SSH",
+                "privateKeyContentRequired": "لا يمكن أن يكون محتوى المفتاح الخاص فارغًا",
+                "usernameRequired": "لا يمكن أن يكون اسم المستخدم فارغًا",
+                "passwordRequired": "لا يمكن أن تكون كلمة المرور فارغة",
+                "domainRequired": "لا يمكن أن يكون المجال فارغًا لهذا النوع من المشروع",
+                "projectNameRequired": "لا يمكن أن يكون اسم المشروع فارغًا",
+                "startCommandRequired": "Start command cannot be empty",
+                "portRequired": "Application port cannot be empty",
+                "portInvalid": "أدخل منفذًا صالحًا بين 1 و65535",
+                "databaseFileRequired": "الرجاء تحديد نسخة احتياطية لقاعدة البيانات",
+                "databaseCredentialsRequired": "مطلوب اسم قاعدة البيانات والمستخدم وكلمة المرور",
+                "databaseFormat": "حدد ملف النسخ الاحتياطي SQL أو SQL.GZ أو GZ",
+                "databaseNameExists": "The database name already exists. Please change the Database name."
               }
             },
             "form": {
@@ -386,6 +635,7 @@
               "projectNamePlaceholder": "فقط أحرف وأرقام",
               "runtimeVersion": "إصدار بيئة التشغيل",
               "nodeRecommendedVersion": "Node.js 24.15.0 (موصى به)",
+              "runtimeInstalledVersion": "{0} (مثبّت)",
               "packageManager": "مدير الحزم",
               "frameworkTemplate": "قالب الإطار",
               "mappingDomain": "نطاق التعيين",

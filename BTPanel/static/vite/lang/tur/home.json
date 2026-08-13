@@ -341,7 +341,256 @@
           "proxy": {
             "title": "Ters Vekil Sunucu Oluştur",
             "description": "Vekil sunucu önbelleği ile dahili portları harici alan adlarına yönlendirin."
+          },
+          "importProject": {
+            "title": "Mevcut bir projeyi içe aktarın",
+            "description": "Projenizin nerede saklanacağını seçin. aaPanel incelemeniz için bir proje türü önerecektir."
+          },
+          "aiBuilder": {
+            "title": "AI Web Sitesi Oluşturucu",
+            "description": "Yapay zeka ile saniyeler içinde göz alıcı bir web sitesi oluşturun.",
+            "action": "Oluşturmaya başlayın"
           }
+        }
+      },
+      "importProject": {
+        "brand": "aaPanel Projesini İçe Aktarma",
+        "title": "Mevcut bir projeyi içe aktarın",
+        "description": "Projenizin nerede saklanacağını seçin. aaPanel incelemeniz için bir proje türü önerecektir.",
+        "steps": {
+          "source": "Bir kaynak seçin",
+          "analyzing": "Proje analiz ediliyor",
+          "review": "Projeyi inceleyin",
+          "complete": "İçe aktarma tamamlandı"
+        },
+        "sources": {
+          "archive": {
+            "title": "Arşivi yükle",
+            "description": "Bilgisayarınızdan ZIP, TAR.GZ veya TGZ dosyalarını yükleyin."
+          },
+          "remote": {
+            "title": "FTP / SFTP sunucusu",
+            "description": "Uzak dosya sunucusundan bir proje dizini indirin."
+          },
+          "git": {
+            "title": "Git deposu",
+            "description": "Genel veya özel bir Git deposunu ve şubesini klonlayın."
+          },
+          "localArchive": {
+            "title": "Yerel dosyalar",
+            "description": "Halihazırda bu sunucuda depolanan bir proje klasörünü veya arşivi içe aktarın."
+          }
+        },
+        "source": {
+          "archive": {
+            "title": "Arşiv yüklemeyi yapılandırın",
+            "description": "Proje paketinizi yükleyin ve hedefini seçin.",
+            "action": "Yükleme & analiz etme",
+            "projectArchive": "Proje arşivi",
+            "dropTitle": "Buraya bir arşiv bırakın veya bir dosya seçin",
+            "dropHint": "ZIP, TAR.GZ veya TGZ · 5 GB'a kadar",
+            "localHint": "Bu aaPanel sunucusunda arşivin çıkarılacağı dizin.",
+            "cleanup": "İçe aktarma temizliği",
+            "cleanupHint": "İçe aktarma işleminden sonra geçici dosyaları kaldırın"
+          },
+          "remote": {
+            "title": "FTP/SFTP'ye bağlanın",
+            "description": "Uzak bağlantı ve hedef ayrıntılarını girin.",
+            "action": "Bağlan & analiz et",
+            "testConnectedAndSelectDirectory": "Bağlantıyı Test Edin ve Dizin Seçin",
+            "authentication": "Kimlik Doğrulama",
+            "passwordAuthentication": "Şifre",
+            "privateKey": "Özel anahtar",
+            "privateKeyPlaceholder": "SSH özel anahtar içeriğinin tamamını yapıştırın",
+            "remoteHint": "Uzak sunucudaki proje dizinini seçin.",
+            "localHint": "Dosyalar bu dizine kopyalanacak."
+          },
+          "git": {
+            "title": "Git deposunu klonlayın",
+            "description": "Depoyu, kimlik doğrulamayı ve hedefi yapılandırın.",
+            "action": "Klonlayın & analiz edin",
+            "repositoryUrl": "Depo URL'si",
+            "branch": "Dal veya etiket",
+            "branchPlaceholder": "Bağlantıyı Test Edin ve Dal Seçin",
+            "testConnection": "Bağlantıyı test edin",
+            "testAgain": "Tekrar test edin",
+            "connectionSuccessful": "Bağlantı başarılı.",
+            "branchesFound": "{0} Git şubesi bulundu.",
+            "verifyRepository": "Mevcut dalları yüklemek için depo erişimini doğrulayın.",
+            "noBranches": "Bu depoda hiçbir dal veya etiket bulunamadı.",
+            "authentication": "Kimlik Doğrulama",
+            "public": "Herkese açık",
+            "token": "Jeton",
+            "sshKey": "SSH Anahtarı",
+            "copySshKey": "SSH anahtarını kopyala",
+            "publicHint": "Kimlik bilgisi gerekli değil.",
+            "accessToken": "Erişim jetonu",
+            "privateKey": "Özel anahtar",
+            "chooseKey": "Bir .pem veya .key dosyası seçin",
+            "passphrase": "Anahtar parolası",
+            "localHint": "Depo bu dizine kopyalanacak.",
+            "cloneDepth": "Klon derinliği",
+            "latestCommitOnly": "Yalnızca en son işleme",
+            "fullGitHistory": "Tam Git geçmişi",
+            "shallowClone": "Sığ klon"
+          },
+          "localArchive": {
+            "title": "Yerel kaynağı yapılandırın",
+            "description": "Bu aaPanel sunucusunda depolanan bir proje klasörünü veya arşivi seçin.",
+            "action": "Kaynağı analiz edin",
+            "archiveLocation": "Proje kaynağı",
+            "archiveHint": "Geçerli sunucudan bir proje klasörü veya ZIP, TAR.GZ veya TGZ arşivi seçin.",
+            "projectDirectory": "Proje dizini",
+            "projectDirectoryHint": "Proje bu dizinde oluşturulacak."
+          }
+        },
+        "common": {
+          "back": "Geri",
+          "browse": "Göz Atın",
+          "cancel": "İptal",
+          "choose": "Seçin",
+          "configure": "Yapılandır",
+          "disabled": "Devre Dışı",
+          "edit": "Düzenle",
+          "enabled": "Etkin",
+          "localDirectory": "Yerel dizin",
+          "notSet": "Ayarlanmadı",
+          "optional": "İsteğe bağlı",
+          "password": "Şifre",
+          "port": "Bağlantı Noktası",
+          "protocol": "Protokol",
+          "remoteDirectory": "Uzak dizin",
+          "save": "Bu dizini kullan",
+          "select": "Seç",
+          "server": "Sunucu",
+          "username": "Kullanıcı adı"
+        },
+        "analyzing": {
+          "title": "Projeniz analiz ediliyor",
+          "preparing": "Kaynak dosyalar hazırlanıyor...",
+          "reading": "Proje dosyaları ve bağımlılıkları okunuyor...",
+          "checking": "Yapılandırma ve veritabanı yedeklemeleri kontrol ediliyor...",
+          "detecting": "Proje türü ve çalışma zamanı algılanıyor...",
+          "complete": "Analiz tamamlandı. İnceleme hazırlanıyor..."
+        },
+        "review": {
+          "title": "Proje ayarlarını inceleyin",
+          "description": "Algılanan proje türünü onaylayın ve projenin nasıl oluşturulacağını yapılandırın.",
+          "detectedFrom": "{0} konumundan algılandı",
+          "projectType": "Proje türü",
+          "projectTypeHint": "Proje dosyalarına göre otomatik olarak algılandı. Sonuç yanlışsa lütfen doğru proje tipini seçin.",
+          "domain": "Alan adı",
+          "applySsl": "SSL için başvurun",
+          "domainRequiredHint": "PHP ve Statik web siteleri için gereklidir.",
+          "domainOptionalHint": "İsteğe bağlı. Uygulamaya IP ve port üzerinden erişilecekse boş bırakın.",
+          "projectName": "Proje adı",
+          "phpVersion": "PHP sürümü",
+          "nodeVersion": "Node.js sürümü",
+          "startCommand": "Başlatma komutu",
+          "applicationPort": "Uygulama bağlantı noktası",
+          "dependencyInstallation": "Bağımlılık kurulumu",
+          "dependencyInstallationHint": "Bağımlılıkları yeniden yüklemek, mevcut node_modules dizinini kaldırır ve proje paketlerini geçerli sunucu için yeniden yükler. Mevcut kilit dosyaları korunur.",
+          "installDependencies": "Bağımlılıkları yükleyin",
+          "importAction": "Projeyi içe aktar",
+          "importing": "İçe aktarılıyor...",
+          "types": {
+            "php": "PHP Web Sitesi",
+            "node": "Node.js Projesi",
+            "static": "Statik Web Sitesi"
+          }
+        },
+        "database": {
+          "title": "Veritabanını içe aktarma",
+          "description": "Algılanan bir yedeği kullanın veya başka bir SQL dosyası yükleyin.",
+          "detectedHint": "Proje dosyalarında bir MySQL yedeği bulundu.",
+          "notDetectedHint": "Hiçbir SQL yedeği algılanmadı. Bir tanesini manuel olarak yükleyebilirsiniz.",
+          "selectFile": "Bir veritabanı yedeklemesi seçin",
+          "importTo": "{0}'a aktarılacak",
+          "editSettings": "Ayarları düzenle",
+          "backupSource": "Yedekleme kaynağı",
+          "detected": "Yedekleme algılandı",
+          "useDetected": "Algılanan yedeklemeyi seçin",
+          "uploadAnother": "Veritabanı yedeğini yükleyin",
+          "sqlFile": "SQL yedekleme dosyası",
+          "uploadPlaceholder": ".sql veya .sql.gz'yi seçin",
+          "uploadHint": "SQL, SQL.GZ veya GZ dosyalarını destekler",
+          "configuration": "Veritabanı yapılandırması",
+          "name": "Veritabanı adı",
+          "user": "Veritabanı kullanıcısı",
+          "generate": "Oluştur",
+          "charset": "Karakter kümesi",
+          "updateConfig": "Proje yapılandırmasını güncelleyin",
+          "updateConfigHint": "Yeni veritabanı kimlik bilgilerini algılanan yapılandırma dosyasına uygulayın.",
+          "doNotImport": "Veritabanını içe aktarma",
+          "saveSettings": "Ayarları kaydet"
+        },
+        "directory": {
+          "currentServer": "Mevcut aaPanel sunucusu",
+          "localTitle": "Yerel dizini seçin",
+          "remoteTitle": "Uzak dizini seç",
+          "empty": "Bu simüle edilmiş konumda alt dizin yok",
+          "localHint": "Bu sunucudaki hedef dizini seçin.",
+          "remoteHint": "Uzak sunucudaki kaynak dizini seçin."
+        },
+        "summary": {
+          "title": "İçe aktarma özeti",
+          "description": "Projeyi oluşturmadan önce inceleyin",
+          "source": "Proje kaynağı",
+          "sourceItem": "Kaynak öğesi",
+          "detectedAs": "Şu şekilde algılandı:",
+          "destination": "Hedef",
+          "domain": "Etki alanı",
+          "database": "Veritabanı",
+          "targetDatabase": "Hedef veritabanı",
+          "configUpdate": "Yapılandırma güncellemesi",
+          "notice": "Siz içe aktarmayı onaylayana kadar mevcut hiçbir proje değiştirilmeyecek.",
+          "sources": {
+            "archive": "Yüklenen arşiv",
+            "remote": "{0} sunucusu",
+            "git": "Git deposu",
+            "localArchive": "Yerel klasör veya arşiv"
+          }
+        },
+        "success": {
+          "title": "Proje başarıyla içe aktarıldı",
+          "description": "Proje artık aaPanel web sitesi listenizde mevcut.",
+          "domain": "Etki alanı",
+          "project": "Proje",
+          "type": "Proje türü",
+          "path": "Proje yolu",
+          "database": "Veritabanı",
+          "notImported": "İçe aktarılmadı",
+          "status": "Durum",
+          "ready": "Hazır",
+          "importAnother": "Başka bir tane içe aktarın",
+          "viewProject": "Projeyi görüntüle"
+        },
+        "validation": {
+          "archiveRequired": "Lütfen bir proje arşivi seçin",
+          "localArchiveRequired": "Lütfen yerel bir proje klasörü veya arşivi seçin",
+          "projectDirectoryRequired": "Proje dizini boş olamaz",
+          "archiveFormat": "Bir ZIP, TAR.GZ veya TGZ arşivi seçin",
+          "archiveSize": "Arşiv 5 GB veya daha küçük olmalıdır",
+          "localDirectoryRequired": "Yerel dizin boş olamaz",
+          "serverRequired": "Sunucu ve bağlantı noktası gerekli",
+          "credentialsRequired": "Kullanıcı adı ve şifre gerekli",
+          "remoteDirectoryRequired": "Uzak dizin boş olamaz",
+          "repositoryRequired": "Depo URL'si boş olamaz",
+          "branchRequired": "Lütfen bağlantıyı test edin ve bir şube seçin",
+          "tokenRequired": "Erişim belirteci boş olamaz",
+          "privateKeyRequired": "Lütfen bir SSH anahtarı seçin",
+          "privateKeyContentRequired": "Özel anahtar içeriği boş olamaz",
+          "usernameRequired": "Kullanıcı adı boş olamaz",
+          "passwordRequired": "Şifre boş olamaz",
+          "domainRequired": "Etki alanı bu proje türü için boş olamaz",
+          "projectNameRequired": "Proje adı boş olamaz",
+          "startCommandRequired": "Start command cannot be empty",
+          "portRequired": "Application port cannot be empty",
+          "portInvalid": "1 ile 65535 arasında geçerli bir bağlantı noktası girin",
+          "databaseFileRequired": "Lütfen bir veritabanı yedeği seçin",
+          "databaseCredentialsRequired": "Veritabanı adı, kullanıcı ve şifre gerekli",
+          "databaseFormat": "Bir SQL, SQL.GZ veya GZ yedekleme dosyası seçin",
+          "databaseNameExists": "The database name already exists. Please change the Database name."
         }
       },
       "form": {
@@ -386,6 +635,7 @@
         "projectNamePlaceholder": "Yalnızca harfler ve sayılar",
         "runtimeVersion": "Çalışma zamanı sürümü",
         "nodeRecommendedVersion": "Node.js 24.15.0 (Önerilen)",
+        "runtimeInstalledVersion": "{0} (Yüklü)",
         "packageManager": "Paket yöneticisi",
         "frameworkTemplate": "Çerçeve şablonu",
         "mappingDomain": "Eşleme alan adı",

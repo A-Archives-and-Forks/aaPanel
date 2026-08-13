@@ -156,6 +156,9 @@ class main(NodeJs):
         get.project_type = get.get("project_type", None)
         get.port = get.get('port', "")
         get.bind_extranet = get.get('bind_extranet', 0)
+        get.project_cwd = get.get("project_cwd", "")
+        if re.search(r"\s", get.project_cwd):
+            self.ws_err_exit(False, 'Project path cannot contain spaces.', code=2)
         if get.project_type is None:
             self.ws_err_exit(False, 'The "project_type" parameter cannot be left blank.', code=2)
         if not get.project_type in ("nodejs", "pm2", "general"):

@@ -138,7 +138,38 @@ class TgMsg:
         chat_id = self.my_id
 
         msg = msg.strip()
+        # 清理已由 to_tg_msg 转义过的内容, 避免二次转义:
+        # 1. 去掉 HTML 标签 (如 <font color=#20a53a>), Telegram MarkdownV2 不支持
+        # 2. 去掉 to_tg_msg 预先转义的 \ 字符
+        msg = re.sub(r'<[^>]+>', '', msg)
+        msg = msg.replace('\\', '')
+
+        # 处理 Markdown 语法 (参考 class/msg/tg_msg.py process_character):
+        # 1. 去掉标题的 #### 标记, 提取标题行用于加粗
+        # 2. 去掉行首的 > 引用符 (正文中间的 > 如 CPU > 80% 不受影响)
+        header = ''
+        if '####' in msg:
+            msg = msg.replace('####', '').strip()
+            if '\n' in msg:
+                header = msg.split('\n', 1)[0].strip()
+                msg = msg.split('\n', 1)[1].strip()
+            else:
+                header = msg
+                msg = ''
+        msg = re.sub(r'(?m)^>[ ]?', '', msg)
+        # 仅过滤无值的 hook 行, 如 After_hook: Restart - (后面没有指定服务) 不发送;
+        # 带值如 After_hook: Restart - apache 正常发送
+        msg = '\n'.join(
+            line for line in msg.split('\n')
+            if not re.match(r'^After_hook:\s*Restart\s*-\s*$', line)
+        )
+        # 所有消息行之间统一加空行, 便于阅读
+        msg = msg.replace('\n', '\n\n')
+
+        # 统一转义一次
         msg = self.escape_markdown_v2(msg)
+        if header:
+            msg = '*{}*\n\n{}'.format(self.escape_markdown_v2(header), msg)
         import asyncio
 
         loop = asyncio.new_event_loop()
@@ -164,8 +195,8 @@ class TgMsg:
         """
         Escape special characters for Telegram's MarkdownV2 mode.
         """
-        # 所有需要转义的 MarkdownV2 字符
-        escape_chars = r'\_*[]()~`>#+-=|{}.!'
+        # 所有需要转义的 MarkdownV2 字符 (不包含 \ , 反斜杠由 send_msg 统一处理)
+        escape_chars = r'_*[]()~`>#+-=|{}.!'
         for ch in escape_chars:
             text = text.replace(ch, '\\' + ch)
         return text

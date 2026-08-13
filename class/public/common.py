@@ -5702,6 +5702,35 @@ def get_free_ip_info(address):
     except:
         pass
 
+    geo2_mmdb = '{}/config/GeoLite2-City.mmdb'.format(get_panel_path())
+    if os.path.exists(geo2_mmdb):
+        try:
+            from geoip2 import database
+            reader = database.Reader(geo2_mmdb)
+            res = reader.city(ip)
+            reader.close()
+            country = res.raw.get('country', {})
+            geo_info = {
+                'continent': '',
+                'country': country.get('country', ''),
+                'province': country.get('province', ''),
+                'city': country.get('city', ''),
+                'region': '',
+                'carrier': '',
+                'division': '',
+                'en_country': country.get('country', ''),
+                'en_short_code': country.get('en_short_code', ''),
+                'longitude': country.get('longitude', ''),
+                'latitude': country.get('latitude', ''),
+                'tag': '',
+            }
+            geo_info['info'] = '{} {} {}'.format(
+                geo_info['country'], geo_info['province'], geo_info['city']
+            ).strip()
+            return geo_info
+        except:
+            pass
+
     return {'info': 'Unknown'}
 
 
@@ -5715,11 +5744,11 @@ def free_login_area(login_ip, login_type='panel'):
     if os.path.exists('{}/data/{}_login_area.pl'.format(get_panel_path(), 'btpanel')):
         return False, {}
     login_ip_area = ''
-    ip_info = get_free_ips_area([login_ip])
-    if not login_ip in ip_info:
+    # 改英文IP库：用本地 GeoLite2 替代云端免费IP库，避免登录告警/推送出现中文归属地
+    ip_info = get_free_ip_info(login_ip)
+    if not ip_info:
         return False, {}
 
-    ip_info = ip_info[login_ip]
     if not 'city' in ip_info:
         login_ip_area = ip_info['info']
     status = True
@@ -5738,7 +5767,7 @@ def free_login_area(login_ip, login_type='panel'):
             if city == 'Local':
                 login_ip_area += '（<font color=red>Intranet</font>）'
             else:
-                login_ip_area += '（<font color=red>Abnormal login</font>）'
+                login_ip_area += '（<font color=red>Public</font>）'
         data[city] += 1
         writeFile(s_conf, json.dumps(data))
     data['login_ip_area'] = login_ip_area

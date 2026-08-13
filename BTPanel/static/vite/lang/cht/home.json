@@ -346,7 +346,256 @@
           "proxy": {
             "title": "建立反向代理",
             "description": "將內部連接埠路由到外部網域，並設定代理快取。"
+          },
+          "importProject": {
+            "title": "導入現有項目",
+            "description": "選擇項目的儲存位置。 aaPanel 將建議一個項目類型供您查看。"
+          },
+          "aiBuilder": {
+            "title": "AI 網站產生器",
+            "description": "使用 AI 在幾秒鐘內建立一個令人驚嘆的網站。",
+            "action": "開始建置"
           }
+        }
+      },
+      "importProject": {
+        "brand": "aaPanel 專案導入",
+        "title": "導入現有項目",
+        "description": "選擇項目的儲存位置。 aaPanel 將建議一個項目類型供您查看。",
+        "steps": {
+          "source": "選擇來源",
+          "analyzing": "分析項目",
+          "review": "審核項目",
+          "complete": "導入完成"
+        },
+        "sources": {
+          "archive": {
+            "title": "上傳檔案",
+            "description": "從您的電腦上傳 ZIP、TAR.GZ 或 TGZ 檔案。"
+          },
+          "remote": {
+            "title": "FTP/SFTP 伺服器",
+            "description": "從遠端檔案伺服器下載專案目錄。"
+          },
+          "git": {
+            "title": "Git 儲存庫",
+            "description": "複製公用或私人 Git 儲存庫和分支。"
+          },
+          "localArchive": {
+            "title": "本地文件",
+            "description": "匯入已儲存在此伺服器上的項目資料夾或存檔。"
+          }
+        },
+        "source": {
+          "archive": {
+            "title": "設定存檔上傳",
+            "description": "上傳您的項目包並選擇其目的地。",
+            "action": "上傳 & 分析",
+            "projectArchive": "專案存檔",
+            "dropTitle": "將檔案拖曳到此處或選擇一個檔案",
+            "dropHint": "ZIP、TAR.GZ 或 TGZ · 最大 5 GB",
+            "localHint": "此 aaPanel 伺服器上將在其中提取已存檔的目錄。",
+            "cleanup": "導入清理",
+            "cleanupHint": "匯入後刪除暫存檔案"
+          },
+          "remote": {
+            "title": "連接到 FTP/SFTP",
+            "description": "輸入遠端連線和目標詳細資料。",
+            "action": "連接 & 分析",
+            "testConnectedAndSelectDirectory": "測試連線並選擇目錄",
+            "authentication": "驗證",
+            "passwordAuthentication": "密碼",
+            "privateKey": "私鑰",
+            "privateKeyPlaceholder": "貼上完整的 SSH 私鑰內容",
+            "remoteHint": "選擇遠端伺服器上的項目目錄。",
+            "localHint": "檔案將會被複製到此目錄中。"
+          },
+          "git": {
+            "title": "複製 Git 儲存庫",
+            "description": "設定儲存庫、驗證和目標。",
+            "action": "複製 & 分析",
+            "repositoryUrl": "儲存庫 URL",
+            "branch": "分支或標記",
+            "branchPlaceholder": "測試連線並選擇分支",
+            "testConnection": "測試連線",
+            "testAgain": "再次測試",
+            "connectionSuccessful": "連線成功。",
+            "branchesFound": "{0} 已找到 Git 分支。",
+            "verifyRepository": "驗證儲存庫存取權限以載入可用分支。",
+            "noBranches": "在此儲存庫中找不到分支或標籤。",
+            "authentication": "驗證",
+            "public": "公",
+            "token": "令牌",
+            "sshKey": "SSH 金鑰",
+            "copySshKey": "複製 SSH 金鑰",
+            "publicHint": "無需憑證。",
+            "accessToken": "存取權令牌",
+            "privateKey": "私鑰",
+            "chooseKey": "選擇 .pem 或 .key 檔案",
+            "passphrase": "金鑰密碼",
+            "localHint": "儲存庫將會被複製到此目錄中。",
+            "cloneDepth": "克隆深度",
+            "latestCommitOnly": "僅最新提交",
+            "fullGitHistory": "完整的 Git 歷史記錄",
+            "shallowClone": "淺克隆"
+          },
+          "localArchive": {
+            "title": "設定本地來源",
+            "description": "選擇儲存在此 aaPanel 伺服器上的項目資料夾或存檔。",
+            "action": "分析來源",
+            "archiveLocation": "專案來源",
+            "archiveHint": "從目前伺服器中選擇專案資料夾或 ZIP、TAR.GZ 或 TGZ 存檔。",
+            "projectDirectory": "專案目錄",
+            "projectDirectoryHint": "將在此目錄中建立項目。"
+          }
+        },
+        "common": {
+          "back": "回傳",
+          "browse": "瀏覽",
+          "cancel": "取消",
+          "choose": "選擇",
+          "configure": "設定",
+          "disabled": "已停用",
+          "edit": "編輯",
+          "enabled": "已啟用",
+          "localDirectory": "本地目錄",
+          "notSet": "未設定",
+          "optional": "可選",
+          "password": "密碼",
+          "port": "連接埠",
+          "protocol": "協定",
+          "remoteDirectory": "遠端目錄",
+          "save": "使用此目錄",
+          "select": "選擇",
+          "server": "伺服器",
+          "username": "使用者名稱"
+        },
+        "analyzing": {
+          "title": "分析您的項目",
+          "preparing": "準備原始檔...",
+          "reading": "讀取專案檔案與相依性...",
+          "checking": "檢查設定和資料庫備份...",
+          "detecting": "正在偵測項目類型和運作時間...",
+          "complete": "分析完成。正在準備審核..."
+        },
+        "review": {
+          "title": "查看項目設定",
+          "description": "確認偵測到的項目類型並配置項目的建立方式。",
+          "detectedFrom": "從 {0}",
+          "projectType": "項目類型",
+          "projectTypeHint": "依照專案文件自動偵測。如果結果不正確，請選擇正確的項目類型。",
+          "domain": "網域",
+          "applySsl": "申請 SSL",
+          "domainRequiredHint": "PHP 和靜態網站必要。",
+          "domainOptionalHint": "可選。如果應用程式將透過 IP 和連接埠訪問，請保留空白。",
+          "projectName": "項目名稱",
+          "phpVersion": "PHP 版本",
+          "nodeVersion": "Node.js 版本",
+          "startCommand": "啟動指令",
+          "applicationPort": "應用程式連接埠",
+          "dependencyInstallation": "依賴項安裝",
+          "dependencyInstallationHint": "重新安裝相依性會刪除現有的 node_modules 目錄，並為目前伺服器再次安裝專案包。現有的鎖定檔案將被保留。",
+          "installDependencies": "安裝依賴項",
+          "importAction": "導入項目",
+          "importing": "正在導入...",
+          "types": {
+            "php": "PHP 網站",
+            "node": "Node.js 專案",
+            "static": "靜態網站"
+          }
+        },
+        "database": {
+          "title": "資料庫導入",
+          "description": "使用偵測到的備份或上傳另一個 SQL 檔案。",
+          "detectedHint": "在專案文件中找到 MySQL 備份。",
+          "notDetectedHint": "未偵測到 SQL 備份。您可以手動上傳一份。",
+          "selectFile": "選擇資料庫備份",
+          "importTo": "將會匯入到 {0}",
+          "editSettings": "編輯設定",
+          "backupSource": "備份來源",
+          "detected": "偵測到備份",
+          "useDetected": "選擇偵測到的備份",
+          "uploadAnother": "上傳資料庫備份",
+          "sqlFile": "SQL 備份檔",
+          "uploadPlaceholder": "選擇 .sql 或 .sql.gz",
+          "uploadHint": "支援 SQL、SQL.GZ 或 GZ 檔案",
+          "configuration": "資料庫配置",
+          "name": "資料庫名稱",
+          "user": "資料庫使用者",
+          "generate": "產生",
+          "charset": "字元集",
+          "updateConfig": "更新專案配置",
+          "updateConfigHint": "將新的資料庫憑證套用到偵測到的設定檔。",
+          "doNotImport": "不匯入資料庫",
+          "saveSettings": "儲存設定"
+        },
+        "directory": {
+          "currentServer": "目前 aaPanel 伺服器",
+          "localTitle": "選擇本地目錄",
+          "remoteTitle": "選擇遠端目錄",
+          "empty": "此模擬位置中沒有子目錄",
+          "localHint": "選擇此伺服器上的目標目錄。",
+          "remoteHint": "選擇遠端伺服器上的來源目錄。"
+        },
+        "summary": {
+          "title": "導入摘要",
+          "description": "建立專案前檢查",
+          "source": "專案來源",
+          "sourceItem": "來源項目",
+          "detectedAs": "偵測為",
+          "destination": "目的地",
+          "domain": "域",
+          "database": "資料庫",
+          "targetDatabase": "目標資料庫",
+          "configUpdate": "設定更新",
+          "notice": "在您確認匯入之前，不會變更任何現有項目。",
+          "sources": {
+            "archive": "已上傳存檔",
+            "remote": "{0} 伺服器",
+            "git": "Git 儲存庫",
+            "localArchive": "本機資料夾或檔案"
+          }
+        },
+        "success": {
+          "title": "專案導入成功",
+          "description": "該項目現已出現在您的 aaPanel 網站清單中。",
+          "domain": "域",
+          "project": "項目",
+          "type": "項目類型",
+          "path": "專案路徑",
+          "database": "資料庫",
+          "notImported": "未導入",
+          "status": "狀態",
+          "ready": "準備好",
+          "importAnother": "導入另一個",
+          "viewProject": "查看項目"
+        },
+        "validation": {
+          "archiveRequired": "請選擇項目存檔",
+          "localArchiveRequired": "請選擇本機項目資料夾或存檔",
+          "projectDirectoryRequired": "專案目錄不能為空",
+          "archiveFormat": "選擇 ZIP、TAR.GZ 或 TGZ 檔案",
+          "archiveSize": "檔案必須為 5 GB 或更小",
+          "localDirectoryRequired": "本地目錄不能為空",
+          "serverRequired": "需要伺服器和連接埠",
+          "credentialsRequired": "需要使用者名稱和密碼",
+          "remoteDirectoryRequired": "遠端目錄不能為空",
+          "repositoryRequired": "儲存庫 URL 不能為空白",
+          "branchRequired": "請測試連線並選擇一分支",
+          "tokenRequired": "存取權杖不能為空",
+          "privateKeyRequired": "請選擇 SSH 金鑰",
+          "privateKeyContentRequired": "私鑰內容不能為空白",
+          "usernameRequired": "使用者名稱不能為空",
+          "passwordRequired": "密碼不能為空白",
+          "domainRequired": "此項目類型的域不能為空",
+          "projectNameRequired": "項目名稱不能為空白",
+          "startCommandRequired": "啟動命令不能為空",
+          "portRequired": "應用程式連接埠不能為空",
+          "portInvalid": "輸入 1 到 65535 之間的有效連接埠",
+          "databaseFileRequired": "請選擇資料庫備份",
+          "databaseCredentialsRequired": "需要資料庫名稱、使用者和密碼",
+          "databaseFormat": "選擇 SQL、SQL.GZ 或 GZ 備份檔",
+          "databaseNameExists": "資料庫名稱已存在，請修改 Database name"
         }
       },
       "form": {
@@ -391,6 +640,7 @@
         "projectNamePlaceholder": "僅支援字母和數字",
         "runtimeVersion": "執行時版本",
         "nodeRecommendedVersion": "Node.js 24.15.0（推薦）",
+        "runtimeInstalledVersion": "{0}（已安裝）",
         "packageManager": "套件管理器",
         "frameworkTemplate": "框架範本",
         "mappingDomain": "對應網域",

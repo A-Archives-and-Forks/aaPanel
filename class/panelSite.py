@@ -1554,6 +1554,7 @@ listener Default%s{
             if os.path.exists(backup_cert):
                 shutil.move(backup_cert, path)
             return public.return_msg_gettext(False, public.lang('ERROR: <br><a style="color:red;">' + isError.replace("\n", '<br>') + '</a>'))
+        self._clear_nginx_proxy_cache()
         public.serviceReload()
 
         if os.path.exists(path + '/partnerOrderId'): os.remove(path + '/partnerOrderId')
@@ -2110,6 +2111,14 @@ listener SSL443 {
         # except:
         # return False;
 
+    # 多服务模式下清除Nginx反向代理缓存并重启(避免部署SSL后重定向过多)
+    def _clear_nginx_proxy_cache(self):
+        if not public.get_multi_webservice_status():
+            return
+        proxy_cache_dir = '/www/server/nginx/proxy_cache_dir'
+        if os.path.isdir(proxy_cache_dir):
+            public.ExecShell('rm -rf /www/server/nginx/proxy_cache_dir/*')
+
     # HttpToHttps
     def HttpToHttps(self, get):
         siteName = get.siteName
@@ -2158,6 +2167,7 @@ listener SSL443 {
 </IfModule>
 #HTTP_TO_HTTPS_END'''
         public.writeFile(file, ols_force_https)
+        self._clear_nginx_proxy_cache()
         public.serviceReload()
         return public.return_msg_gettext(True, public.lang("Setup successfully!"))
 
@@ -2279,6 +2289,7 @@ listener SSL443 {
         if os.path.exists(p_file): public.ExecShell('rm -f ' + p_file)
 
         public.write_log_gettext('Site manager', 'Site [{}] turned off SSL successfully!', (siteName,))
+        self._clear_nginx_proxy_cache()
         public.serviceReload()
         return public.return_msg_gettext(True, public.lang("SSL turned off!"))
 

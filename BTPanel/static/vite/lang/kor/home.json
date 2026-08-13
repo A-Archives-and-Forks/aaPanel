@@ -341,8 +341,257 @@
 					"proxy": {
 						"title": "리버스 프록시 만들기",
 						"description": "내부 포트를 외부 도메인으로 라우팅하고 프록시 캐싱을 구성합니다."
-					}
+					},
+				  "importProject": {
+				    "title": "기존 프로젝트 가져오기",
+				    "description": "프로젝트가 저장되는 위치를 선택하세요. aaPanel은 검토할 프로젝트 유형을 제안합니다."
+				  },
+				  "aiBuilder": {
+				    "title": "AI 웹사이트 빌더",
+				    "description": "AI를 사용하여 몇 초 만에 멋진 웹사이트를 구축하세요.",
+				    "action": "구축 시작"
+				  }
 				}
+			},
+			"importProject": {
+			  "brand": "aaPanel 프로젝트 가져오기",
+			  "title": "기존 프로젝트 가져오기",
+			  "description": "프로젝트가 저장되는 위치를 선택하세요. aaPanel은 검토할 프로젝트 유형을 제안합니다.",
+			  "steps": {
+			    "source": "소스 선택",
+			    "analyzing": "프로젝트 분석 중",
+			    "review": "프로젝트 검토",
+			    "complete": "가져오기 완료"
+			  },
+			  "sources": {
+			    "archive": {
+			      "title": "아카이브 업로드",
+			      "description": "컴퓨터에서 ZIP, TAR.GZ 또는 TGZ 파일을 업로드하세요."
+			    },
+			    "remote": {
+			      "title": "FTP/SFTP 서버",
+			      "description": "원격 파일 서버에서 프로젝트 디렉터리를 다운로드합니다."
+			    },
+			    "git": {
+			      "title": "Git 저장소",
+			      "description": "공개 또는 비공개 Git 저장소와 브랜치를 복제하세요."
+			    },
+			    "localArchive": {
+			      "title": "로컬 파일",
+			      "description": "이 서버에 이미 저장된 프로젝트 폴더 또는 아카이브를 가져옵니다."
+			    }
+			  },
+			  "source": {
+			    "archive": {
+			      "title": "아카이브 업로드 구성",
+			      "description": "프로젝트 패키지를 업로드하고 대상을 선택하세요.",
+			      "action": "업로드 & 분석",
+			      "projectArchive": "프로젝트 아카이브",
+			      "dropTitle": "여기에 아카이브를 놓거나 파일을 선택하세요",
+			      "dropHint": "ZIP, TAR.GZ 또는 TGZ · 최대 5GB",
+			      "localHint": "아카이브가 추출될 aaPanel 서버의 디렉터리입니다.",
+			      "cleanup": "가져오기 정리",
+			      "cleanupHint": "가져온 후 임시 파일 제거"
+			    },
+			    "remote": {
+			      "title": "FTP/SFTP에 연결",
+			      "description": "원격 연결 및 대상 세부정보를 입력하세요.",
+			      "action": "연결 & 분석",
+			      "testConnectedAndSelectDirectory": "연결 테스트 및 디렉터리 선택",
+			      "authentication": "인증",
+			      "passwordAuthentication": "비밀번호",
+			      "privateKey": "개인 키",
+			      "privateKeyPlaceholder": "전체 SSH 개인 키 콘텐츠 붙여넣기",
+			      "remoteHint": "원격 서버의 프로젝트 디렉터리를 선택하세요.",
+			      "localHint": "파일이 이 디렉터리에 복사됩니다."
+			    },
+			    "git": {
+			      "title": "Git 저장소 복제",
+			      "description": "저장소, 인증 및 대상을 구성합니다.",
+			      "action": "복제 & 분석",
+			      "repositoryUrl": "저장소 URL",
+			      "branch": "분기 또는 태그",
+			      "branchPlaceholder": "연결 테스트 및 분기 선택",
+			      "testConnection": "연결 테스트",
+			      "testAgain": "다시 테스트",
+			      "connectionSuccessful": "연결에 성공했습니다.",
+			      "branchesFound": "{0} Git 분기가 발견되었습니다.",
+			      "verifyRepository": "사용 가능한 브랜치를 로드하려면 저장소 액세스를 확인하세요.",
+			      "noBranches": "이 저장소에서는 분기나 태그를 찾을 수 없습니다.",
+			      "authentication": "인증",
+			      "public": "공개",
+			      "token": "토큰",
+			      "sshKey": "SSH 키",
+			      "copySshKey": "SSH 키 복사",
+			      "publicHint": "자격 증명이 필요하지 않습니다.",
+			      "accessToken": "액세스 토큰",
+			      "privateKey": "개인 키",
+			      "chooseKey": ".pem 또는 .key 파일 선택",
+			      "passphrase": "키 암호",
+			      "localHint": "저장소가 이 디렉터리에 복제됩니다.",
+			      "cloneDepth": "복제 깊이",
+			      "latestCommitOnly": "최신 커밋만",
+			      "fullGitHistory": "전체 Git 기록",
+			      "shallowClone": "얕은 클론"
+			    },
+			    "localArchive": {
+			      "title": "로컬 소스 구성",
+			      "description": "이 aaPanel 서버에 저장된 프로젝트 폴더 또는 아카이브를 선택하세요.",
+			      "action": "소스 분석",
+			      "archiveLocation": "프로젝트 소스",
+			      "archiveHint": "현재 서버에서 프로젝트 폴더나 ZIP, TAR.GZ 또는 TGZ 아카이브를 선택하세요.",
+			      "projectDirectory": "프로젝트 디렉터리",
+			      "projectDirectoryHint": "이 디렉터리에 프로젝트가 생성됩니다."
+			    }
+			  },
+			  "common": {
+			    "back": "뒤로",
+			    "browse": "찾아보기",
+			    "cancel": "취소",
+			    "choose": "선택",
+			    "configure": "구성",
+			    "disabled": "비활성화됨",
+			    "edit": "수정",
+			    "enabled": "활성화됨",
+			    "localDirectory": "로컬 디렉터리",
+			    "notSet": "설정되지 않음",
+			    "optional": "선택사항",
+			    "password": "비밀번호",
+			    "port": "포트",
+			    "protocol": "프로토콜",
+			    "remoteDirectory": "원격 디렉터리",
+			    "save": "이 디렉토리를 사용하세요",
+			    "select": "선택",
+			    "server": "서버",
+			    "username": "사용자 이름"
+			  },
+			  "analyzing": {
+			    "title": "프로젝트 분석 중",
+			    "preparing": "소스 파일 준비 중...",
+			    "reading": "프로젝트 파일 및 종속성을 읽는 중...",
+			    "checking": "구성 및 데이터베이스 백업 확인 중...",
+			    "detecting": "프로젝트 유형 및 런타임 감지 중...",
+			    "complete": "분석이 완료되었습니다. 리뷰 준비 중..."
+			  },
+			  "review": {
+			    "title": "프로젝트 설정 검토",
+			    "description": "감지된 프로젝트 유형을 확인하고 프로젝트 생성 방법을 구성합니다.",
+			    "detectedFrom": "{0}에서 감지됨",
+			    "projectType": "프로젝트 유형",
+			    "projectTypeHint": "프로젝트 파일을 기반으로 자동 감지됩니다. 결과가 올바르지 않은 경우 올바른 프로젝트 유형을 선택하십시오.",
+			    "domain": "도메인 이름",
+			    "applySsl": "SSL 신청",
+			    "domainRequiredHint": "PHP 및 정적 웹사이트에 필요합니다.",
+			    "domainOptionalHint": "선택사항입니다. 애플리케이션이 IP 및 포트로 액세스되는 경우 공백으로 두십시오.",
+			    "projectName": "프로젝트 이름",
+			    "phpVersion": "PHP 버전",
+			    "nodeVersion": "Node.js 버전",
+			    "startCommand": "시작 명령",
+			    "applicationPort": "애플리케이션 포트",
+			    "dependencyInstallation": "종속성 설치",
+			    "dependencyInstallationHint": "종속성을 다시 설치하면 기존 node_modules 디렉터리가 제거되고 현재 서버에 대한 프로젝트 패키지가 다시 설치됩니다. 기존 잠금 파일은 보존됩니다.",
+			    "installDependencies": "종속성 설치",
+			    "importAction": "프로젝트 가져오기",
+			    "importing": "가져오는 중...",
+			    "types": {
+			      "php": "PHP 웹사이트",
+			      "node": "Node.js 프로젝트",
+			      "static": "정적 웹사이트"
+			    }
+			  },
+			  "database": {
+			    "title": "데이터베이스 가져오기",
+			    "description": "감지된 백업을 사용하거나 다른 SQL 파일을 업로드하세요.",
+			    "detectedHint": "프로젝트 파일에서 MySQL 백업이 발견되었습니다.",
+			    "notDetectedHint": "SQL 백업이 감지되지 않았습니다. 수동으로 업로드할 수 있습니다.",
+			    "selectFile": "데이터베이스 백업 선택",
+			    "importTo": "{0}",
+			    "editSettings": "설정 수정",
+			    "backupSource": "백업 소스",
+			    "detected": "백업 감지",
+			    "useDetected": "감지된 백업 선택",
+			    "uploadAnother": "데이터베이스 백업 업로드",
+			    "sqlFile": "SQL 백업 파일",
+			    "uploadPlaceholder": ".sql 또는 .sql.gz 선택",
+			    "uploadHint": "SQL, SQL.GZ 또는 GZ 파일 지원",
+			    "configuration": "데이터베이스 구성",
+			    "name": "데이터베이스 이름",
+			    "user": "데이터베이스 사용자",
+			    "generate": "생성",
+			    "charset": "문자 세트",
+			    "updateConfig": "프로젝트 구성 업데이트",
+			    "updateConfigHint": "감지된 구성 파일에 새 데이터베이스 자격 증명을 적용합니다.",
+			    "doNotImport": "데이터베이스를 가져오지 않음",
+			    "saveSettings": "설정 저장"
+			  },
+			  "directory": {
+			    "currentServer": "현재 aaPanel 서버",
+			    "localTitle": "로컬 디렉터리 선택",
+			    "remoteTitle": "원격 디렉터리 선택",
+			    "empty": "이 시뮬레이션된 위치에는 하위 디렉터리가 없습니다.",
+			    "localHint": "이 서버의 대상 디렉터리를 선택하세요.",
+			    "remoteHint": "원격 서버의 소스 디렉터리를 선택하세요."
+			  },
+			  "summary": {
+			    "title": "가져오기 요약",
+			    "description": "프로젝트 생성 전 검토",
+			    "source": "프로젝트 소스",
+			    "sourceItem": "소스 항목",
+			    "detectedAs": "다음으로 감지됨",
+			    "destination": "목적지",
+			    "domain": "도메인",
+			    "database": "데이터베이스",
+			    "targetDatabase": "대상 데이터베이스",
+			    "configUpdate": "구성 업데이트",
+			    "notice": "가져오기를 확인할 때까지 기존 프로젝트는 변경되지 않습니다.",
+			    "sources": {
+			      "archive": "업로드된 아카이브",
+			      "remote": "{0} 서버",
+			      "git": "Git 저장소",
+			      "localArchive": "로컬 폴더 또는 아카이브"
+			    }
+			  },
+			  "success": {
+			    "title": "프로젝트를 성공적으로 가져왔습니다",
+			    "description": "이제 aaPanel 웹사이트 목록에서 프로젝트를 사용할 수 있습니다.",
+			    "domain": "도메인",
+			    "project": "프로젝트",
+			    "type": "프로젝트 유형",
+			    "path": "프로젝트 경로",
+			    "database": "데이터베이스",
+			    "notImported": "가져오지 않음",
+			    "status": "상태",
+			    "ready": "준비됨",
+			    "importAnother": "다른 항목 가져오기",
+			    "viewProject": "프로젝트 보기"
+			  },
+			  "validation": {
+			    "archiveRequired": "프로젝트 아카이브를 선택하세요",
+			    "localArchiveRequired": "로컬 프로젝트 폴더 또는 아카이브를 선택하세요.",
+			    "projectDirectoryRequired": "프로젝트 디렉토리는 비워둘 수 없습니다.",
+			    "archiveFormat": "ZIP, TAR.GZ 또는 TGZ 아카이브 선택",
+			    "archiveSize": "아카이브는 5GB 이하여야 합니다.",
+			    "localDirectoryRequired": "로컬 디렉터리는 비워둘 수 없습니다.",
+			    "serverRequired": "서버 및 포트가 필요합니다.",
+			    "credentialsRequired": "사용자 이름과 비밀번호가 필요합니다.",
+			    "remoteDirectoryRequired": "원격 디렉터리는 비워둘 수 없습니다.",
+			    "repositoryRequired": "저장소 URL은 비워둘 수 없습니다.",
+			    "branchRequired": "연결을 테스트하고 지점을 선택하세요",
+			    "tokenRequired": "액세스 토큰은 비워둘 수 없습니다.",
+			    "privateKeyRequired": "SSH 키를 선택하세요.",
+			    "privateKeyContentRequired": "개인 키 내용은 비워둘 수 없습니다.",
+			    "usernameRequired": "사용자 이름은 비워둘 수 없습니다.",
+			    "passwordRequired": "비밀번호는 비워둘 수 없습니다.",
+			    "domainRequired": "이 프로젝트 유형에서는 도메인을 비워둘 수 없습니다.",
+			    "projectNameRequired": "프로젝트 이름은 비워둘 수 없습니다.",
+			    "startCommandRequired": "Start command cannot be empty",
+			    "portRequired": "Application port cannot be empty",
+			    "portInvalid": "1~65535 사이의 유효한 포트를 입력하세요.",
+			    "databaseFileRequired": "데이터베이스 백업을 선택하세요.",
+			    "databaseCredentialsRequired": "데이터베이스 이름, 사용자 및 비밀번호가 필요합니다.",
+			    "databaseFormat": "SQL, SQL.GZ 또는 GZ 백업 파일 선택",
+			    "databaseNameExists": "The database name already exists. Please change the Database name."
+			  }
 			},
 			"form": {
 				"wordpress": {
@@ -386,6 +635,7 @@
 				"projectNamePlaceholder": "영문자와 숫자만 가능",
 				"runtimeVersion": "런타임 버전",
 				"nodeRecommendedVersion": "Node.js 24.15.0 (Recommended)",
+				"runtimeInstalledVersion": "{0} (설치됨)",
 				"packageManager": "패키지 관리자",
 				"frameworkTemplate": "프레임워크 템플릿",
 				"mappingDomain": "매핑 도메인",
