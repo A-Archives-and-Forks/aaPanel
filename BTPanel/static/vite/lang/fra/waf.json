@@ -982,6 +982,8 @@
 				"title": "Défense Web en direct",
 				"description": "Classé par nombre de requêtes bloquées",
 				"rankIp": "Rang / adresse IP",
+				"rank": "Classement",
+				"ipAddress": "Adresse IP",
 				"country": "Pays",
 				"hits": "Occurrences",
 				"empty": "Aucune donnée de protection en temps réel"

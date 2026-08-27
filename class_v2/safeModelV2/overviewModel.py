@@ -41,6 +41,7 @@ class main(safeBase):
         "fail2ban": "/plugin/fail2ban",
         "tamper_core": "/plugin/tamper_core",
         "btwaf": "/waf/overview",
+        "bt_hids": "/plugin/bt_hids",
     }
     # 安全功能 跳转路由
     SCAN_CARD_ROUTES = {
@@ -72,7 +73,7 @@ class main(safeBase):
     ]
 
     # 插件
-    PLUGIN_ACTION_SOURCES = set(["fail2ban", "tamper_core", "btwaf"])
+    PLUGIN_ACTION_SOURCES = set(["fail2ban", "tamper_core", "btwaf", "bt_hids"])
 
     # 概览页扫描项  后续加扫描项在此追加
     SCAN_TASKS = {
@@ -222,7 +223,7 @@ class main(safeBase):
     def toggle_plugin(self, get):
         """
         @name Toggle security overview plugin status.
-        @param get.plugin_name string required, fail2ban/btwaf/tamper_core
+        @param get.plugin_name string required, fail2ban/btwaf/tamper_core/bt_hids
         @param get.type string optional, fail2ban start/stop
         @param get.value int/bool optional, tamper_core status value 1/0
         """
@@ -235,9 +236,10 @@ class main(safeBase):
                 result, action, target_enabled = self._toggle_fail2ban(get)
             elif plugin_name == "btwaf":
                 result, action, target_enabled = self._toggle_btwaf(get)
-            else:
+            elif plugin_name == "tamper_core":
                 result, action, target_enabled = self._toggle_tamper_core(get)
-
+            else:
+                result, action, target_enabled = self._toggle_bt_hids(get)
             success = self._plugin_result_success(result)
             if success:
                 return public.return_message(0 , 0, public.lang("Set successfully!"))
@@ -321,6 +323,12 @@ class main(safeBase):
         )
         return result, "enable" if value else "disable", bool(value)
 
+    def _toggle_bt_hids(self, get):
+        current_enabled = self._get_bt_hids_status(self._plugin_path("bt_hids"))
+        self._record_toggle_log("bt_hids")
+        result = public.run_plugin("bt_hids", "set_process", public.to_dict_obj({}))
+        return result, "toggle", not bool(current_enabled)
+
     def _record_toggle_log(self, plugin_name):
         """
         记录埋点
@@ -329,6 +337,7 @@ class main(safeBase):
             "fail2ban": "toggle_fail2ban",
             "btwaf": "toggle_btwaf",
             "tamper_core": "toggle_tamper_core",
+            "bt_hids": "toggle_bt_hids",
         }
         action = actions.get(plugin_name)
         if not action:
@@ -554,6 +563,7 @@ class main(safeBase):
         items = [
             self._firewall_module(),
             self._ssh_module(),
+            self._bt_hids_module(),
             self._tamper_module(),
             self._waf_module(),
             self._fail2ban_module(),
@@ -661,6 +671,16 @@ class main(safeBase):
             ))
 
         # 按优先级从高到低排序，最多展示8条建议
+        bt_hids = module_map.get("bt_hids", {})
+        if bt_hids and bt_hids.get("installed") and not bt_hids.get("enabled"):
+            actions.append(self._action(
+                "enable_intrusion_detection",
+                "Enable Intrusion Detection",
+                "Intrusion Detection is installed but not enabled. Enable it to detect abnormal process and system intrusion risks.",
+                "low",
+                "bt_hids",
+                self._module_route("bt_hids"),
+            ))
         actions.sort(key=lambda x: x["priority"], reverse=True)
         return actions[:8]
 
@@ -971,6 +991,62 @@ class main(safeBase):
             },
         }
 
+    def _bt_hids_module(self):
+        plugin_dir = self._plugin_path("bt_hids")
+        installed = os.path.exists(plugin_dir)
+        enabled = False
+        result = {}
+        counts = self._bt_hids_empty_counts()
+        risks = []
+        repair_count = 0
+        white_count = 0
+        all_count = 0
+        latest_alert_ts = 0
+
+        if installed:
+            enabled = self._get_bt_hids_status(plugin_dir)
+            if enabled:
+                result = self._get_bt_hids_result(["serious", "high", "medium", "low"], p=1)
+                counts = self._bt_hids_counts(result)
+                # risks = result.get("risk", []) if isinstance(result.get("risk", []), list) else []
+                # repair_count = self._safe_int(result.get("repair_count", 0))
+                # white_count = self._safe_int(result.get("white_count", 0))
+                all_count = self._safe_int(result.get("all_count", 0)) or sum(counts.values())
+                # latest_alert_ts = self._bt_hids_latest_alert_time(risks)
+
+        if not installed:
+            summary = "Plugin not installed"
+        elif not enabled:
+            summary = "Disabled"
+        elif all_count > 0:
+            summary = "Detected {} intrusion alerts: {}".format(all_count, self._bt_hids_top_counter_text(counts))
+        else:
+            summary = "No intrusion alerts detected"
+
+        return {
+            "id": "bt_hids",
+            "title": "Intrusion Detection",
+            "source": "plugin",
+            "plugin_name": "bt_hids",
+            "product_name": "Intrusion Detection",
+            "installed": installed,
+            "enabled": installed and enabled,
+            "summary": summary,
+            "metrics": {
+                "all_count": all_count,
+                # "alert_count": all_count,
+                # "repair_count": repair_count,
+                # "white_count": white_count,
+                # "count": counts,
+                "serious": counts.get("serious", 0),
+                "high_risk": counts.get("high_risk", 0),
+                "medium_risk": counts.get("medium_risk", 0),
+                "low_risk": counts.get("low_risk", 0),
+                # "latest_alert_time": self._format_time(latest_alert_ts),
+                # "latest_alert_timestamp": latest_alert_ts,
+            },
+        }
+
     def _tamper_module(self):
         plugin_dir = self._plugin_path("tamper_core")
         installed = os.path.exists(plugin_dir)
@@ -1089,6 +1165,7 @@ class main(safeBase):
         events = []
         events.extend(self._events_malware())
         events.extend(self._events_warning())
+        events.extend(self._events_bt_hids())
         events.extend(self._events_vulnerability())
         events.extend(self._events_baseline())
         events.extend(self._events_ssh())
@@ -1100,6 +1177,33 @@ class main(safeBase):
             event["relative_time"] = self._relative_time(event.get("time", 0))
             event["level_label"] = self.SEVERITY_LABELS.get(event.get("level", "info"), "Info")
         return events[:limit]
+
+    def _events_bt_hids(self):
+        plugin_dir = self._plugin_path("bt_hids")
+        if not os.path.exists(plugin_dir) or not self._get_bt_hids_status(plugin_dir):
+            return []
+
+        data = self._get_bt_hids_result(["serious", "high", "medium", "low"], p=1)
+        risks = data.get("risk", []) if isinstance(data.get("risk", []), list) else []
+        events = []
+        for risk in risks:
+            if not isinstance(risk, dict):
+                continue
+            level = str(risk.get("level", "medium") or "medium").strip()
+            title = risk.get("vulnname") or risk.get("msg") or "Intrusion alert"
+            message = risk.get("msg") or risk.get("repair") or "Intrusion Detection alert"
+            meta = risk.get("other") or risk.get("data_type") or ""
+            events.append(self._event(
+                "bt_hids",
+                "intrusion_detection",
+                title,
+                message,
+                level,
+                risk.get("time", 0),
+                meta,
+                "unhandled",
+            ))
+        return events
 
     def _events_malware(self):
         events = []
@@ -1575,6 +1679,88 @@ class main(safeBase):
         if not isinstance(config, dict):
             return False
         return bool(self._safe_int(config.get("status", 0)))
+
+    def _get_bt_hids_status(self, plugin_dir):
+        if not os.path.exists(plugin_dir):
+            return False
+        if hasattr(self, "_bt_hids_status_cache"):
+            return self._bt_hids_status_cache
+        enabled = False
+        try:
+            status = public.run_plugin("bt_hids", "get_status", public.to_dict_obj({}))
+            if isinstance(status, bool):
+                enabled = status
+            elif isinstance(status, dict):
+                enabled = bool(status.get("status", False))
+        except Exception:
+            enabled = False
+        self._bt_hids_status_cache = enabled
+        return enabled
+
+    def _get_bt_hids_result(self, levels=None, p=1):
+        levels = levels or ["serious", "high", "medium", "low"]
+        cache_key = "{}:{}".format(",".join([str(level) for level in levels]), p)
+        cache = getattr(self, "_bt_hids_result_cache", {})
+        if cache_key in cache:
+            return cache[cache_key]
+        try:
+            result = public.run_plugin(
+                "bt_hids",
+                "get_result",
+                public.to_dict_obj({
+                    "type": json.dumps(levels),
+                    "p": p,
+                })
+            )
+
+            if isinstance(result, dict) and result.get("status") is False:
+                result = {}
+            result = result if isinstance(result, dict) else {}
+        except Exception as ex:
+            public.print_log("security overview get bt_hids result error: {}".format(ex))
+            result = {}
+        cache[cache_key] = result
+        self._bt_hids_result_cache = cache
+        return result
+
+    def _bt_hids_empty_counts(self):
+        return {
+            "serious": 0,
+            "high_risk": 0,
+            "medium_risk": 0,
+            "low_risk": 0,
+        }
+
+    def _bt_hids_counts(self, data):
+        counts = self._bt_hids_empty_counts()
+        raw = data.get("count", {}) if isinstance(data, dict) else {}
+        if not isinstance(raw, dict):
+            raw = {}
+        for key in counts.keys():
+            counts[key] = self._safe_int(raw.get(key, 0))
+        return counts
+
+    def _bt_hids_latest_alert_time(self, risks):
+        latest = 0
+        for risk in risks if isinstance(risks, list) else []:
+            if not isinstance(risk, dict):
+                continue
+            latest = max(latest, self._to_timestamp(risk.get("time", 0)))
+        return latest
+
+    def _bt_hids_top_counter_text(self, counts):
+        labels = [
+            ("serious", "serious"),
+            ("high_risk", "high"),
+            ("medium_risk", "medium"),
+            ("low_risk", "low"),
+        ]
+        parts = []
+        for key, label in labels:
+            value = self._safe_int(counts.get(key, 0))
+            if value > 0:
+                parts.append("{} {}".format(label, value))
+        return ", ".join(parts) if parts else "no active alerts"
 
     def _btwaf_file(self, filename):
         server_path = os.path.join("/www/server/btwaf", filename)

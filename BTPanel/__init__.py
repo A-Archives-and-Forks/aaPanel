@@ -2208,13 +2208,13 @@ def panel_cloud(is_csrf=True):
 
 
 
-# # 前端新架构使用  暂时注释
-# @app.route('/software', methods=method_all)
-# def software(pdata=None):
-#     # 图标
-#     comReturn = comm.local()
-#     if comReturn: return comReturn
-#     return render_template('software.html', data={})
+# 前端新架构使用
+@app.route('/software', methods=method_all)
+def software(pdata=None):
+    # 图标
+    comReturn = comm.local()
+    if comReturn: return comReturn
+    return render_template('software.html', data={})
 
 
 @app.route('/btwaf_error', methods=method_get)
@@ -4739,6 +4739,10 @@ def git_tools(pdata=None):
         'clear_webhook_log',
         'generate_aapanel_ed25519_key',
         'get_remote_branches',
+        'connect_repository',
+        'get_remote_commits',
+        'get_commit_detail',
+        'deploy_git_code',
         'change_repository_key',
         'import_existing_repository',
         'get_git_directory',
@@ -6505,6 +6509,26 @@ def databaseModel_v2(def_name):
     return publicObject(project_obj, defs, None, get)
 
 
+# # 网站批量操作
+# @app.route(route_v2 + '/datalist/batch/<def_name>', methods=method_all)
+# def datalistModel_v2(def_name):
+#     if request.method not in ['GET', 'POST']: return
+#     path_split = request.path.split("/")
+#     if len(path_split) < 5: return
+#     comReturn = comm.local()
+#     if comReturn: return comReturn
+#
+#     defs = ('model',)
+#     get = get_input()
+#     get.model_index = path_split[2]
+#     get.action = 'model'
+#     get.mod_name = path_split[3]
+#     get.def_name = def_name
+#
+#     from panelControllerV2 import Controller
+#     controller_obj = Controller()
+#     return publicObject(controller_obj, defs, None, get)
+
 # 系统安全模型页面
 # @app.route(route_v2+'/safe/<mod_name>/<def_name>', methods=method_all)
 @app.route(route_v2 + '/safe/firewall/<def_name>', methods=method_all)
@@ -7605,8 +7629,16 @@ def get_mod_input():
         data.set(key, str(request.args.get(key, '')))
 
     if request.is_json:
-        for key in request.get_json().keys():
-            data.set(key, str(request.get_json()[key]))
+        # for key in request.get_json().keys():
+        #     data.set(key, str(request.get_json()[key]))
+        # 测试用
+        json_data = request.get_json(silent=True)
+        if isinstance(json_data, dict):
+            for key, value in json_data.items():
+                if isinstance(value, (dict, list)):
+                    data[key] = value
+                else:
+                    data.set(key, str(value))
     else:
         try:
             for key in request.form.keys():

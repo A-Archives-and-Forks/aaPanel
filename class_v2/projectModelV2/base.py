@@ -147,6 +147,26 @@ class projectBase(LimitNet, Redirect):
     def __init__(self):
         self._is_nginx_http3 = None
 
+    def _del_crontab_by_name(self, cron_name):
+        """按名称删除计划任务（含 crontab 文件条目），删除项目时清理关联 cron。
+        DelCrontab 内部已通过 remove_for_crond 整行删除系统 crontab 中的对应行，
+        并清理 cron 脚本文件
+        """
+        try:
+            cron_list = public.M('crontab').where(
+                "name=?", (cron_name,)
+            ).select()
+            if cron_list and isinstance(cron_list, list):
+                for i in cron_list:
+                    if not i:
+                        continue
+                    import crontab_v2
+                    crontab_v2.crontab().DelCrontab({"id": i['id']})
+        except Exception as e:
+            public.print_log(
+                "Delete crontab {} failed: {}".format(cron_name, str(e))
+            )
+
     def check_port(self, port):
         '''
         @name 检查端口是否被占用

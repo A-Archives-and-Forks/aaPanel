@@ -225,7 +225,11 @@
 			"index_7": "Увімкнути SSH сервіс",
 			"index_8": "Ви дійсно бажаєте увімкнути службу SSH?",
 			"index_9": "Вимкнення служби SSH також призведе до виходу всіх зареєстрованих користувачів, Продовжити?",
-			"index_10": "Керування системними обліковими записами SSH",
+			"index_10": "Системні облікові записи",
+			"overview_service": "Служба SSH",
+			"overview_enabled": "Службу SSH увімкнено",
+			"overview_disabled": "Службу SSH вимкнено",
+			"overview_current_status": "Поточний статус: ",
 			"Basic": {
 				"index_1": "Логін SSH пароль",
 				"index_2": "Логін SSH ключа",
@@ -274,14 +278,14 @@
 				"create": "Створити системного користувача",
 				"conversion_title": "Керування системними обліковими записами SSH",
 				"overview": "Огляд",
-				"feature_modify_password": "Змінення паролів системних користувачів",
+				"feature_modify_password": "Зміна паролів системних користувачів",
 				"feature_delete_user": "Видалення системних користувачів",
-				"feature_anti_intrusion": "Захист від вторгнень",
+				"feature_anti_intrusion": "Захист від вторгнення",
 				"username": "Ім'я користувача",
-				"protection": "Захист від підвищення привілеїв",
-				"log": "Журналювання команд",
+				"protection": "Захист прав доступу",
+				"log": "Запис команд у журнал",
 				"remark": "Примітки",
-				"command_log": "Журнали команд",
+				"command_log": "Командні журнали",
 				"reset_password": "Скинути пароль",
 				"create_title": "Створити системного користувача",
 				"reset_title": "Скинути пароль: {0}",
@@ -289,22 +293,22 @@
 				"new_password": "Новий пароль",
 				"username_placeholder": "Введіть ім'я користувача",
 				"password_placeholder": "Введіть пароль",
-				"username_invalid": "Ім'я користувача має містити від 2 до 20 символів і складатися лише з літер і цифр. Спеціальні символи не дозволені.",
+				"username_invalid": "Ім'я користувача має містити від 2 до 20 символів і складатися лише з літер та цифр. Спеціальні символи не допускаються.",
 				"password_min": "Пароль має містити щонайменше 8 символів",
 				"delete_title": "Видалити користувача: {0}",
-				"delete_content": "Після видалення цей системний користувач більше не зможе ввійти на сервер. Цю дію неможливо скасувати.",
-				"confirm_delete": "Підтвердити видалення",
-				"tip_1": "Коли захист від підвищення привілеїв увімкнено, небезпечні команди обмежуються та записуються.",
-				"tip_2": "Коли захист вимкнено, команди користувача лише записуються та відстежуються.",
-				"tip_3": "Наразі захист зосереджений на ризиках підвищення привілеїв від користувачів www, redis і mysql.",
-				"plugin_missing": "Установіть плагін захисту від вторгнень перед керуванням системними обліковими записами SSH",
-				"install_plugin": "Установити плагін",
+				"delete_content": "Після видалення цей системний користувач більше не зможе увійти на сервер. Цю дію неможливо скасувати.",
+				"confirm_delete": "підтвердження видалення",
+				"tip_1": "Коли захист привілеїв увімкнено, небезпечні команди обмежуються та фіксуються в журналі.",
+				"tip_2": "Коли захист привілеїв вимкнено, команди, які виконує користувач, лише записуються та відстежуються.",
+				"tip_3": "Захист привілеїв наразі зосереджений на ризиках підвищення прав, спричинених користувачами, як-от www, redis та mysql.",
+				"plugin_missing": "Перед керуванням системними обліковими записами SSH встановіть плагін запобігання вторгненням",
+				"install_plugin": "Встановити плагін",
 				"professional_only": "Функція професійної версії",
-				"professional_desc": "Керування системними обліковими записами SSH охоплює створення, видалення й адміністрування облікових записів SSH на сервері. Вони забезпечують безпечний віддалений доступ через SSH і зазвичай керуються системними адміністраторами, щоб доступ до сервера мали лише авторизовані користувачі.",
+				"professional_desc": "Керування системними обліковими записами SSH передбачає створення, видалення та адміністрування облікових записів користувачів SSH на сервері. Ці облікові записи забезпечують віддалений доступ до сервера через SSH (Secure Shell) і, як правило, ними керують системні адміністратори, щоб гарантувати, що лише авторизовані користувачі матимуть доступ до сервера.",
 				"upgrade": "Оновити зараз",
-				"no_logs": "Наразі журнали команд відсутні",
-				"api_create": "Створення системного користувача, зачекайте...",
-				"api_delete": "Видалення системного користувача, зачекайте..."
+				"no_logs": "Журнали команд наразі недоступні",
+				"api_create": "Створення системного користувача, будь ласка, зачекайте...",
+				"api_delete": "Видалення системного користувача, будь ласка, зачекайте..."
 			},
 			"Logs": {
 				"index_1": "Всі",
@@ -323,7 +327,37 @@
 				"index_14": "Вхід виконано",
 				"index_15": "Помилка входу",
 				"free_1": "Лог SSH",
-				"free_2": "Запис і перегляд логів SSH"
+				"free_2": "Запис і перегляд логів SSH",
+				"ban_brute_force": "Блокувати IP-адреси з підбором паролів",
+				"export_logs": "Експортувати журнали",
+				"clear_logs": "Очистити журнали входу",
+				"scheduled_ban": "Планове блокування",
+				"history_all": "За весь час",
+				"history_7_days": "Останні 7 днів",
+				"manual_ban_title": "Заблокувати IP-адреси з підбором паролів",
+				"auto_ban_title": "Автоматичне блокування підбору паролів",
+				"period": "Період",
+				"schedule": "Розклад",
+				"failure_count": "Невдалі спроби",
+				"ban_duration": "Тривалість блокування",
+				"hours": "год.",
+				"times": "раз(и)",
+				"manual_ban_desc": "Блокувати IP-адреси з понад {count} невдалими спробами за {hour} год на {banHour} год.",
+				"auto_ban_desc": "Кожні {hour} год блокувати IP-адреси з понад {count} невдалими спробами за {hour} год на {banHour} год.",
+				"ban_rule_tip": "Заблоковані IP-адреси можна переглянути в розділі Безпека - Правила IP.",
+				"positive_integer": "Введіть додатне ціле число",
+				"task_log": "Журнал завдань",
+				"waiting_task_log": "Очікування журналів завдань...",
+				"disable_scheduled_title": "Вимкнути заплановане блокування",
+				"disable_scheduled_content": "Заплановане завдання блокування більше не запускатиметься. Продовжити?",
+				"clear_title": "Очистити журнали входу",
+				"clear_content": "Усі журнали входу через SSH будуть очищені. Продовжити?",
+				"export_type": "Тип журналу",
+				"export_count": "Кількість експортованих записів",
+				"all_logs": "Усі журнали",
+				"success_logs": "Успішні входи",
+				"failed_logs": "Невдалі спроби входу",
+				"operation_failed": "Не вдалося виконати операцію"
 			},
 			"Api": {
 				"index_1": "Встановлення SSH сервісу, будь ласка, зачекайте...",
@@ -336,7 +370,12 @@
 				"index_8": "Обробка, зачекайте будь ласка...",
 				"index_9": "Налаштування сигналу для входу, будь ласка, зачекайте...",
 				"index_10": "Додавання IP білого списку, будь ласка, зачекайте...",
-				"index_11": "Видалення IP з білого списку, будь ласка, зачекайте..."
+				"index_11": "Видалення IP з білого списку, будь ласка, зачекайте...",
+				"index_12": "Блокування IP-адрес із brute-force атаками, будь ласка, зачекайте...",
+				"index_13": "Додавання завдання автоматичного блокування, зачекайте...",
+				"index_14": "Вимкнення завдання автоматичного блокування, зачекайте...",
+				"index_15": "Експортування журналів входу SSH, зачекайте...",
+				"index_16": "Очищення журналів входу SSH, зачекайте..."
 			}
 		},
 		"Tabs": {
@@ -503,97 +542,97 @@
 			"Index_6": "Ви справді бажаєте вилучити цього користувача?"
 		},
 		"ServerSafe": {
-		  "title": "Безпека сервера",
-		  "sshProtectionConfiguration": "Налаштування захисту SSH",
-		  "sshProtectionLog": "Захист журналів SSH",
-		  "securityConfiguration": "Налаштування безпеки",
-		  "totalBannedIp": "Заборонені IP-адреси",
-		  "totalFailedConnection": "Загальна кількість невдалих з'єднань",
-		  "currentBannedIp": "Заборонені IP",
-		  "currentFailedConnection": "Помилка поточного з'єднання",
-		  "statusCodeAccessDenied": "403 - Access Denied",
-		  "statusCodePageNotFound": "404 - Page Not Found",
-		  "statusCodeInvalidRequest": "416 - Invalid Request",
-		  "statusCodeClientTimeout": "408 - Client Timeout",
-		  "statusCodeClientRequestError": "400 - Client Request Error",
-		  "statusCodeUnauthorizedAccess": "401 - Unauthorized Access",
-		  "sshKeyLogin": "Логін SSH ключа",
-		  "enableSshKeyBeforeView": "Будь ласка, спочатку увімкніть вхід за SSH-ключем, а потім перевірте ключ",
-		  "enableSshKeyBeforeDownload": "Будь ласка, спочатку увімкніть вхід за допомогою SSH-ключа, а потім завантажте ключ.",
-		  "gettingKeyInfo": "Отримання інформації про ключ, будь ласка, зачекайте...",
-		  "loading": "Завантажується, будь ласка зачекайте...",
-		  "lastFiveLoginRecords": "Останні 5 записів",
-		  "viewMore": "Переглянути більше",
-		  "ip": "IP",
-		  "loginTime": "Час входу в систему",
-		  "port": "Порт",
-		  "success": "Успіх",
-		  "failure": "Невдача",
-		  "browser": "Браузер",
-		  "blockIpConfirm": "Після блокування цей IP більше не зможе отримати доступ до сервера, Продовжити?",
-		  "unblockIpConfirm": "Після розблокування цього IP доступ до сервера з цього IP буде відновлено, Продовжити?",
-		  "manualBlockBrief": "Сторінка журналу входу SSH натисніть на ручне блокування IP",
-		  "safetyRating": "Рівень безпеки",
-		  "sshPortChange": "Зміна порту SSH",
-		  "recommendedNon22Port": "Рекомендується використовувати порти, які не 22",
-		  "modifyDefaultSshPort": "Змінити типовий порт SSH, щоб уникнути шкідливого сканування",
-		  "important": "Важливо",
-		  "apply": "Прийняти",
-		  "passwordComplexity": "Складність пароля",
-		  "recommendedComplexityLevel": "Рекомендація: Використовуйте рівень більше 3",
-		  "passwordComplexityDesc": "Увімкнути перевірку складності пароля. Поточний рівень складності буде містити цифри, великі, малі та спеціальні символи типу {a}",
-		  "complexityLevel": "Рівень складності",
-		  "passwordLengthLimit": "Обмеження довжини пароля",
-		  "recommendedPasswordLength": "Рекомендація: використовуйте пароль довжиною 9-20 символів",
-		  "setMinimumPasswordLength": "Встановити мінімальну довжину пароля",
-		  "minimumLength": "Мінімальна довжина",
-		  "sshLoginAlert": "Попередження про вхід SSH",
-		  "recommendedSshLoginAlerts": "Рекомендація: Включити попередження про вхід SSH",
-		  "sendSshLoginAlerts": "Надіслати попередження при вході SSH",
-		  "configured": "Налаштовано",
-		  "configureAlert": "Налаштувати попередження",
-		  "sshBruteForceProtection": "Захист від насильства SSH",
-		  "recommendedSshBruteForceProtection": "Рекомендовано: Включити захист від насильства SSH",
-		  "sshBruteForceDesc": "Відкрийте фон для розгортання, щоб запобігти насильницьким хакерським атакам",
-		  "panelLoginAlert": "Попередження про вхід до панелі",
-		  "recommendedPanelLoginAlerts": "Рекомендація: Включити попередження про вхід до панелі",
-		  "sendPanelLoginAlerts": "Надіслати попередження при вході до панелі",
-		  "panelGoogleAuthenticatorLogin": "Панель Google Authenticator Вхід",
-		  "recommendedGoogleAuthenticatorLogin": "Рекомендовано: Включити вхід автентифікатора Google",
-		  "googleAuthenticatorDesc": "Включення входу з автентифікатором Google для підвищення безпеки",
-		  "notLoggedInStatusCode": "Код стану відповіді без входу",
-		  "recommendedStatusCode404": "Рекомендація: встановити 404 як код відповіді",
-		  "notLoggedInStatusCodeDesc": "Неправильно повернутий стан безпечного входу",
-		  "panelSsl": "ПанельSSL",
-		  "recommendedPanelHttps": "Рекомендація: Включити панель HTTPS",
-		  "panelHttpsDesc": "Увімкніть доступ HTTPS (панель буде перезавантажена після налаштування)",
-		  "rootPasswordLoginSettings": "Пароль root для входу",
-		  "recommendedOnlyKeyLogin": "Рекомендація: Вхід тільки за допомогою ключа",
-		  "recommendedOnlyAllowKeyLogin": "Рекомендується дозволити вхід тільки з ключем",
-		  "onlyKeyLogin": "Вхід тільки з ключем",
-		  "onlyCommandExecution": "Виконати тільки команди",
-		  "passwordAndKeyLogin": "Пароль та ключ для входу + ключ",
-		  "prohibitedLogin": "Заборонити вхід",
-		  "rootKeySettings": "Параметри кореневого ключа",
-		  "rootKeyDesc": "Увімкніть клавішу aaPanel для перегляду та завантаження",
-		  "viewKey": "Переглянути ключ",
-		  "downloadKey": "Завантажити ключ",
-		  "maximumRetryTimes": "Максимальна кількість повторних спроб",
-		  "period": "Період",
-		  "prohibitionTime": "Prohibition time",
-		  "sshProtectionConfigDesc": "Моніторинг журналів служби SSHD забороняє доступ до IP на 86 400 секунд, якщо IP перевищує максимальну кількість повторних спроб (5 разів) протягом встановленого періоду часу (300 секунд)",
-		  "sshLoginSuccessful": "Успішний вхід SSH",
-		  "sshLoginFailed": "Помилка входу SSH",
-		  "days": "Дні",
-		  "lastLoginInformation": "Останній вхід",
-		  "time": "Час",
-		  "sshLogin": "SSH Вхід",
-		  "panelLogin": "Вхід до панелі",
-		  "sshProtection": "Захист SSH",
-		  "sshProtectionNotInstalled": "Захист SSH не встановлений",
-		  "sshProtectionInstallDesc": "Після встановлення захисту SSH ви можете ефективно запобігти шкідливим спробам входу",
-		  "required": "Не може бути порожнім",
-		  "googleAuthBinding": "Автентифікація Google"
+			"title": "Безпека сервера",
+			"sshProtectionConfiguration": "Налаштування захисту SSH",
+			"sshProtectionLog": "Журнал захисту SSH",
+			"securityConfiguration": "Конфігурація безпеки",
+			"totalBannedIp": "Загальна кількість заблокованих IP",
+			"totalFailedConnection": "Загальна кількість невдалих спроб з'єднання",
+			"currentBannedIp": "IP-адреси, які наразі заблоковані",
+			"currentFailedConnection": "Поточні невдалі спроби підключення",
+			"statusCodeAccessDenied": "403 — Доступ заборонено",
+			"statusCodePageNotFound": "404 - Сторінку не знайдено",
+			"statusCodeInvalidRequest": "416 - Неправильний запит",
+			"statusCodeClientTimeout": "408 - Час очікування клієнта",
+			"statusCodeClientRequestError": "400 — Помилка клієнтського запиту",
+			"statusCodeUnauthorizedAccess": "401 - Неавторизований доступ",
+			"sshKeyLogin": "Вхід за SSH-ключем",
+			"enableSshKeyBeforeView": "Будь ласка, спочатку увімкніть вхід за SSH-ключем, а потім перевірте ключ",
+			"enableSshKeyBeforeDownload": "Будь ласка, спочатку увімкніть вхід за допомогою SSH-ключа, а потім завантажте ключ.",
+			"gettingKeyInfo": "Отримання інформації про ключ, будь ласка, зачекайте...",
+			"loading": "Завантаження, будь ласка, зачекайте...",
+			"lastFiveLoginRecords": "останні 5 записів входу",
+			"viewMore": "Переглянути більше",
+			"ip": "IP",
+			"loginTime": "Час входу в систему",
+			"port": "Порт",
+			"success": "Успіх",
+			"failure": "Невдача",
+			"browser": "Браузер",
+			"blockIpConfirm": "Після блокування цей IP більше не зможе отримати доступ до сервера, Продовжити?",
+			"unblockIpConfirm": "Після розблокування цього IP доступ до сервера з цього IP буде відновлено, Продовжити?",
+			"manualBlockBrief": "На сторінці журналу входу через SSH натисніть «Ручне блокування за IP-адресою»",
+			"safetyRating": "Рейтинг безпеки",
+			"sshPortChange": "Зміна порту SSH",
+			"recommendedNon22Port": "Рекомендовано: Використовувати порт, відмінний від 22",
+			"modifyDefaultSshPort": "Змініть порт SSH за замовчуванням, щоб уникнути зловмисного сканування",
+			"important": "Важливо",
+			"apply": "Прийняти",
+			"passwordComplexity": "Складність пароля",
+			"recommendedComplexityLevel": "Рекомендовано: Використовувати рівень вище 3",
+			"passwordComplexityDesc": "Увімкнути перевірку складності пароля; поточний рівень складності міститиме цифри, великі літери, малі літери та спеціальні символи ({a} типів символів)",
+			"complexityLevel": "Рівень складності",
+			"passwordLengthLimit": "Обмеження довжини пароля",
+			"recommendedPasswordLength": "Рекомендовано: Використовувати пароль довжиною 9-20 символів",
+			"setMinimumPasswordLength": "Встановіть вимогу до мінімальної довжини пароля",
+			"minimumLength": "Мінімальна довжина",
+			"sshLoginAlert": "Сповіщення про вхід на SSH",
+			"recommendedSshLoginAlerts": "Рекомендовано: Увімкнути сповіщення про вхід через SSH",
+			"sendSshLoginAlerts": "Надсилати сповіщення при вході через SSH",
+			"configured": "Налаштовано",
+			"configureAlert": "Налаштувати сповіщення",
+			"sshBruteForceProtection": "Захист SSH від перебору паролів",
+			"recommendedSshBruteForceProtection": "Рекомендовано: Увімкнути захист від перебору паролів SSH",
+			"sshBruteForceDesc": "Розгортається у фоновому режимі після активації для запобігання атакам повного перебору",
+			"panelLoginAlert": "Сповіщення про вхід до панелі",
+			"recommendedPanelLoginAlerts": "Рекомендовано: Увімкнути сповіщення про вхід до панелі",
+			"sendPanelLoginAlerts": "Надсилати сповіщення, коли панель увійде в систему",
+			"panelGoogleAuthenticatorLogin": "Панель входу за допомогою Google Authenticator",
+			"recommendedGoogleAuthenticatorLogin": "Рекомендовано: Увімкнути вхід за допомогою Google Authenticator",
+			"googleAuthenticatorDesc": "Увімкніть вхід за допомогою Google Authenticator, щоб підвищити безпеку",
+			"notLoggedInStatusCode": "Код статусу відповіді «Не ввійшли в систему»",
+			"recommendedStatusCode404": "Рекомендовано: Встановити 404 як код відповіді",
+			"notLoggedInStatusCodeDesc": "Запит безпеки був некоректним і повернув визначений код статусу",
+			"panelSsl": "SSL панелі",
+			"recommendedPanelHttps": "Рекомендовано: Увімкнути панель HTTPS",
+			"panelHttpsDesc": "Увімкніть доступ через HTTPS (після налаштування панель перезавантажиться)",
+			"rootPasswordLoginSettings": "Налаштування входу за кореневим паролем",
+			"recommendedOnlyKeyLogin": "Рекомендовано: використовувати лише вхід за ключем",
+			"recommendedOnlyAllowKeyLogin": "Рекомендується дозволити вхід лише за допомогою ключа",
+			"onlyKeyLogin": "Тільки вхід за допомогою ключа",
+			"onlyCommandExecution": "Тільки виконання команд",
+			"passwordAndKeyLogin": "Пароль і ключ для входу + ключ",
+			"prohibitedLogin": "Заборонений вхід",
+			"rootKeySettings": "Налаштування root-ключа",
+			"rootKeyDesc": "Увімкнення ключа aaPanel, перегляд та завантаження",
+			"viewKey": "Переглянути ключ",
+			"downloadKey": "Завантажити ключ",
+			"maximumRetryTimes": "Максимальна кількість повторних спроб",
+			"period": "Період",
+			"prohibitionTime": "Час заборони",
+			"sshProtectionConfigDesc": "Моніторинг логів служби SSHD та заборона доступу до IP на 86400 секунд, якщо IP перевищує максимальну кількість повторних спроб (5 разів) протягом встановленого періоду (300 секунд)",
+			"sshLoginSuccessful": "Успішний вхід по SSH",
+			"sshLoginFailed": "Не вдалося увійти через SSH",
+			"days": "Дні",
+			"lastLoginInformation": "Дані останнього входу в систему",
+			"time": "Час",
+			"sshLogin": "Вхід по SSH",
+			"panelLogin": "Вхід в панель",
+			"sshProtection": "Захист SSH",
+			"sshProtectionNotInstalled": "Функція захисту SSH не встановлена",
+			"sshProtectionInstallDesc": "Після встановлення функції захисту SSH ви зможете ефективно запобігати спробам зловмисного входу в систему",
+			"required": "Не може бути порожнім",
+			"googleAuthBinding": "Прив’язка автентифікації Google"
 		},
 		"SiteSecurity": {
 			"Header": {
@@ -677,27 +716,27 @@
 		},
 		"Overview": {
 			"header": {
-				"title": "Security Overview",
-				"subtitle": "Monitor your server security posture and respond to threats before they impact your services.",
-				"systemRunning": "System running"
+				"title": "Огляд безпеки",
+				"subtitle": "Стежте за станом безпеки свого сервера та реагуйте на загрози, перш ніж вони вплинуть на ваші сервіси.",
+				"systemRunning": "Система працює"
 			},
 			"sections": {
-				"securityScan": "Security Scan",
-				"recommendedActions": "Recommended Actions",
-				"recentSecurityEvents": "Recent Security Events",
-				"scanOverview": "Scan Overview",
-				"last7Days": "Last 7 days",
-				"scanning": "Scanning..."
+				"securityScan": "Сканування безпеки",
+				"recommendedActions": "Рекомендовані дії",
+				"recentSecurityEvents": "Нещодавні події безпеки",
+				"scanOverview": "Огляд сканування",
+				"last7Days": "Останні 7 днів",
+				"scanning": "Сканування..."
 			},
 			"Api": {
-				"settingStatus": "Applying settings, please wait..."
+				"settingStatus": "Застосування налаштувань, будь ласка, зачекайте..."
 			},
 			"common": {
-				"noData": "No data yet"
+				"noData": "Даних ще немає"
 			},
 			"protection": {
-				"title": "Protection Status",
-				"enabledCount": "Enabled {enabled}/{total}",
+				"title": "Статус захисту",
+				"enabledCount": "Увімкнено {enabled}/{total}",
 				"confirm": {
 					"enableTitle": "Увімкнути {name}",
 					"enableContent": "Ви впевнені, що хочете увімкнути {name}?",
@@ -705,230 +744,230 @@
 					"disableContent": "Ви впевнені, що хочете вимкнути {name}?"
 				},
 				"names": {
-					"firewall": "Firewall",
-					"tamperCore": "Tamper-proof for Enterprise",
-					"ssh": "SSH Protection",
+					"firewall": "Брандмауер",
+					"tamperCore": "Захист від несанкціонованих змін для Enterprise",
+					"ssh": "Захист SSH",
 					"btwaf": "Nginx WAF",
 					"fail2ban": "Fail2Ban"
 				},
 				"status": {
-					"enabled": "Enabled",
-					"disabled": "Disabled",
-					"notInstalled": "Not installed"
+					"enabled": "Увімкнено",
+					"disabled": "Вимкнено",
+					"notInstalled": "Не встановлено"
 				},
 				"details": {
-					"allowedPorts": "Allowed ports: ",
+					"allowedPorts": "Дозволені порти: ",
 					"portSeparator": ", ",
-					"monitoringPrefix": "Monitoring ",
-					"monitoringSuffix": " core files for changes",
-					"currentPort": "Current port: ",
-					"keyLogin": "Key login: ",
-					"passwordLogin": "Password login: ",
-					"blocks": "Blocks:",
-					"todayRequest": "Запити за сьогодні: ",
-					"todayMaliciousRequest": "Шкідливі запити за сьогодні: ",
-					"blockedPrefix": "Blocked ",
-					"bruteForceMiddle": " brute-force attempts · ",
-					"bannedIpSuffix": " IPs banned"
+					"monitoringPrefix": "Моніторинг ",
+					"monitoringSuffix": " файли core для внесення змін",
+					"currentPort": "Поточний порт: ",
+					"keyLogin": "Вхід за ключем: ",
+					"passwordLogin": "Вхід за паролем: ",
+					"blocks": "Блокування:",
+					"todayRequest": "Запитів сьогодні: ",
+					"todayMaliciousRequest": "Зловмисних запитів сьогодні: ",
+					"blockedPrefix": "Заблоковано ",
+					"bruteForceMiddle": " спроб підбору пароля · ",
+					"bannedIpSuffix": " Заблоковані IP-адреси"
 				},
 				"settings": {
-					"quickAllowPorts": "Quick allow ports",
-					"configureProduct": "Configure {name}",
-					"sshSettings": "SSH settings"
+					"quickAllowPorts": "Швидке відкриття портів",
+					"configureProduct": "Налаштувати {name}",
+					"sshSettings": "Налаштування SSH"
 				},
 				"forms": {
-					"portNumber": "Номер порту"
+					"portNumber": "Номер порта"
 				},
 				"ssh": {
-					"keyLoginDesc": "Дозволити вхід SSH за ключем",
-					"passwordLoginDesc": "Дозволити вхід SSH за паролем",
+					"keyLoginDesc": "Дозволити вхід через SSH за ключем",
+					"passwordLoginDesc": "Дозволити вхід через SSH за допомогою пароля",
 					"keysTitle": "Ключі SSH"
 				},
 				"attacks": {
-					"cc": "CC attacks",
+					"cc": "CC-атаки",
 					"xss": "XSS",
-					"sql": "SQL injection"
+					"sql": "SQL-ін'єкція"
 				}
 			},
 			"scanCards": {
 				"labels": {
-					"securityRisk": "Security Risk",
-					"malwareDetection": "Malware Detection",
-					"websiteVulnerability": "Website Vulnerability",
-					"baseline": "Baseline"
+					"securityRisk": "Ризик-безпека",
+					"malwareDetection": "Виявлення шкідливого ПЗ",
+					"websiteVulnerability": "Вразливість сайту",
+					"baseline": "Вихідні дані"
 				},
-				"waitingFirstScan": "Waiting for first scan",
-				"details": "Details →",
-				"detailsAria": "{label} details"
+				"waitingFirstScan": "Очікування першого сканування",
+				"details": "Деталі →",
+				"detailsAria": "Деталі {label}"
 			},
 			"riskLevels": {
-				"critical": "Critical",
-				"high": "High",
-				"medium": "Medium",
-				"low": "Low",
-				"normal": "Normal"
+				"critical": "Критичний",
+				"high": "Високий",
+				"medium": "Середній",
+				"low": "Низький",
+				"normal": "Нормальний"
 			},
 			"recommended": {
-				"emptyTitle": "No recommended actions",
-				"emptyDesc": "Recommended actions will be generated automatically after a security scan.",
-				"noDescription": "No recommendation details",
-				"defaultTitle": "Recommended Action",
-				"badgeItems": "{count} items",
-				"badgeZeroItems": "0 items",
+				"emptyTitle": "Немає рекомендацій",
+				"emptyDesc": "Рекомендовані дії буде автоматично згенеровано після сканування безпеки.",
+				"noDescription": "Немає опису рекомендації",
+				"defaultTitle": "Рекомендована дія",
+				"badgeItems": "{count} елементів",
+				"badgeZeroItems": "0 елементів",
 				"buttons": {
-					"fixNow": "Fix Now",
-					"resolve": "Resolve",
-					"review": "Review",
-					"view": "View"
+					"fixNow": "Виправити зараз",
+					"resolve": "Вирішити",
+					"review": "Переглянути",
+					"view": "Переглянути"
 				}
 			},
 			"events": {
-				"title": "Recent Security Events",
-				"defaultTitle": "Security event",
-				"noEventDetails": "No event details",
-				"emptyTitle": "No security events",
-				"emptyDesc": "Your server is running normally. Security events will appear here after a scan.",
-				"allLoaded": "All security events loaded",
-				"viewAll": "View All →",
-				"autoRecord": "Events will be recorded after the first scan",
+				"title": "Останні події безпеки",
+				"defaultTitle": "Подія безпеки",
+				"noEventDetails": "Немає подробиць події",
+				"emptyTitle": "Немає подій безпеки",
+				"emptyDesc": "Ваш сервер працює нормально. Після сканування тут з'являтимуться події безпеки.",
+				"allLoaded": "Усі події безпеки завантажено",
+				"viewAll": "Переглянути всі →",
+				"autoRecord": "Події будуть записуватися після першого сканування",
 				"filters": {
-					"all": "All categories",
-					"info": "Info",
-					"low": "Low",
-					"medium": "Medium",
-					"high": "High",
-					"critical": "Critical",
-					"searchPlaceholder": "Search security events"
+					"all": "Всі категорії",
+					"info": "Інформація",
+					"low": "Низький",
+					"medium": "Середній",
+					"high": "Високий",
+					"critical": "Критичні",
+					"searchPlaceholder": "Пошук подій безпеки"
 				},
 				"status": {
-					"normal": "Normal",
-					"warning": "Warning",
-					"blocked": "Blocked"
+					"normal": "Нормальний",
+					"warning": "Попередження",
+					"blocked": "Заблоковано"
 				}
 			},
 			"health": {
 				"status": {
-					"scanning": "Scanning",
-					"pending": "Not scanned"
+					"scanning": "Сканується",
+					"pending": "Не скановано"
 				},
 				"levels": {
-					"healthy": "Healthy",
-					"good": "Good",
-					"attention": "Needs Attention",
-					"critical": "Critical"
+					"healthy": "Нормально",
+					"good": "Добрий",
+					"attention": "Потребує уваги",
+					"critical": "Критичний"
 				},
-				"scanningDesc": "Running a full server security scan",
-				"pleaseWait": "Please wait",
-				"lastScan": "Last scan: {time}",
-				"notScanned": "No security scan has been run yet.",
-				"clickToStart": "Click Start Scan to begin.",
-				"startScan": "Start Scan"
+				"scanningDesc": "Виконується повне сканування безпеки сервера",
+				"pleaseWait": "Будь ласка, зачекайте",
+				"lastScan": "Останнє сканування: {time}",
+				"notScanned": "Ще не було виконано жодного сканування безпеки.",
+				"clickToStart": "Натисніть «Почати сканування», щоб розпочати.",
+				"startScan": "Почати сканування"
 			}
 		},
 		"NetworkScan": {
 			"Tabs": {
-				"overview": "Overview",
-				"blocked": "Blocked Records",
-				"operationLog": "Operation Log",
-				"realtimeLog": "Real-time Log"
+				"overview": "Огляд",
+				"blocked": "Заблоковані записи",
+				"operationLog": "Журнал операцій",
+				"realtimeLog": "Журнал у реальному часі"
 			},
 			"Conversion": {
-				"title": "Scan Detection - Features",
-				"feature1": "Identify malicious scan IPs 24/7",
-				"feature2": "Quickly detect and block abnormal traffic",
-				"buttonSetup": "Install Now",
-				"buttonRenew": "Buy Now"
+				"title": "Виявлення сканування — функції",
+				"feature1": "Виявлення шкідливих IP-адрес сканування цілодобово",
+				"feature2": "Швидке виявлення та блокування аномального трафіку",
+				"buttonSetup": "Встановити зараз",
+				"buttonRenew": "Купити зараз"
 			},
 			"Overview": {
-				"title": "Scan Overview",
-				"todayScanCount": "Today's Scan Count",
-				"todayIpCount": "Today's IP Count",
-				"totalScanCount": "Total Scan Count",
-				"scanSwitch": "Scan Detection",
-				"refresh": "Refresh",
-				"export": "Export",
-				"advancedConfig": "Advanced Config",
-				"durationText": "{minutes}m {seconds}s",
-				"durationOverflow": "999+h",
+				"title": "Огляд сканування",
+				"todayScanCount": "Кількість сканувань сьогодні",
+				"todayIpCount": "Кількість IP за сьогодні",
+				"totalScanCount": "Загальна кількість сканувань",
+				"scanSwitch": "Виявлення сканування",
+				"refresh": "Оновити",
+				"export": "Експорт",
+				"advancedConfig": "Розширені налаштування",
+				"durationText": "{minutes}хв {seconds}с",
+				"durationOverflow": "999+ год",
 				"columns": {
-					"scanIp": "Scan IP",
-					"scanType": "Scan Type",
-					"todayScanCount": "Today's Scans",
-					"totalScanCount": "Total Scans",
-					"scannedPorts": "Scanned Ports",
-					"scanStartTime": "Scan Start Time",
-					"scanDuration": "Scan Duration"
+					"scanIp": "Сканувати IP-адресу",
+					"scanType": "Тип сканування",
+					"todayScanCount": "Сканування за сьогодні",
+					"totalScanCount": "Усього сканувань",
+					"scannedPorts": "Перевірені порти",
+					"scanStartTime": "Час початку сканування",
+					"scanDuration": "Тривалість сканування"
 				},
 				"actions": {
-					"details": "Details",
-					"block": "Block"
+					"details": "Деталі",
+					"block": "Заблокувати"
 				},
 				"dialogs": {
-					"scanDetail": "{ip} Scan Details",
-					"blockTitle": "Block IP",
-					"blockContent": "Block {ip} for 24 hours?",
-					"exportTitle": "Export IP List",
-					"exportContent": "Export the current scan IP list?",
-					"batchBlockTitle": "Batch Block",
-					"batchBlockDesc": "Batch block selected IPs?",
-					"advancedConfigTitle": "Advanced Config"
+					"scanDetail": "Деталі сканування {ip}",
+					"blockTitle": "Блокування IP",
+					"blockContent": "Заблокувати {ip} на 24 години?",
+					"exportTitle": "Експорт списку IP-адрес",
+					"exportContent": "Експортувати поточний список IP-адрес?",
+					"batchBlockTitle": "Масове блокування",
+					"batchBlockDesc": "Блокувати вибрані IP-адреси пакетно?",
+					"advancedConfigTitle": "Розширені налаштування"
 				}
 			},
 			"Blocked": {
 				"columns": {
 					"ip": "IP",
-					"source": "Source",
-					"reason": "Reason"
+					"source": "Джерело",
+					"reason": "Причина"
 				},
 				"actions": {
-					"unlock": "Unblock",
-					"unlockTitle": "Unblock IP",
-					"unlockContent": "Allow {ip} to access after unblocking?",
-					"batchUnlockTitle": "Batch Unblock",
-					"batchUnlockDesc": "Batch unblock selected IPs?"
+					"unlock": "Розблокувати",
+					"unlockTitle": "Розблокувати IP",
+					"unlockContent": "Дозволити {ip} доступ після розблокування?",
+					"batchUnlockTitle": "Масове розблокування",
+					"batchUnlockDesc": "Розблокувати вибрані IP-адреси масово?"
 				},
 				"defaults": {
-					"source": "Nginx Firewall",
-					"reason": "IP scan too frequent"
+					"source": "Брандмауер Nginx",
+					"reason": "Занадто часте сканування IP"
 				}
 			},
 			"OperationLog": {
 				"columns": {
-					"time": "Time",
-					"detail": "Detail"
+					"time": "Час",
+					"detail": "Деталі"
 				}
 			},
 			"ScanDetail": {
-				"totalScanCount": "Total Scans:",
-				"localNetwork": "Local Network",
+				"totalScanCount": "Загальна кількість сканувань:",
+				"localNetwork": "Локальна мережа",
 				"columns": {
-					"date": "Date",
-					"scanCount": "Scan Count"
+					"date": "Дата",
+					"scanCount": "Кількість сканувань"
 				}
 			},
 			"DateRange": {
-				"today": "Today",
-				"yesterday": "Yesterday"
+				"today": "Сьогодні",
+				"yesterday": "Вчора"
 			},
 			"AdvancedConfig": {
 				"tabs": {
-					"rule": "Block Rules",
-					"cleanup": "Data Cleanup"
+					"rule": "Правила блокування",
+					"cleanup": "Очищення даних"
 				},
 				"form": {
-					"scanTime": "Scan Time",
-					"accessCount": "Access Count",
-					"cleanupDays": "Scan Days",
-					"minuteUnit": "minutes",
-					"countUnit": "times",
-					"cleanupUnit": "days",
-					"cleanupTip": "Scan data is retained for {days} days. Older data will be cleaned automatically.",
-					"save": "Save"
+					"scanTime": "Час сканування",
+					"accessCount": "Лічильник доступу",
+					"cleanupDays": "Дні сканування",
+					"minuteUnit": "хвилини",
+					"countUnit": "разів",
+					"cleanupUnit": "днів",
+					"cleanupTip": "Дані сканування зберігаються протягом {days} днів. Старіші дані буде видалено автоматично.",
+					"save": "Зберегти"
 				},
 				"validation": {
-					"scanTime": "Please enter scan time",
-					"accessCount": "Please enter access count",
-					"cleanupDays": "Please enter max days"
+					"scanTime": "Вкажіть час сканування",
+					"accessCount": "Введіть кількість доступів",
+					"cleanupDays": "Будь ласка, введіть максимальну кількість днів"
 				}
 			}
 		}

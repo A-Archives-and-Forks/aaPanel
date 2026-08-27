@@ -996,6 +996,8 @@
 				"title": "Pertahanan Web Langsung",
 				"description": "Diurutkan berdasarkan jumlah permintaan yang diblokir",
 				"rankIp": "Peringkat / alamat IP",
+				"rank": "Peringkat",
+				"ipAddress": "Alamat IP",
 				"country": "Negara",
 				"hits": "Hit",
 				"empty": "Tidak ada data perlindungan real-time"

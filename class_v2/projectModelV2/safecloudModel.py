@@ -362,216 +362,7 @@ rm -f /tmp/install_yara.lock
                     pass
 
 
-class CloudDetector(WebshellDetector):
-    """云端检测引擎
-    @time: 2025-02-19
-    @param file_path: 文件路径
-    @return: <tuple> 是否可疑, 规则名称
-    """
 
-    def __init__(self):
-        self.cache_file = '/www/server/panel/data/safeCloud/cloud_config.json'
-        self.url_cache = self._load_cache()  # 加载缓存配置
-        self.last_check_time = self.url_cache.get('last_check', 0)  # 上次检查时间
-        self.check_url = self.url_cache.get('check_url', '')  # 检测URL
-        self.request_count = 0  # 请求次数
-        self.last_request_time = 0  # 上次请求时间
-        # 配置参数
-        self.cache_ttl = 86400  # URL缓存时间(24小时)
-        self.rate_limit = {
-            'max_requests': 100,  # 每小时最大请求数
-            'interval': 3600,  # 计数周期(秒)
-            'min_interval': 1  # 两次请求的最小间隔(秒)
-        }
-
-    def _load_cache(self) -> dict:
-        """加载缓存配置
-        @time: 2025-02-19
-        @return: <dict> 缓存配置
-        """
-        try:
-            if os.path.exists(self.cache_file):
-                with open(self.cache_file, 'r') as f:
-                    return json.load(f)
-        except Exception as e:
-            # logging.error("Error loading cloud config cache: {}".format(str(e)))
-            pass
-        return {'last_check': 0, 'check_url': ''}
-
-    def _save_cache(self) -> None:
-        """保存缓存配置
-        @time: 2025-02-19
-        """
-        try:
-            cache_dir = os.path.dirname(self.cache_file)
-            if not os.path.exists(cache_dir):
-                os.makedirs(cache_dir)
-            with open(self.cache_file, 'w') as f:
-                json.dump({
-                    'last_check': self.last_check_time,
-                    'check_url': self.check_url
-                }, f)
-        except Exception as e:
-            # logging.error("Error saving cloud config cache: {}".format(str(e)))
-            pass
-
-    def _update_check_url(self) -> bool:
-        """更新检测URL
-        @time: 2025-02-19
-        @return: <bool> 是否更新成功
-        """
-        current_time = time.time()
-
-        # 检查缓存是否有效
-        if self.check_url and (current_time - self.last_check_time) < self.cache_ttl:
-            return True
-
-        try:
-            ret = requests.get(f'{public.OfficialWebShellCheckBase()}/checkWebShell.php').json()
-            if ret['status'] and ret['url']:
-                self.check_url = ret['url']
-                self.last_check_time = current_time
-                self._save_cache()
-                return True
-        except Exception as e:
-            # logging.error("Error updating check URL: {}".format(str(e)))
-            pass
-        return False
-
-    def _check_rate_limit(self) -> bool:
-        """检查频率限制
-        @time: 2025-02-19
-        @return: <bool> 是否检查成功
-        """
-        current_time = time.time()
-
-        # 检查最小请求间隔
-        # if (current_time - self.last_request_time) < self.rate_limit['min_interval']:
-        #     return False
-
-        # 重置计数器
-        if (current_time - self.last_request_time) > self.rate_limit['interval']:
-            self.request_count = 0
-
-        # 检查请求数限制
-        if self.request_count >= self.rate_limit['max_requests']:
-            return False
-
-        self.request_count += 1
-        self.last_request_time = current_time
-        return True
-
-    def detect(self, file_path: str) -> tuple:
-        """检测文件是否为木马
-        @time: 2025-02-19
-        @param file_path: 文件路径
-        @return: <tuple> 是否可疑, 规则名称
-        """
-        try:
-            # 基础检查
-            if not os.path.exists(file_path) or not os.path.isfile(file_path):
-                return False, ''
-
-            # 检查文件大小
-            file_size = os.path.getsize(file_path)
-            if file_size < 1024:  # 小于1KB，视为空文件
-                return False, ''
-            if file_size > 10 * 1024 * 1024:  # 10MB限制
-                return False, ''
-
-            # 频率限制检查
-            if not self._check_rate_limit():
-                # logging.warning("Cloud detection rate limit exceeded for: {}".format(file_path))
-                return False, ''
-
-            # 确保有可用的检测URL
-            if not self._update_check_url():
-                return False, ''
-
-            # 读取文件内容
-            file_content = self.ReadFile(file_path)
-            if not file_content:
-                return False, ''
-
-            # 计算文件MD5
-            md5_hash = self.FileMd5(file_path)
-            if not md5_hash:
-                return False, ''
-
-            # 发送检测请求
-            try:
-                upload_data = {
-                    'inputfile': file_content,
-                    'md5': md5_hash
-                }
-                response = requests.post(self.check_url, upload_data, timeout=20)
-                # 添加响应内容检查
-                if not response.content:
-                    # logging.error("Empty response from cloud detection for file: {}".format(file_path))
-                    return False, ''
-                try:
-                    result = response.json()
-                except json.JSONDecodeError as je:
-                    # logging.error("Invalid JSON response from cloud detection for {}: {}".format(file_path, response.content))
-                    return False, ''
-
-                # 查看是否需要告警
-                if isinstance(result, dict) and result.get('msg') == 'ok':
-                    try:
-                        is_webshell = result.get('data', {}).get('data', {}).get('level') == 5
-                        if is_webshell:
-                            return True, 'cloud_detection'
-                    except (KeyError, AttributeError) as e:
-                        # logging.error("Unexpected response structure for {}: {}".format(file_path, result))
-                        return False, ''
-
-            except Exception as e:
-                # logging.error("Cloud detection error for {}: {}".format(file_path, str(e)))
-                pass
-
-            return False, ''
-
-        except Exception as e:
-            # logging.error("Error in cloud detection: {}".format(str(e)))
-            return False, ''
-
-    def ReadFile(self, filepath: str, mode: str = 'r') -> str:
-        """读取文件内容
-        @time: 2025-02-19
-        @param filepath: 文件路径
-        @param mode: 文件模式
-        @return: <str> 文件内容
-        """
-        if not os.path.exists(filepath):
-            return ''
-        try:
-            with open(filepath, mode) as fp:
-                return fp.read()
-        except Exception:
-            try:
-                with open(filepath, mode, encoding="utf-8") as fp:
-                    return fp.read()
-            except Exception as e:
-                # logging.error("Error reading file {}: {}".format(filepath, str(e)))
-                return ''
-
-    def FileMd5(self, filepath: str) -> str:
-        """计算文件MD5
-        @time: 2025-02-19
-        @param filepath: 文件路径
-        @return: <str> 文件MD5
-        """
-        try:
-            if not os.path.exists(filepath) or not os.path.isfile(filepath):
-                return ''
-            md5_hash = hashlib.md5()
-            with open(filepath, 'rb') as f:
-                for chunk in iter(lambda: f.read(64 * 1024), b''):
-                    md5_hash.update(chunk)
-            return md5_hash.hexdigest()
-        except Exception as e:
-            # logging.error("Error calculating MD5 for {}: {}".format(filepath, str(e)))
-            return ''
 
 
 class SafeCloudModel:
@@ -765,7 +556,7 @@ class Config:
             'scan_oss': False,  # OSS目录扫描开关，默认关闭
             'oss_dirs': [],  # 存储检测到的OSS挂载目录
             'has_oss_mounts': False,  # 是否存在OSS挂载
-            'dynamic_detection': True,  # 动态查杀开关,默认开启
+
             # 过滤目录
             'exclude_dirs': [
                 '/proc',
@@ -989,7 +780,6 @@ class main(projectBase):
             # PatternDetector(),  # 正则匹配，wp误报根源
             # BehaviorDetector(),  # 行为分析
             YaraDetector(),  # 添加 Yara 检测引擎，删除规则包，待修复
-            CloudDetector()  # 添加云查杀引擎
         ]
 
         # 创建必要的目录
@@ -1475,10 +1265,7 @@ class main(projectBase):
         """
         try:
             # public.print_log("|-开始木马检测扫描-|")
-            # 检测是否开启动态查杀开关
-            # todo  去掉开关 改为手动扫描
-            # if not self.__config.config.get('dynamic_detection', True):
-            #     return public.returnMsg(True, 'The dynamic killing function has been turned off, skipping detection')
+
             # task任务频率控制
             safecloud_dir = '/www/server/panel/data/safeCloud'
             if not os.path.exists(safecloud_dir):
@@ -1500,8 +1287,8 @@ class main(projectBase):
 
                     last_detection_time = last_detection_data.get('time', 0)
                     # 检查是否需要执行
-                    if (current_time - last_detection_time) < 50:  # 5小时60*60*5
-                        return public.return_message(0, 0, 'Less than 12 hours have passed since the last scan, skip this scan')
+                    if (current_time - last_detection_time) < 60:
+                        return public.return_message(0, 0, 'Less than 1 minute has passed since the last scan, skip this scan')
                 except Exception as e:
                     return public.return_message(-1, 0, "An error occurred during the scanning process: {}".format(str(e)))
 
@@ -1849,7 +1636,7 @@ class main(projectBase):
                     # 'max_files_per_dir': self.__config.config.get('max_files_per_dir', 10000),
                     'quarantine': self.__config.config.get('quarantine', False),
                     'alertable': self.__config.config.get('alertable', {}),
-                    'dynamic_detection': self.__config.config.get('dynamic_detection', True)
+
                 }
             })
         except Exception as e:
@@ -1882,13 +1669,13 @@ class main(projectBase):
                     'success_msg': lambda x: "The file interception function has been activated {}".format(
                         "enabled" if x else "turned off")
                 },
-                'dynamic_detection': {
-                    'validator': lambda x: str(x).lower() in ('true', 'false'),
-                    'converter': lambda x: str(x).lower() == 'true',
-                    'error_msg': "dynamic_detection parameter must 'true' or 'false'",
-                    'success_msg': lambda x: "The dynamic killing function has been {}".format(
-                        "enabled" if x else "turned off"),
-                },
+                # 'dynamic_detection': {
+                #     'validator': lambda x: str(x).lower() in ('true', 'false'),
+                #     'converter': lambda x: str(x).lower() == 'true',
+                #     'error_msg': "dynamic_detection parameter must 'true' or 'false'",
+                #     'success_msg': lambda x: "The dynamic killing function has been {}".format(
+                #         "enabled" if x else "turned off"),
+                # },
                 'scan_oss': {
                     'validator': lambda x: str(x).lower() in ('true', 'false'),
                     'converter': lambda x: str(x).lower() == 'true',
@@ -1969,7 +1756,7 @@ class main(projectBase):
                             if 'post_process' in rule:
                                 rule['post_process'](new_value)
 
-                            if key not in ['quarantine', 'dynamic_detection', 'scan_oss']:  # 这些有专门的成功消息
+                            if key not in ['quarantine', 'scan_oss']:  # 这些有专门的成功消息
                                 success_messages.append(rule['success_msg'](new_value))
                             elif 'success_msg' in rule:  # 对于布尔型，使用其自身的success_msg
                                 success_messages.append(rule['success_msg'](new_value))
@@ -3047,10 +2834,12 @@ class main(projectBase):
 
             # 3. 检查恶意文件检测状态
             try:
-                config_file = '/www/server/panel/data/safeCloud/config.json'
-                if os.path.exists(config_file):
-                    config = json.loads(public.readFile(config_file))
-                    status['file_detection'] = bool(config.get('dynamic_detection'))
+                # config_file = '/www/server/panel/data/safeCloud/config.json'
+                # if os.path.exists(config_file):
+                #     config = json.loads(public.readFile(config_file))
+                #     status['file_detection'] = bool(config.get('dynamic_detection'))
+                # 改为手动
+                status['file_detection'] = False
             except:
                 pass
 

@@ -972,7 +972,8 @@ class DomainObject:
                 success_msg = {"result": apply_res.get("msg", "Apply Successfully!")}
                 if deploy.get("status"):
                     success_msg.update({"deploy": deploy.get("status")})
-                return public.success_v2(public.lang(success_msg))
+                # return public.success_v2(public.lang(success_msg))
+                return public.success_v2(success_msg)
 
             if apply_res.get("index"):  # 新申请, 返回订单详情
                 manual_apply.update({domian_index: apply_res.get("index")})

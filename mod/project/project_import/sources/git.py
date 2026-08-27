@@ -261,17 +261,23 @@ def bind_site_git(site_id, project_path, git_bind):
     """
     repo = str(git_bind.get("repo", "")).strip()
     branch = str(git_bind.get("branch", "")).strip()
-    key_path = str(git_bind.get("key_path", "")).strip()
     auth_type = str(git_bind.get("auth_type", "ssh")).strip().lower()
-    if not site_id or not repo or not key_path:
+    if auth_type == "ssh_key":
+        auth_type = "ssh"
+    key_path = str(git_bind.get("key_path", "")).strip()
+    username = str(git_bind.get("username", "")).strip()
+    token_encrypted = str(git_bind.get("token_encrypted", "")).strip()
+    if not site_id or not repo or auth_type not in ("public", "ssh", "token"):
         return {"bound": False, "warning": "Git binding skipped: incomplete git bind information"}
     project_path = os.path.realpath(str(project_path or ""))
     if not os.path.isdir(os.path.join(project_path, ".git")):
         return {"bound": False, "warning": "Git binding skipped: the imported project has no .git directory"}
-    if auth_type != "ssh":
-        return {"bound": False, "warning": "Git binding skipped: only ssh_key authentication is supported"}
-    if not os.path.isfile(key_path) or not os.path.isfile(key_path + ".pub"):
+    if auth_type == "ssh" and (
+        not os.path.isfile(key_path) or not os.path.isfile(key_path + ".pub")
+    ):
         return {"bound": False, "warning": "Git binding skipped: the SSH private key does not exist"}
+    if auth_type == "token" and (not username or not token_encrypted):
+        return {"bound": False, "warning": "Git binding skipped: incomplete token authentication information"}
 
     try:
         import public
@@ -281,19 +287,35 @@ def bind_site_git(site_id, project_path, git_bind):
         custom_env = os.environ.copy()
         custom_env["HOME"] = "/root"
         custom_env["GIT_SAFE_DIRECTORY"] = "*"
-        public.ExecShell(
-            "git config --global --add safe.directory {}".format(project_path),
+        subprocess.run(
+            ["git", "config", "--global", "--add", "safe.directory", project_path],
             env=custom_env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=30,
+            check=True,
         )
-        public.ExecShell(
-            "git -C {} config core.sshCommand \"ssh -i {} -o IdentitiesOnly=yes -o StrictHostKeyChecking=no\"".format(
-                project_path, key_path
-            ),
-            timeout=15,
-        )
+        if auth_type == "ssh":
+            subprocess.run(
+                [
+                    "git", "-C", project_path, "config", "core.sshCommand",
+                    "ssh -i {} -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new".format(
+                        shlex.quote(key_path)
+                    ),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=30,
+                check=True,
+            )
         public.M("git_sites_auth").add(
-            "site_id,repo,branch,auth_type,key_path",
-            (int(site_id), repo, branch, "ssh", key_path),
+            "site_id,repo,branch,auth_type,key_path,username,oauth_access_token,oauth_token_type",
+            (
+                int(site_id), repo, branch, auth_type, key_path, username,
+                token_encrypted, "aes" if auth_type == "token" else "",
+            ),
         )
         return {"bound": True, "warning": ""}
     except Exception as exc:

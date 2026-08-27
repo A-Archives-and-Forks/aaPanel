@@ -3194,23 +3194,6 @@ echo $! > {pid_file}'''.format(
         public.WriteLog(self._log_name, done_msg)
         return True
 
-    # 移除cron
-    def _del_crontab_by_name(self, cron_name):
-        try:
-            cron_path = public.GetConfigValue('setup_path') + '/cron/'
-            cron_list = public.M('crontab').where("name=?", (cron_name,)).select()
-            if cron_list and isinstance(cron_list, list):
-                for i in cron_list:
-                    if not i: continue
-                    cron_echo = public.M('crontab').where("id=?", (i['id'],)).getField('echo')
-                    args = {"id": i['id']}
-                    import crontab_v2
-                    crontab_v2.crontab().DelCrontab(args)
-                    del_cron_file = cron_path + cron_echo
-                    public.ExecShell("crontab -u root -l| grep -v '{}'|crontab -u root -".format(del_cron_file))
-        except Exception as e:
-            public.print_log("Delete crontab {} failed: {}".format(cron_name, str(e)))
-
     # —————————————
     #  日志切割   |
     # —————————————

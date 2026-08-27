@@ -2454,7 +2454,7 @@ include /www/server/panel/vhost/openlitespeed/proxy/BTSITENAME/*.conf
                 Param('ftp').Integer(),
                 Param('database').Integer(),
                 Param('path').Integer(),
-                Param('del_port').Integer(),
+                Param('port').Integer(),
 
             ], [
                 public.validate.trim_filter(),
@@ -2607,7 +2607,7 @@ include /www/server/panel/vhost/openlitespeed/proxy/BTSITENAME/*.conf
             public.serviceReload()
 
         # 删除站点放行端口(除默认80/443外)
-        if hasattr(get, 'del_port') and get.del_port == '1':
+        if hasattr(get, 'port') and get.port == '1':
             self.__del_site_firewall_port(id, siteName, get)
 
         try:

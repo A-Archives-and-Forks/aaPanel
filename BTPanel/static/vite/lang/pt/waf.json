@@ -982,6 +982,8 @@
 				"title": "Defesa Web ao vivo",
 				"description": "Classificado pelo número de solicitações bloqueadas",
 				"rankIp": "Posição / endereço IP",
+				"rank": "Posição",
+				"ipAddress": "Endereço IP",
 				"country": "País",
 				"hits": "Ocorrências",
 				"empty": "Sem dados de proteção em tempo real"

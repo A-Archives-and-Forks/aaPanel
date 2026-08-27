@@ -996,6 +996,8 @@
 				"title": "Defensa Web en vivo",
 				"description": "Ordenado por número de solicitudes bloqueadas",
 				"rankIp": "Posición / dirección IP",
+				"rank": "Posición",
+				"ipAddress": "Dirección IP",
 				"country": "País",
 				"hits": "Incidencias",
 				"empty": "Sin datos de protección en tiempo real"

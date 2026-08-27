@@ -965,7 +965,7 @@
 				"title": "大屏設定",
 				"monitorTitle": "監控標題",
 				"monitorTitlePlaceholder": "請輸入監控標題",
-				"screenVersion": "大屏版本",
+				"screenVersion": "版本",
 				"serverCoords": "伺服器經緯度",
 				"longitude": "經度",
 				"longitudePlaceholder": "請輸入經度，如 116.395645",
@@ -994,6 +994,8 @@
 				"title": "即時WEB防護",
 				"description": "按攔截請求次數排序",
 				"rankIp": "排名 / IP 位址",
+				"rank": "排名",
+				"ipAddress": "IP 位址",
 				"country": "國家或地區",
 				"hits": "次數",
 				"empty": "暫無即時防護數據"

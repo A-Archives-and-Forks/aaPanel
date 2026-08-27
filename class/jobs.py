@@ -440,12 +440,14 @@ def sql_pacth():
       `id` INTEGER PRIMARY KEY AUTOINCREMENT,
       `site_id` INTEGER,
       `auth_type` TEXT,
+      `username` TEXT,
       `oauth_access_token` TEXT,
       `oauth_scope` TEXT,
       `oauth_token_type` TEXT,
       `branch` TEXT,
       `repo` TEXT,
-      `key_path` TEXT,  
+      `key_path` TEXT,
+      `ignore_paths` TEXT,
       `number_copies` INTEGER DEFAULT 5
 )"""
         sql.execute(csql, ())
@@ -453,6 +455,14 @@ def sql_pacth():
     # 添加密钥路径
     if not public.M('sqlite_master').where('type=? AND name=? AND sql LIKE ?', ('table', 'git_sites_auth','%key_path%')).count():
         public.M('crontab').execute("ALTER TABLE 'git_sites_auth' ADD 'key_path' TEXT",())
+
+    # Git token authentication username. Historical SSH records keep auth_type=ssh.
+    if not public.M('sqlite_master').where('type=? AND name=? AND sql LIKE ?', ('table', 'git_sites_auth','%username%')).count():
+        public.M('crontab').execute("ALTER TABLE 'git_sites_auth' ADD 'username' TEXT",())
+
+    # Git manager deployment ignored paths (JSON array), preserved on full replace.
+    if not public.M('sqlite_master').where('type=? AND name=? AND sql LIKE ?', ('table', 'git_sites_auth','%ignore_paths%')).count():
+        public.M('crontab').execute("ALTER TABLE 'git_sites_auth' ADD 'ignore_paths' TEXT",())
 
     if not sql.table('sqlite_master').where('type=? AND name=?', ('table', 'site_deploy_status')).count():
         csql = r"""
@@ -469,9 +479,29 @@ def sql_pacth():
         `commit_hash_short` TEXT,
         `msg` TEXT,
         `author_name` TEXT,
-        `committed_time` TEXT
+        `committed_time` TEXT,
+        `branch` TEXT,
+        `operation_type` TEXT DEFAULT 'script',
+        `rollback_from_id` INTEGER DEFAULT 0,
+        `error_message` TEXT
     )"""
         sql.execute(csql, ())
+
+    deploy_status_columns = (
+        ('branch', "TEXT"),
+        ('operation_type', "TEXT DEFAULT 'script'"),
+        ('rollback_from_id', "INTEGER DEFAULT 0"),
+        ('error_message', "TEXT"),
+    )
+    for column_name, column_type in deploy_status_columns:
+        if not public.M('sqlite_master').where(
+            'type=? AND name=? AND sql LIKE ?',
+            ('table', 'site_deploy_status', '%{}%'.format(column_name))
+        ).count():
+            public.M('crontab').execute(
+                "ALTER TABLE 'site_deploy_status' ADD '{}' {}".format(column_name, column_type),
+                ()
+            )
 
     if not sql.table('sqlite_master').where('type=? AND name=?', ('table', 'site_deploy_script')).count():
         csql = r"""

@@ -127,3 +127,5 @@ pymssql==2.3.0
 distro==1.9.0
 pymssql==2.3.0
 jsonpath==0.82.2
+openai==1.39.0
+httpx==0.24.1

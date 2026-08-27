@@ -13,7 +13,7 @@ import sys, os, re, asyncio, public, json, requests
 try:
     import telegram
 except:
-    public.ExecShell("btpip install -I python-telegram-bot")
+    public.ExecShell("btpip install -I python-telegram-bot==20.3")
     import telegram
 
 panelPath = "/www/server/panel"

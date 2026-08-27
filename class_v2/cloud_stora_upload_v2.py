@@ -520,7 +520,9 @@ class CloudStoraUpload:
             self.obj._name = cloud_name
         if not hasattr(self.obj, "_title"):
             self.obj._title = self.__CLOUD_TITLE.get(cloud_name, "")
-        if not hasattr(self.obj, "backup_path"):
+        if not isinstance(getattr(self.obj, "backup_path", None), str):
+            # 部分插件对象将 backup_path 定义为方法（如 gdrive 旧版目录备份接口），
+            # hasattr 对方法返回 True 会跳过注入；这里按类型判断，非字符串一律注入默认值。
             self.obj.backup_path = self.backup_path
         if not hasattr(self.obj, "error_msg"):
             self.obj.error_msg = ""

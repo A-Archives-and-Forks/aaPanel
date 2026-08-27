@@ -982,6 +982,8 @@
 				"title": "Canlı Web Savunması",
 				"description": "Engellenen istek sayısına göre sıralanır",
 				"rankIp": "Sıra / IP adresi",
+				"rank": "Sıra",
+				"ipAddress": "IP adresi",
 				"country": "Ülke",
 				"hits": "İsabet",
 				"empty": "Gerçek zamanlı koruma verisi yok"

@@ -982,6 +982,8 @@
 				"title": "Difesa Web live",
 				"description": "Classificato per numero di richieste bloccate",
 				"rankIp": "Posizione / indirizzo IP",
+				"rank": "Posizione",
+				"ipAddress": "Indirizzo IP",
 				"country": "Paese",
 				"hits": "Occorrenze",
 				"empty": "Nessun dato di protezione in tempo reale"

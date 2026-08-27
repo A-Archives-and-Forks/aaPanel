@@ -996,6 +996,8 @@
 				"title": "Phòng thủ Web trực tiếp",
 				"description": "Xếp hạng theo số yêu cầu bị chặn",
 				"rankIp": "Xếp hạng / địa chỉ IP",
+				"rank": "Xếp hạng",
+				"ipAddress": "Địa chỉ IP",
 				"country": "Quốc gia",
 				"hits": "Lượt",
 				"empty": "Không có dữ liệu bảo vệ thời gian thực"

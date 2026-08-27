@@ -25,6 +25,7 @@ from ..database import DatabaseImporter
 from ..sources import get_source_adapter
 from ..sources.base import copy_directory
 from ..sources.git import bind_site_git, normalize_git_config
+from git_auth import encrypt_git_token
 
 
 ANALYSIS_WEIGHTS = {
@@ -201,6 +202,11 @@ def execute_import(task_id):
             bind_result = bind_site_git(site_id, project_path, git_bind)
             if bind_result.get("warning"):
                 store.add_warning(task_id, bind_result["warning"])
+            if bind_result.get("bound"):
+                def clear_git_bind(data):
+                    data.setdefault("internal", {}).pop("git_bind", None)
+                    return data
+                sessions.update(session_id, clear_git_bind)
 
         reporter.start("database", "Preparing database")
         database_result = {"enabled": False}
@@ -303,14 +309,18 @@ def _git_bind_from_source(source_type, source_config):
         normalized = normalize_git_config(source_config)
     except ProjectImportError:
         return None
-    if normalized.get("auth_type") != "ssh_key":
-        return None
-    return {
+    auth_type = normalized.get("auth_type")
+    result = {
         "repo": normalized["repository"],
         "branch": normalized.get("branch", ""),
-        "key_path": normalized["key_path"],
-        "auth_type": "ssh",
+        "auth_type": "ssh" if auth_type == "ssh_key" else auth_type,
     }
+    if auth_type == "ssh_key":
+        result["key_path"] = normalized["key_path"]
+    elif auth_type == "token":
+        result["username"] = normalized["username"]
+        result["token_encrypted"] = encrypt_git_token(normalized["token"])
+    return result
 
 
 DEPENDENCY_INSTALL_TIMEOUT = 900

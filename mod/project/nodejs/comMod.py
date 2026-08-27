@@ -10,7 +10,7 @@
 # ------------------------------
 # nodejs项目业务接口
 # ------------------------------
-import sys, time, shutil, os, json
+import sys, time, shutil, os, json, re
 
 if "/www/server/panel/class" not in sys.path:
     sys.path.insert(0, "/www/server/panel/class")

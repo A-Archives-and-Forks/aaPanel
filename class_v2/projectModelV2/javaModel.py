@@ -5036,17 +5036,14 @@ echo $! > {pid_file}
         @return
         """
         cron_name = f'[Do not delete] Java project [{name}] log rotation'
-        cron_path = public.GetConfigValue('setup_path') + '/cron/'
         cron_list = public.M('crontab').where("name=?", (cron_name,)).select()
         if cron_list:
             for i in cron_list:
                 if not i: continue
-                cron_echo = public.M('crontab').where("id=?", (i['id'],)).getField('echo')
-                args = {"id": i['id']}
-                import crontab
-                crontab.crontab().DelCrontab(args)
-                del_cron_file = cron_path + cron_echo
-                public.ExecShell("crontab -u root -l| grep -v '{}'|crontab -u root -".format(del_cron_file))
+                import crontab_v2 as crontab
+                crontab.crontab().DelCrontab({"id": i['id']})
+        # 清理定时重启任务，避免项目删除后残留
+        self._del_crontab_by_name('[Do Not Delete] Scheduled Restart java Project {}'.format(name))
     
     def add_crontab(self, name, log_conf, python_path):
         """

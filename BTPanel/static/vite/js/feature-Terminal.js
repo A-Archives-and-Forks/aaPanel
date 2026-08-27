@@ -1,7 +1,7 @@
 ;(() => {
 	const stylesheetSelector = "link[rel=stylesheet]"
 	const loaded = new Set(Array.from(document.querySelectorAll(stylesheetSelector)).map(link => link.href))
-	const version = "1786507437784"
+	const version = "1787646744133"
 	const findLoadedLink = href => Array.from(document.querySelectorAll(stylesheetSelector)).find(link => link.href === href)
 	const removeAfterLoad = (freshLink, staleLink) => {
 		const remove = () => staleLink.remove()
@@ -28,7 +28,7 @@
 		removeAfterLoad(freshLink, link)
 	}
 })();
-import{Cn as e,Gn as t,Hn as n,Jn as r,br as i,kn as a,nn as o,or as s,y as c,zn as l}from"./vendor-utils.js?v=1786507437784";import{l as u}from"./vendor-vue.js?v=1786507437784";import{zf as d}from"./app.js?v=1786507437784";import{Cf as f}from"./app-shared.js?v=1786507437784";import{a as p,i as m,n as h,r as g,t as _}from"./vendor-terminal.js?v=1786507437784";o();var v=p(),y=m(),b=g(),x=h(),S=_(),C=a({__name:`index`,props:{url:{default:`/ws_model`},id:{},data:{default:()=>[]}},emits:[`message`],setup(a,{emit:o}){let s=a,d=o,{t:p}=u(),{ws:m,status:h,send:g,close:_}=f(s.url,{verifyData:s.id?{id:s.id}:{},onMessage:(e,t)=>{let n=t.data;if(d(`message`,n),n.indexOf(`Authentication timeout.`)>-1&&(T.value=!0),(n.indexOf(`@127.0.0.1:`)!=-1||n.indexOf(`@localhost:`)!=-1)&&n.indexOf(`Authentication failed`)!=-1){_(),M();return}else if(n==`\\r\\nlogout\\r\\n`||n==`logout\\r\\n`||n==`\r
+import{Cn as e,Gn as t,Hn as n,Jn as r,br as i,kn as a,nn as o,or as s,y as c,zn as l}from"./vendor-utils.js?v=1787646744133";import{l as u}from"./vendor-vue.js?v=1787646744133";import{zf as d}from"./app.js?v=1787646744133";import{Cf as f}from"./app-shared.js?v=1787646744133";import{a as p,i as m,n as h,r as g,t as _}from"./vendor-terminal.js?v=1787646744133";o();var v=p(),y=m(),b=g(),x=h(),S=_(),C=a({__name:`index`,props:{url:{default:`/ws_model`},id:{},data:{default:()=>[]}},emits:[`message`],setup(a,{emit:o}){let s=a,d=o,{t:p}=u(),{ws:m,status:h,send:g,close:_}=f(s.url,{verifyData:s.id?{id:s.id}:{},onMessage:(e,t)=>{let n=t.data;if(d(`message`,n),n.indexOf(`Authentication timeout.`)>-1&&(T.value=!0),(n.indexOf(`@127.0.0.1:`)!=-1||n.indexOf(`@localhost:`)!=-1)&&n.indexOf(`Authentication failed`)!=-1){_(),M();return}else if(n==`\\r\\nlogout\\r\\n`||n==`logout\\r\\n`||n==`\r
 logout\r
 `||n==`logout\r
 `||n.search(/logout[\r\n]+$/)>-1){C.write(`\r`+p(`Component.Terminal.index_1`)+`\r`),M(),_();return}}}),C,w,T=i(!1),E=i(null),D=()=>{C=new v.Terminal({cursorBlink:!0,fontSize:14,fontFamily:`Monaco, Menlo, Consolas, 'Courier New', monospace`,theme:{background:`#333`,foreground:`#ececec`}}),w=new y.FitAddon,O(),k(),P(),I()},O=()=>{let e=m.value;e&&(C.loadAddon(w),C.loadAddon(new S.CanvasAddon),C.loadAddon(new x.WebLinksAddon),C.loadAddon(new b.AttachAddon(e)))},k=()=>{E.value&&C.open(E.value)},A=!1,j=()=>{A=!0},M=()=>{A=!1},N=()=>{let{data:e}=s;e.forEach(e=>{g(e)})},P=()=>{N(),C.focus(),C.onData(e=>{let t=m.value;e===`\r`&&T.value&&(T.value=!1,C.write(`\r

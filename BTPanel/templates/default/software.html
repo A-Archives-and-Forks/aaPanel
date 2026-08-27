@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>Plugin Manage</title>
+    <link href="{{g.cdn_url}}/bootstrap-3.3.5/css/bootstrap.min.css?version={{g['version']}}" rel="stylesheet" />
+    <link href="{{g.cdn_url}}/codemirror/lib/codemirror.css?version={{g['version']}}" rel="stylesheet" />
+    <link href="{{g.cdn_url}}/css/site.css?version={{g['version']}}" rel="stylesheet" />
+		<style>
+        body {
+            background-color: transparent !important;
+        }
+    </style>
+  </head>
+
+  <body>
+    <a style="display: none" id="panel_debug" data="{{g['debug']}}" data-pyversion="{{g['pyversion']}}"></a>
+	<a style="display: none" id="request_token_head" token="{{g.csrf_display_token|default('')}}"></a>
+    
+    <script type="text/javascript" src="{{g.cdn_url}}/js/jquery-1.10.2.min.js?version={{g['version']}}"></script>
+    
+    <script type="text/javascript" src="{{g.cdn_url}}/layer/layer.js?version={{g['version']}}"></script>
+    
+    <script type="text/javascript" src="{{g.cdn_url}}/js/jquery.dragsort-0.5.2.min.js?version={{g['version']}}"></script>
+    <script type="text/javascript" src="{{g.cdn_url}}/laydate/laydate.js?version={{g['version']}}" defer></script>
+    <script type="text/javascript" src="{{g.cdn_url}}/js/clipboard.min.js?version={{g['version']}}" defer></script>
+    <script type="text/javascript" src="{{g.cdn_url}}/js/jquery.qrcode.min.js?version={{g['version']}}" defer></script>
+    <script type="text/javascript" src="{{g.cdn_url}}/codemirror/lib/codemirror.js?version={{g['version']}}" defer></script>
+    
+    <script type="text/javascript" src="{{g.cdn_url}}/js/bootstrap.min.js?version={{g['version']}}"></script>
+    
+    <script src="{{g.cdn_url}}/language/{{session['lan']}}/lan.js?version={{g['version']}}"></script>
+    
+	<script type="text/javascript" src="{{g.cdn_url}}/js/public.js?version={{g['version']}}"></script>
+	<script type="text/javascript" src="{{g.cdn_url}}/js/tools.js?version={{g['version']}}"></script>
+	<script type="text/javascript" src="{{g.cdn_url}}/js/public_backup.js?version={{g['version']}}"></script>
+	
+    <script type="text/javascript" src="{{g.cdn_url}}/js/soft.js?version={{g['version']}}"></script>
+    
+    <script>
+        (() => {
+                let panelOrigin = '';
+                let currentPlugin;
+                let popupObserver;
+                let popupOpened = false;
+
+                const postToPanel = message => {
+                        if (!panelOrigin) return;
+                        window.parent.postMessage(message, panelOrigin);
+                };
+
+                const clearCurrentPlugin = () => {
+                        popupObserver?.disconnect();
+                        popupObserver = undefined;
+                        currentPlugin = undefined;
+                        popupOpened = false;
+                };
+
+                const reportFailure = () => {
+                        clearCurrentPlugin();
+                        postToPanel('closePlugin&Failed to open legacy plug-in settings&error');
+                };
+
+                const normalizePlugin = data => {
+                        const request = typeof data === 'string' ? JSON.parse(data) : data;
+
+                        if (
+                                !request ||
+                                typeof request !== 'object' ||
+                                typeof request.pluginName !== 'string' ||
+                                typeof request.pluginTitle !== 'string' ||
+                                typeof request.pluginAdmin !== 'boolean' ||
+                                (request.pluginVersion !== undefined &&
+                                        typeof request.pluginVersion !== 'string')
+                        ) {
+                                throw new Error('Invalid legacy plug-in request.');
+                        }
+
+                        return {
+                                name: request.pluginName,
+                                title: request.pluginTitle,
+                                version: request.pluginVersion,
+                                admin: request.pluginAdmin,
+                        };
+                };
+
+                const openPlugin = plugin => {
+                        if (plugin.admin) {
+                                const adminSoft = window.bt && window.bt.soft;
+
+                                if (
+                                        !adminSoft ||
+                                        typeof adminSoft.set_lib_config !== 'function'
+                                ) {
+                                        throw new Error(
+                                                'Legacy plug-in bt.soft.set_lib_config is unavailable.',
+                                        );
+                                }
+
+                                adminSoft.set_lib_config.call(
+                                        adminSoft,
+                                        plugin.name,
+                                        plugin.title,
+                                        plugin.version,
+                                );
+                                return;
+                        }
+
+                        if (
+                                !window.soft ||
+                                typeof window.soft.set_soft_config !== 'function'
+                        ) {
+                                throw new Error(
+                                        'Legacy plug-in soft.set_soft_config is unavailable.',
+                                );
+                        }
+
+                        window.soft.set_soft_config.call(window.soft, plugin.name);
+                };
+
+                const syncPopupState = () => {
+                        if (!currentPlugin) return;
+
+                        const popupVisible = Boolean(
+                                document.querySelector('.layui-layer'),
+                        );
+
+                        if (popupVisible && !popupOpened) {
+                                popupOpened = true;
+                                postToPanel('pluginLoad');
+                                return;
+                        }
+
+                        if (!popupVisible && popupOpened) {
+                                postToPanel('closePlugin');
+                                clearCurrentPlugin();
+                        }
+                };
+
+                const observePluginPopup = plugin => {
+                        clearCurrentPlugin();
+                        currentPlugin = plugin;
+
+                        popupObserver = new MutationObserver(syncPopupState);
+                        popupObserver.observe(document.body, {
+                                childList: true,
+                                subtree: true,
+                        });
+                };
+
+                window.addEventListener('message', event => {
+                        if (event.source !== window.parent) return;
+
+                        // 首次接收父窗口消息后锁定其准确 origin。
+                        if (!panelOrigin) panelOrigin = event.origin;
+                        if (event.origin !== panelOrigin) return;
+
+                        try {
+                                const plugin = normalizePlugin(event.data);
+                                observePluginPopup(plugin);
+                                openPlugin(plugin);
+                                syncPopupState();
+                        } catch {
+                                reportFailure();
+                        }
+                });
+        })();
+  </script>
+</body>
+</html>

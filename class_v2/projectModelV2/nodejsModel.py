@@ -1700,6 +1700,10 @@ export PATH
         if os.path.exists(script_file): os.remove(script_file)
         log_file = '{}/{}.log'.format(self._node_logs_path, get.project_name)
         if os.path.exists(log_file): os.remove(log_file)
+        # 清理定时重启任务，避免项目删除后残留
+        self._del_crontab_by_name(
+            '[Do Not Delete] Scheduled Restart nodejs Project {}'.format(get.project_name)
+        )
         public.WriteLog(self._log_name, 'Delete Node.js project {}'.format(get.project_name))
         return_message = public.return_data(True, 'Successfully deleted item')
         del return_message['status']

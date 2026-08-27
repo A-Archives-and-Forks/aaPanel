@@ -996,6 +996,8 @@
 				"title": "Live-Webschutz",
 				"description": "Nach Anzahl blockierter Anfragen sortiert",
 				"rankIp": "Rang / IP-Adresse",
+				"rank": "Rang",
+				"ipAddress": "IP-Adresse",
 				"country": "Land",
 				"hits": "Treffer",
 				"empty": "Keine Echtzeit-Schutzdaten"
